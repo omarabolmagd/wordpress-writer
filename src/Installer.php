@@ -8,10 +8,15 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Installer {
 
-	private const DB_VERSION        = '2';
+	private const DB_VERSION        = '3';
 	private const DB_VERSION_OPTION = 'aaw_db_version';
 
+	/**
+	 * Runs on activation and whenever the stored database version is older than this code's,
+	 * so an update works the same whether WordPress reactivates the plugin or not.
+	 */
 	public static function activate(): void {
+		$from = get_option( self::DB_VERSION_OPTION );
 		self::create_tables();
 		if ( false === get_option( Settings::OPTION ) ) {
 			add_option( Settings::OPTION, Settings::defaults(), '', false );
@@ -21,6 +26,13 @@ final class Installer {
 			add_filter( 'cron_schedules', array( Worker::class, 'cron_schedules' ) );
 			wp_schedule_event( time() + 60, 'aaw_minute', Worker::CRON_HOOK );
 		}
+		if ( $from && version_compare( (string) $from, '2', '<' ) ) {
+			self::upgrade_from_1();
+		}
+		if ( $from && version_compare( (string) $from, '3', '<' ) ) {
+			// 1.2: start the research library with the research of earlier jobs.
+			Library::backfill();
+		}
 	}
 
 	public static function deactivate(): void {
@@ -29,13 +41,8 @@ final class Installer {
 	}
 
 	public static function maybe_upgrade(): void {
-		$from = get_option( self::DB_VERSION_OPTION );
-		if ( $from === self::DB_VERSION ) {
-			return;
-		}
-		self::activate();
-		if ( $from && version_compare( (string) $from, '2', '<' ) ) {
-			self::upgrade_from_1();
+		if ( get_option( self::DB_VERSION_OPTION ) !== self::DB_VERSION ) {
+			self::activate();
 		}
 	}
 
@@ -88,5 +95,6 @@ final class Installer {
 				KEY created_gmt (created_gmt)
 			) {$charset};"
 		);
+		dbDelta( Library::schema( $charset ) );
 	}
 }

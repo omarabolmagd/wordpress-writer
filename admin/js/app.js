@@ -179,7 +179,7 @@
 	};
 
 	const notice = ( message, type = 'error' ) =>
-		`<div class="notice notice-${ type === 'error' ? 'error' : 'success' } inline aaw-notice"><p>${ esc( message ) }</p></div>`;
+		`<div class="notice notice-${ [ 'error', 'info', 'warning' ].includes( type ) ? type : 'success' } inline aaw-notice"><p>${ esc( message ) }</p></div>`;
 
 	const flash = ( container, message, type ) => {
 		const box = document.createElement( 'div' );
@@ -279,6 +279,15 @@
 		const retryNote = retry && serverNow() - retry.t < 90
 			? `<p class="aaw-live-note">${ esc( retry.text === 'max_tokens' ? __( 'The answer was longer than the space Claude had, so it is trying again with more room.', 'ana-afdal-writer' ) : __( 'Claude was busy for a moment; the plugin retried automatically.', 'ana-afdal-writer' ) ) }</p>`
 			: '';
+		const reuse = p && p.events ? p.events.filter( ( e ) => e.type === 'reuse' ).pop() : null;
+		let reuseNote = '';
+		if ( reuse ) {
+			reuseNote = `<p class="aaw-live-good">${ esc(
+				reuse.articles
+					? sprintf( __( 'Using saved notes from related articles (%d), so fewer searches are needed.', 'ana-afdal-writer' ), reuse.articles )
+					: __( 'Using the notes of the topic search that suggested this article.', 'ana-afdal-writer' )
+			) }</p>`;
+		}
 		const restarted = job.attempts > 1
 			? `<p class="aaw-live-note">${ esc( sprintf( __( 'The server stopped this step before it finished, so it started again (attempt %d).', 'ana-afdal-writer' ), job.attempts ) ) }</p>`
 			: '';
@@ -293,7 +302,7 @@
 				<p class="aaw-live-now">${ esc( phaseText( job, p ) ) }</p>
 				${ bar }
 				${ items ? `<ul class="aaw-live-events">${ items }</ul>` : '' }
-				${ retryNote }${ restarted }
+				${ reuseNote }${ retryNote }${ restarted }
 				${ compact ? '' : `<p class="description">${ esc( __( 'Keep this page open: it runs each step itself, which is the fastest way. If you leave, the work continues in the background only when your server allows it.', 'ana-afdal-writer' ) ) }</p>` }
 			</section>`;
 	};
@@ -380,6 +389,28 @@
 		return c ? c.name : '';
 	};
 
+	/** The same normalisation as Library::focus_key() on the server. */
+	const focusKey = ( v ) =>
+		String( v || '' )
+			.trim()
+			.replace( /\s+/g, ' ' )
+			.toLowerCase()
+			.replace( /[\u064B-\u065F\u0670\u0640]/g, '' )
+			.replace( /[أإآٱ]/g, 'ا' )
+			.replace( /ة/g, 'ه' )
+			.replace( /ى/g, 'ي' )
+			.replace( /ؤ/g, 'و' )
+			.replace( /ئ/g, 'ي' );
+
+	/** Offers to reuse a recent topic search for the focus typed in the topics form. */
+	const reuseHtml = ( focus ) => {
+		const saved = ( overview.saved_ideas || [] ).find( ( i ) => i.focus === focusKey( focus ) );
+		if ( ! saved ) {
+			return '';
+		}
+		return `<label><input type="checkbox" name="reuse_ideas" checked> ${ esc( sprintf( __( 'Reuse the topic search from %s (no new web searches)', 'ana-afdal-writer' ), when( saved.created ) ) ) }</label>`;
+	};
+
 	const topicsHtml = () => {
 		const job = topicsJob;
 		let body = '';
@@ -387,8 +418,13 @@
 			body = liveHtml( job, true );
 		} else if ( job && job.status === 'failed' ) {
 			body = notice( job.error );
+		} else if ( job && job.status === 'done' && job.reused_ideas && ! ( job.topics && job.topics.length ) ) {
+			body = notice( __( 'No new ideas were left in the saved topic search. Untick "Reuse" and suggest again to search the web.', 'ana-afdal-writer' ), 'info' );
 		} else if ( job && job.topics && job.topics.length ) {
-			body = `<p class="description">${ esc( sprintf( __( 'Suggested %s', 'ana-afdal-writer' ), when( job.updated ) ) ) }</p><div class="aaw-topics">` +
+			const from = job.reused_ideas
+				? ' · ' + sprintf( __( 'from the saved topic search of %s, with no new searches', 'ana-afdal-writer' ), when( job.reused_ideas.created ) )
+				: '';
+			body = `<p class="description">${ esc( sprintf( __( 'Suggested %s', 'ana-afdal-writer' ), when( job.updated ) ) + from ) }</p><div class="aaw-topics">` +
 				job.topics
 					.map(
 						( t, i ) => `
@@ -415,6 +451,7 @@
 					<input type="text" id="aaw-focus" name="focus" class="regular-text" dir="auto" placeholder="${ esc( __( 'Optional focus, e.g. scholarships in Europe or AI tools for students', 'ana-afdal-writer' ) ) }">
 					<button type="submit" class="button button-primary" ${ isActive( job ) || ! overview.ready.anthropic || overview.cap_reached ? 'disabled' : '' }>${ esc( __( 'Suggest topics', 'ana-afdal-writer' ) ) }</button>
 				</form>
+				<p class="aaw-reuse" data-region="reuse">${ reuseHtml( '' ) }</p>
 				<div data-region="topics">${ body }</div>
 			</section>`;
 	};
@@ -474,6 +511,13 @@
 	const renderHome = () => {
 		root.innerHTML = budgetHtml() + `<div class="aaw-grid">${ topicsHtml() }${ ownTopicHtml() }</div>` + articlesHtml();
 		bindCategorySelects( root );
+		const focusInput = root.querySelector( '#aaw-focus' );
+		const reuseRegion = root.querySelector( '[data-region="reuse"]' );
+		if ( focusInput && reuseRegion ) {
+			focusInput.addEventListener( 'input', () => {
+				reuseRegion.innerHTML = reuseHtml( focusInput.value );
+			} );
+		}
 	};
 
 	const showTopics = ( job ) => {
@@ -838,11 +882,15 @@
 			return '';
 		}
 		const used = ( job.link_report && job.link_report.external ) || [];
+		const reused = ( job.reused || [] )
+			.map( ( r ) => ( r.kind === 'ideas' ? __( 'the topic search that suggested this article', 'ana-afdal-writer' ) : '“' + r.title + '”' ) + ' (' + when( r.created ) + ')' )
+			.join( '، ' );
 		return `
 			<details class="aaw-card">
 				<summary><strong>${ esc( sprintf( __( 'Research sources (%d)', 'ana-afdal-writer' ), job.sources.length ) ) }</strong></summary>
+				${ reused ? `<p class="description" dir="auto">${ esc( sprintf( __( 'Started from saved research: %s', 'ana-afdal-writer' ), reused ) ) } <a href="${ esc( overview && overview.research_url ? overview.research_url : 'admin.php?page=aaw-research' ) }">${ esc( __( 'Saved research', 'ana-afdal-writer' ) ) }</a></p>` : '' }
 				<ul class="aaw-sources">${ job.sources
-					.map( ( s ) => `<li><a href="${ esc( s.url ) }" target="_blank" rel="noopener noreferrer">${ esc( s.title || s.url ) }</a> ${ used.includes( s.url ) ? `<span class="aaw-pill">${ esc( __( 'linked in post', 'ana-afdal-writer' ) ) }</span>` : '' }</li>` )
+					.map( ( s ) => `<li><a href="${ esc( s.url ) }" target="_blank" rel="noopener noreferrer">${ esc( s.title || s.url ) }</a> ${ s.reused ? `<span class="aaw-pill aaw-pill-muted">${ esc( __( 'from saved research', 'ana-afdal-writer' ) ) }</span>` : '' } ${ used.includes( s.url ) ? `<span class="aaw-pill">${ esc( __( 'linked in post', 'ana-afdal-writer' ) ) }</span>` : '' }</li>` )
 					.join( '' ) }</ul>
 			</details>`;
 	};
@@ -962,7 +1010,8 @@
 			e.preventDefault();
 			const button = form.querySelector( '[type="submit"]' );
 			button.disabled = true;
-			api( '/topics', { method: 'POST', data: { focus: form.focus.value } } )
+			const reuseBox = root.querySelector( '[name="reuse_ideas"]' );
+			api( '/topics', { method: 'POST', data: { focus: form.focus.value, reuse: reuseBox ? reuseBox.checked : false } } )
 				.then( ( job ) => {
 					topicsJob = job;
 					renderHome();

@@ -77,7 +77,7 @@ TXT;
 		return array( $system, $prompt );
 	}
 
-	public static function topics_structure( string $notes, array $categories_with_ids, array $existing_titles ): array {
+	public static function topics_structure( string $notes, array $categories_with_ids, array $existing_titles, array $already_suggested = array() ): array {
 		$system = self::site_context() . "\nYou turn research notes into a clean list of article suggestions.";
 
 		$cats = array();
@@ -88,7 +88,12 @@ TXT;
 		$prompt  = "Research notes:\n{$notes}\n\n";
 		$prompt .= "Existing categories (id: name):\n" . implode( "\n", $cats ) . "\n\n";
 		$prompt .= "Already published titles:\n- " . implode( "\n- ", array_slice( $existing_titles, 0, 150 ) ) . "\n\n";
-		$prompt .= "Pick the 6 strongest article ideas. Drop any idea that substantially repeats a published title. For each:\n";
+		if ( $already_suggested ) {
+			$prompt .= "These ideas from the same notes were already suggested to the editor; suggest different ones:\n- " . implode( "\n- ", array_slice( $already_suggested, 0, 60 ) ) . "\n\n";
+			$prompt .= "Pick up to 6 of the strongest remaining article ideas (fewer if fewer good ones remain). Drop any idea that substantially repeats a published title or an idea already suggested. For each:\n";
+		} else {
+			$prompt .= "Pick the 6 strongest article ideas. Drop any idea that substantially repeats a published title. For each:\n";
+		}
 		$prompt .= "- title: an Arabic article title, specific and click-worthy, no clickbait, no emojis.\n";
 		$prompt .= "- focus_keyphrase: the Arabic phrase readers would search (2 to 5 words).\n";
 		$prompt .= "- post_type: news (timely update), list (\"best X\" list) or guide (complete how-to).\n";
@@ -129,7 +134,11 @@ TXT;
 
 	/* --------------------------------------------------------------- research */
 
-	public static function article_research( array $topic ): array {
+	/**
+	 * @param array $earlier Saved research to start from: entries from the library, each with
+	 *                       kind, title, created, notes and sources.
+	 */
+	public static function article_research( array $topic, array $earlier = array() ): array {
 		$system = self::site_context() . "\nYou are a careful researcher preparing notes for an Arabic writer. Use web search. Prefer official sources (the product's own site, the university or scholarship page, official documentation, reputable news). Record exact facts with dates.";
 
 		$prompt  = "Research this article so the writer has accurate, current facts.\n\n";
@@ -138,6 +147,25 @@ TXT;
 		$prompt .= 'Article type: ' . $topic['post_type'] . "\n";
 		if ( ! empty( $topic['notes'] ) ) {
 			$prompt .= 'Editor notes: ' . $topic['notes'] . "\n";
+		}
+		if ( $earlier ) {
+			$prompt .= "\nSaved research from earlier work on related topics is below. Start from it:\n";
+			$prompt .= "- Reuse the facts that apply to this article, with their sources.\n";
+			$prompt .= "- Search the web only for what this article needs that the saved notes don't cover, and to re-check facts that may have changed since they were written (deadlines, prices, dates, availability, versions).\n";
+			$prompt .= "- If something you find now conflicts with a saved fact, use the new one and note what changed.\n";
+			foreach ( $earlier as $e ) {
+				$days   = max( 0, (int) floor( ( time() - (int) $e['created'] ) / DAY_IN_SECONDS ) );
+				$label  = Library::KIND_IDEAS === $e['kind'] ? 'Notes from the topic search that suggested this article' : 'Research for the article "' . $e['title'] . '"';
+				$prompt .= "\n--- {$label} (researched " . gmdate( 'Y-m-d', (int) $e['created'] ) . ", {$days} days ago) ---\n" . trim( (string) $e['notes'] ) . "\n";
+				$urls    = array();
+				foreach ( array_slice( (array) $e['sources'], 0, 15 ) as $src ) {
+					$urls[] = '- ' . $src['url'] . ( '' !== (string) ( $src['title'] ?? '' ) ? ' — ' . $src['title'] : '' );
+				}
+				if ( $urls ) {
+					$prompt .= "Sources:\n" . implode( "\n", $urls ) . "\n";
+				}
+			}
+			$prompt .= "--- End of saved research ---\n\nThe notes you write must be complete for this article on their own, including the saved facts you keep.\n";
 		}
 		$prompt .= "\nWrite research notes in English with:\n";
 		$prompt .= "1. Key facts the article needs (names, what each thing does, prices or free status, requirements, deadlines, steps), each with its source.\n";

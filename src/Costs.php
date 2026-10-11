@@ -52,6 +52,27 @@ final class Costs {
 		);
 	}
 
+	/** What one step of a job cost, for example its research. */
+	public static function job_item_total( int $job_id, string $item ): float {
+		global $wpdb;
+		$table = self::table();
+		return (float) $wpdb->get_var(
+			$wpdb->prepare( "SELECT COALESCE(SUM(amount_usd),0) FROM {$table} WHERE job_id = %d AND item = %s", $job_id, $item ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		);
+	}
+
+	/** How many web searches one step of a job ran, across all its calls. */
+	public static function job_item_searches( int $job_id, string $item ): int {
+		global $wpdb;
+		$table = self::table();
+		$total = 0;
+		foreach ( (array) $wpdb->get_col( $wpdb->prepare( "SELECT details FROM {$table} WHERE job_id = %d AND item = %s", $job_id, $item ) ) as $json ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$d      = json_decode( (string) $json, true );
+			$total += is_array( $d ) ? (int) ( $d['searches'] ?? 0 ) : 0;
+		}
+		return $total;
+	}
+
 	public static function cap(): float {
 		return (float) Settings::get( 'monthly_cap' );
 	}

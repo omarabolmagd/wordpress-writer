@@ -288,6 +288,10 @@ final class Worker {
 	}
 
 	public static function cron(): void {
+		if ( (int) get_option( 'aaw_library_cleaned', 0 ) < time() - DAY_IN_SECONDS ) {
+			update_option( 'aaw_library_cleaned', time(), false );
+			Library::cleanup();
+		}
 		self::run_pending( 240, null, 0, true );
 	}
 

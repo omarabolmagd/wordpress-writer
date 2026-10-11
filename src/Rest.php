@@ -61,6 +61,8 @@ final class Rest {
 				'image_sources' => Images::available_sources(),
 				'articles'      => $articles,
 				'topics_job'    => $topics_jobs ? self::present( $topics_jobs[0] ) : null,
+				'saved_ideas'   => Library::recent_ideas(),
+				'research_url'  => admin_url( 'admin.php?page=' . Admin::PAGE_RESEARCH ),
 				'can_manage'    => current_user_can( Plugin::CAP_MANAGE ),
 				'settings_url'  => admin_url( 'admin.php?page=' . Settings::PAGE ),
 			)
@@ -91,7 +93,8 @@ final class Rest {
 			return $blocked;
 		}
 		$focus  = sanitize_text_field( (string) $request->get_param( 'focus' ) );
-		$job_id = Topics::start( get_current_user_id(), $focus );
+		$reuse  = null === $request->get_param( 'reuse' ) || rest_sanitize_boolean( $request->get_param( 'reuse' ) );
+		$job_id = Topics::start( get_current_user_id(), $focus, $reuse );
 		return rest_ensure_response( self::present( Jobs::get( $job_id ) ) );
 	}
 
@@ -196,13 +199,16 @@ final class Rest {
 		$out['sources'] = array_values(
 			array_map(
 				static fn( $s ) => array(
-					'url'   => $s['url'],
-					'title' => $s['title'],
-					'cited' => ! empty( $s['cited'] ),
+					'url'    => $s['url'],
+					'title'  => $s['title'],
+					'cited'  => ! empty( $s['cited'] ),
+					'reused' => ! empty( $s['reused'] ),
 				),
 				$job['data']['research']['sources'] ?? array()
 			)
 		);
+		$out['reused']        = $job['data']['research']['reused'] ?? array();
+		$out['reused_ideas']  = $job['data']['reused_ideas'] ?? null;
 		$out['outline_links'] = array();
 		foreach ( (array) ( $job['data']['outline']['internal_link_ids'] ?? array() ) as $pid ) {
 			$out['outline_links'][] = array(

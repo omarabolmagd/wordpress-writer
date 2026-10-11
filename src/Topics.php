@@ -9,9 +9,32 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Topics {
 
-	public static function start( int $user_id, string $focus ): int {
+	/**
+	 * @param bool $reuse Use a recent topic search for the same focus instead of searching again.
+	 */
+	public static function start( int $user_id, string $focus, bool $reuse = true ): int {
+		$saved  = $reuse ? Library::ideas_for( $focus ) : null;
 		$job_id = Jobs::create( Jobs::TYPE_TOPICS, $user_id, 'Topic suggestions ' . wp_date( 'Y-m-d H:i' ), array( 'focus' => $focus ) );
-		Jobs::schedule( $job_id, 'topics_research' );
+		if ( ! $saved ) {
+			Jobs::schedule( $job_id, 'topics_research' );
+			return $job_id;
+		}
+		Jobs::update(
+			$job_id,
+			static function ( array $s ) use ( $saved ) {
+				$s['data']['notes']        = $saved['notes'];
+				$s['data']['sources']      = $saved['sources'];
+				$s['data']['ideas_id']     = (int) $saved['id'];
+				$s['data']['reused_ideas'] = array(
+					'id'      => (int) $saved['id'],
+					'created' => (int) $saved['created'],
+				);
+				return $s;
+			}
+		);
+		Library::mark_used( array( (int) $saved['id'] ) );
+		Jobs::log( $job_id, 'Reusing the topic search from ' . gmdate( 'Y-m-d H:i', (int) $saved['created'] ) . ' UTC, so no new searches are needed.' );
+		Jobs::schedule( $job_id, 'topics_structure' );
 		return $job_id;
 	}
 
@@ -22,11 +45,26 @@ final class Topics {
 		Jobs::log( $job_id, 'Searching the web for what readers are looking for…' );
 		$result = Claude::research( $system, $prompt, $job_id, 'topics_research' );
 
+		$focus    = (string) ( $state['input']['focus'] ?? '' );
+		$ideas_id = Library::save(
+			array(
+				'kind'     => Library::KIND_IDEAS,
+				'job_id'   => $job_id,
+				'title'    => $focus,
+				'focus'    => $focus,
+				'notes'    => $result['text'],
+				'sources'  => array_values( $result['sources'] ),
+				'searches' => max( $result['searches'], Costs::job_item_searches( $job_id, 'topics_research' ) ),
+				'cost'     => Costs::job_item_total( $job_id, 'topics_research' ),
+			)
+		);
+
 		Jobs::update(
 			$job_id,
-			static function ( array $s ) use ( $result ) {
-				$s['data']['notes']   = $result['text'];
-				$s['data']['sources'] = array_values( $result['sources'] );
+			static function ( array $s ) use ( $result, $ideas_id ) {
+				$s['data']['notes']    = $result['text'];
+				$s['data']['sources']  = array_values( $result['sources'] );
+				$s['data']['ideas_id'] = $ideas_id;
 				return $s;
 			}
 		);
@@ -39,7 +77,14 @@ final class Topics {
 		$categories = Site::categories();
 		$existing   = Site::existing_titles();
 
-		list( $system, $prompt ) = Prompts::topics_structure( (string) $state['data']['notes'], $categories, $existing );
+		$ideas_id = (int) ( $state['data']['ideas_id'] ?? 0 );
+		$already  = array();
+		if ( ! empty( $state['data']['reused_ideas'] ) ) {
+			$saved   = Library::get( $ideas_id );
+			$already = $saved ? (array) ( $saved['meta']['suggested'] ?? array() ) : array();
+		}
+
+		list( $system, $prompt ) = Prompts::topics_structure( (string) $state['data']['notes'], $categories, $existing, $already );
 		$data = Claude::json( $system, $prompt, Prompts::topics_schema(), $job_id, 'topics_structure' );
 
 		$topics = array();
@@ -53,7 +98,11 @@ final class Topics {
 			if ( $close && '' === $topic['overlap_note'] ) {
 				$topic['overlap_note'] = 'قريب من مقال منشور: ' . $close;
 			}
-			$topics[] = $topic;
+			$topic['ideas_id'] = $ideas_id;
+			$topics[]          = $topic;
+		}
+		if ( $ideas_id && $topics ) {
+			Library::add_suggested( $ideas_id, wp_list_pluck( $topics, 'title' ) );
 		}
 
 		Jobs::update(
@@ -63,7 +112,12 @@ final class Topics {
 				return $s;
 			}
 		);
-		Jobs::log( $job_id, sprintf( '%d topics suggested.', count( $topics ) ) );
+		Jobs::log(
+			$job_id,
+			$topics || ! $already
+				? sprintf( '%d topics suggested.', count( $topics ) )
+				: 'No new ideas were left in the saved topic search. Untick "Reuse" to search the web again.'
+		);
 		Pipeline::wait( $job_id, 'done', 'done' );
 		return null;
 	}
@@ -99,6 +153,8 @@ final class Topics {
 			'why_now'              => sanitize_text_field( (string) ( $t['why_now'] ?? '' ) ),
 			'overlap_note'         => sanitize_text_field( (string) ( $t['overlap_note'] ?? '' ) ),
 			'notes'                => sanitize_textarea_field( (string) ( $t['notes'] ?? '' ) ),
+			// The topic search this came from, so its notes can help the article's research.
+			'ideas_id'             => absint( $t['ideas_id'] ?? 0 ),
 		);
 	}
 }

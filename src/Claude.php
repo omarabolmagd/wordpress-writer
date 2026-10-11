@@ -70,7 +70,7 @@ final class Claude {
 		return (string) apply_filters( 'aaw_anthropic_endpoint', $url );
 	}
 
-	public static function body( string $step, string $system, string $prompt, ?array $schema = null, bool $search = false ): array {
+	public static function body( string $step, string $system, string $prompt, ?array $schema = null, bool $search = false, int $max_searches = 0 ): array {
 		$p     = self::profile( $step );
 		$model = (string) Settings::get( 'claude_model' );
 		$body  = array(
@@ -105,7 +105,7 @@ final class Claude {
 				array(
 					'type'     => 'web_search_20250305',
 					'name'     => 'web_search',
-					'max_uses' => (int) Settings::get( 'max_searches' ),
+					'max_uses' => $max_searches > 0 ? $max_searches : (int) Settings::get( 'max_searches' ),
 				),
 			);
 		}
@@ -119,8 +119,8 @@ final class Claude {
 	 *
 	 * @return array{text:string, sources:array<string,array>, searches:int}
 	 */
-	public static function research( string $system, string $prompt, int $job_id, string $step ): array {
-		$response = self::call( self::body( $step, $system, $prompt, null, true ), $job_id, $step );
+	public static function research( string $system, string $prompt, int $job_id, string $step, int $max_searches = 0 ): array {
+		$response = self::call( self::body( $step, $system, $prompt, null, true, $max_searches ), $job_id, $step );
 
 		$text    = '';
 		$sources = array();

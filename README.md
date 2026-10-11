@@ -70,6 +70,17 @@ Default prices come from the official pricing pages as of October 2026:
 
 They are all editable in Settings. A rough estimate, not yet measured on real articles, is $0.30–$0.60 per article for research, writing and checks, plus about $0.03 per AI image. The Costs page shows the real figures after your first few posts.
 
+## Saved research
+
+Every research step is saved under **Ana Afdal Writer → Saved research**: the topic searches and each article's research. Claude's raw search results come back encrypted and can only be read inside the request that made them, so the plugin saves what Claude wrote from them: the research notes (facts, dates, official links) and the list of sources.
+
+- **Related articles start from saved notes.** When a new article's title and keyphrase are close to an earlier article's, Claude gets that research (up to 2 earlier articles). It then searches only for what the notes miss and for facts that may have changed, such as deadlines, prices and dates. For a near-identical topic, the search limit is also halved.
+- **Closeness is measured on the words of the titles and keyphrases.** Arabic words are reduced to a common form, so "بشهادات" and "شهادة" match. Words that appear in many of the site's titles, such as "كورسات" or "مجانية", count for little; specific words such as "الذكاء الاصطناعي" or "ألمانيا" count for a lot.
+- **Freshness.** News articles only reuse notes up to 7 days old. Guides and lists reuse notes up to 30 days old, which you can change in Settings. Notes are deleted after 180 days.
+- **Topic ideas.** Asking for topics with the same focus within 3 days reuses that topic search with no new web searches, and suggests ideas that were not shown before. Untick **Reuse** to search again. An article started from a suggestion also gets the notes of the topic search that suggested it.
+- **Measured savings.** The Saved research page shows your average research cost per article, from scratch and with saved notes, from your own cost log.
+- **Settings.** You can turn reuse off under **Settings → Reuse saved research**.
+
 ## The slug guard
 
 Posts on anaafdal.com get random slugs such as `8313-vytuja`. The plugin keeps its English slug even if another plugin rewrites slugs on publish. It only overrides slugs that look machine-made. If an editor types a different slug on purpose, that slug is kept.
@@ -141,6 +152,12 @@ All external APIs are mocked, so tests cost nothing and need no keys.
   - streaming, live progress and word counts
   - retries when Claude is busy, an answer runs out of room or thinking settings are rejected
   - restarting a step the server killed, stopping after 3 attempts, and cancelling mid-stream
+  - saved research:
+    - which topics count as related
+    - news freshness and the off switch
+    - topic-search reuse
+    - cleanup
+    - filling the library from earlier jobs when updating
 - **`node tests/validate-blocks.cjs <wordpress-dir> tests/output-content.html`** loads WordPress's own block-editor scripts and checks that every generated block is valid and matches what the editor would save. It needs `jsdom`.
 - **`node tests/browser.cjs http://localhost:8080 screens [rtl]`** clicks through the whole flow in Chromium with Playwright and saves screenshots, including the live progress screens. To set it up:
   1. Copy `tests/mu-test-mocks.php` into `wp-content/mu-plugins/`.
@@ -152,6 +169,13 @@ All external APIs are mocked, so tests cost nothing and need no keys.
 Run `python3 bin/translations-ar.py`, then `wp i18n make-mo languages` and `wp i18n make-json languages --no-purge`.
 
 ## Changelog
+
+**1.2.0**
+- New **Saved research** library. Research notes and sources from every topic search and article are kept.
+- Articles on related topics start from the saved notes and search only for what is missing or may have changed. A near-identical topic gets half the searches.
+- Topic suggestions with the same focus within 3 days reuse the saved search with no new searches, and suggest ideas that were not shown before.
+- The Saved research page lists the notes and lets you delete them. It also compares average research cost with and without saved notes.
+- Updating adds the research of articles you have already written to the library.
 
 **1.1.0**
 - Steps are several times faster. Claude no longer thinks silently before every answer, and each step uses the effort it needs. The old behaviour is available as **Speed → Thorough**.

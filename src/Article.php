@@ -34,25 +34,99 @@ final class Article {
 
 	public static function research( int $job_id ): string {
 		$state = Jobs::get( $job_id );
-		list( $system, $prompt ) = Prompts::article_research( $state['input']['topic'] );
+		$topic = $state['input']['topic'];
+
+		// Start from saved research when earlier articles covered a related topic.
+		$related = Library::related( $topic, $job_id );
+		$earlier = $related;
+		$ideas   = ! empty( $topic['ideas_id'] ) && Library::enabled() ? Library::get( (int) $topic['ideas_id'] ) : null;
+		if ( $ideas && Library::KIND_IDEAS === $ideas['kind'] && $ideas['created'] >= time() - Library::max_age_days( (string) $topic['post_type'] ) * DAY_IN_SECONDS ) {
+			$earlier[] = $ideas;
+		} else {
+			$ideas = null;
+		}
+		// Claude is told to search only for what the saved notes miss. When an earlier article was
+		// on nearly the same topic, the search limit is also halved, so the saving is certain.
+		// Notes from the topic search are a head start, not research for this article.
+		$max      = (int) Settings::get( 'max_searches' );
+		$strong   = array_filter( $related, static fn( $e ) => $e['score'] >= Library::STRONG_SCORE );
+		$searches = $strong ? min( $max, max( 2, (int) ceil( $max / 2 ) ) ) : 0;
+		$reused   = array_map(
+			static fn( $e ) => array(
+				'id'      => (int) $e['id'],
+				'kind'    => (string) $e['kind'],
+				'title'   => (string) $e['title'],
+				'created' => (int) $e['created'],
+			),
+			$earlier
+		);
+		if ( $earlier ) {
+			Progress::event( 'reuse', '', array( 'articles' => count( $related ), 'ideas' => (bool) $ideas ) );
+			Jobs::log(
+				$job_id,
+				$related
+					? sprintf( 'Starting from saved research of %d related article(s); up to %d new searches.', count( $related ), $searches ? $searches : $max )
+					: 'Starting from the notes of the topic search that suggested this article.'
+			);
+		}
+
+		list( $system, $prompt ) = Prompts::article_research( $topic, $earlier );
 
 		Jobs::log( $job_id, 'Researching the topic on the web…' );
-		$result = Claude::research( $system, $prompt, $job_id, 'research' );
+		$result = Claude::research( $system, $prompt, $job_id, 'research', $searches );
 		if ( '' === $result['text'] ) {
 			throw new \RuntimeException( 'Research came back empty. Try again.' );
 		}
 
+		// Keep the earlier sources the new notes rely on, so the article can still cite them.
+		// Each is checked live again before the draft is saved.
+		$sources = $result['sources'];
+		foreach ( $earlier as $e ) {
+			foreach ( $e['sources'] as $src ) {
+				$url = (string) ( $src['url'] ?? '' );
+				if ( '' === $url || isset( $sources[ $url ] ) ) {
+					continue;
+				}
+				$mentioned = str_contains( $result['text'], untrailingslashit( $url ) );
+				if ( $mentioned || ( Library::KIND_ARTICLE === $e['kind'] && ! empty( $src['cited'] ) ) ) {
+					$sources[ $url ] = array_merge( $src, array( 'reused' => true ) );
+				}
+			}
+		}
+
+		$library_id = Library::save(
+			array(
+				'kind'        => Library::KIND_ARTICLE,
+				'job_id'      => $job_id,
+				'title'       => (string) $topic['title'],
+				'keyphrase'   => (string) ( $topic['focus_keyphrase'] ?? '' ),
+				'post_type'   => (string) ( $topic['post_type'] ?? '' ),
+				'category_id' => (int) ( $topic['category_existing_id'] ?? 0 ),
+				'notes'       => $result['text'],
+				'sources'     => array_values( $sources ),
+				'searches'    => max( $result['searches'], Costs::job_item_searches( $job_id, 'research' ) ),
+				'cost'        => Costs::job_item_total( $job_id, 'research' ),
+				'meta'        => array(
+					'reused_from' => array_map( static fn( $e ) => (int) $e['id'], $related ),
+					'ideas_id'    => $ideas ? (int) $ideas['id'] : 0,
+				),
+			)
+		);
+		Library::mark_used( wp_list_pluck( $earlier, 'id' ) );
+
 		Jobs::update(
 			$job_id,
-			static function ( array $s ) use ( $result ) {
+			static function ( array $s ) use ( $result, $sources, $reused, $library_id ) {
 				$s['data']['research'] = array(
-					'notes'   => $result['text'],
-					'sources' => array_values( $result['sources'] ),
+					'notes'      => $result['text'],
+					'sources'    => array_values( $sources ),
+					'reused'     => $reused,
+					'library_id' => $library_id,
 				);
 				return $s;
 			}
 		);
-		Jobs::log( $job_id, sprintf( 'Research done: %d searches, %d sources.', $result['searches'], count( $result['sources'] ) ) );
+		Jobs::log( $job_id, sprintf( 'Research done: %d searches, %d sources.', $result['searches'], count( $sources ) ) );
 		return 'outline';
 	}
 

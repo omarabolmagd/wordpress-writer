@@ -31,6 +31,8 @@ final class Settings {
 			'claude_model'             => 'claude-sonnet-5-5',
 			'speed'                    => 'fast',
 			'max_searches'             => 6,
+			'reuse_research'           => 1,
+			'reuse_days'               => 30,
 			'monthly_cap'              => 20,
 			'telegram_url'             => 'https://t.me/fyb2020',
 			'telegram_text'            => 'انضم إلى قناتنا على تيليجرام ليصلك جديد الكورسات والمنح والوظائف أولًا بأول.',
@@ -137,6 +139,9 @@ final class Settings {
 		$out['speed'] = in_array( $input['speed'] ?? '', array( 'fast', 'thorough' ), true ) ? $input['speed'] : $current['speed'];
 
 		$out['max_searches'] = max( 1, min( 20, (int) ( $input['max_searches'] ?? $current['max_searches'] ) ) );
+		// The form sends a hidden 0 before the checkbox, so an unticked box arrives as 0.
+		$out['reuse_research'] = isset( $input['reuse_research'] ) ? ( empty( $input['reuse_research'] ) ? 0 : 1 ) : (int) $current['reuse_research'];
+		$out['reuse_days']     = max( 1, min( 180, (int) ( $input['reuse_days'] ?? $current['reuse_days'] ) ) );
 		$out['monthly_cap']  = max( 0, round( (float) ( $input['monthly_cap'] ?? $current['monthly_cap'] ), 2 ) );
 
 		$out['telegram_url']  = esc_url_raw( $input['telegram_url'] ?? $current['telegram_url'], array( 'https' ) );
@@ -222,6 +227,17 @@ final class Settings {
 					</tr>
 					<?php
 					self::number_row( 'max_searches', __( 'Web searches per research step', 'ana-afdal-writer' ), $s['max_searches'], __( 'Each search costs about $0.01.', 'ana-afdal-writer' ), '1' );
+					?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Reuse saved research', 'ana-afdal-writer' ); ?></th>
+						<td>
+							<input type="hidden" name="<?php echo esc_attr( self::OPTION ); ?>[reuse_research]" value="0">
+							<label><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[reuse_research]" value="1" <?php checked( ! empty( $s['reuse_research'] ) ); ?>> <?php esc_html_e( 'Start from saved notes when an earlier article covered a related topic', 'ana-afdal-writer' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Claude gets the notes and sources of up to 2 related earlier articles and searches only for what is missing or may have changed, so research needs fewer searches. Topic suggestions with the same focus reuse a topic search from the last 3 days.', 'ana-afdal-writer' ); ?></p>
+						</td>
+					</tr>
+					<?php
+					self::number_row( 'reuse_days', __( 'Reuse notes for up to (days)', 'ana-afdal-writer' ), $s['reuse_days'], __( 'News articles never reuse notes older than 7 days. Notes are deleted after 180 days.', 'ana-afdal-writer' ), '1' );
 					self::text_row( 'telegram_url', __( 'Telegram channel link', 'ana-afdal-writer' ), $s['telegram_url'], __( 'Every post ends with an invitation to this channel.', 'ana-afdal-writer' ), 'url' );
 					self::text_row( 'telegram_text', __( 'Telegram invitation text', 'ana-afdal-writer' ), $s['telegram_text'], '' );
 					?>

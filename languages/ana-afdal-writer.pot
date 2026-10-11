@@ -2,23 +2,23 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ana Afdal Writer 1.1.0\n"
+"Project-Id-Version: Ana Afdal Writer 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ana-afdal-writer\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-11T15:56:30+00:00\n"
+"POT-Creation-Date: 2026-10-11T16:18:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ana-afdal-writer\n"
 
 #. Plugin Name of the plugin
 #: ana-afdal-writer.php
-#: src/Admin.php:23
-#: src/Admin.php:24
-#: src/Admin.php:91
+#: src/Admin.php:25
+#: src/Admin.php:26
+#: src/Admin.php:94
 msgid "Ana Afdal Writer"
 msgstr ""
 
@@ -41,143 +41,250 @@ msgstr ""
 msgid "Ana Afdal Writer needs PHP 8.1 or newer. Ask your host to upgrade PHP."
 msgstr ""
 
-#: src/Admin.php:31
+#: src/Admin.php:33
 msgid "New post"
 msgstr ""
 
-#: src/Admin.php:32
-#: src/Admin.php:110
+#: src/Admin.php:34
+#: src/Admin.php:187
+#: admin/js/app.js:891
+msgid "Saved research"
+msgstr ""
+
+#: src/Admin.php:35
+#: src/Admin.php:113
 msgid "Costs"
 msgstr ""
 
-#: src/Admin.php:33
-#: src/Admin.php:38
-#: admin/js/app.js:347
+#: src/Admin.php:36
+#: src/Admin.php:41
+#: admin/js/app.js:356
 msgid "Settings"
 msgstr ""
 
-#: src/Admin.php:78
+#: src/Admin.php:81
 msgid "Ana Afdal Writer needs a Claude API key before it can write."
 msgstr ""
 
-#: src/Admin.php:80
+#: src/Admin.php:83
 msgid "Add it in Settings"
 msgstr ""
 
-#: src/Admin.php:87
+#: src/Admin.php:90
+#: src/Admin.php:176
+#: src/Admin.php:297
 msgid "You do not have permission to use the writer."
 msgstr ""
 
-#: src/Admin.php:93
+#: src/Admin.php:96
 msgid "Loading…"
 msgstr ""
 
-#: src/Admin.php:95
+#: src/Admin.php:98
 msgid "This screen needs JavaScript."
 msgstr ""
 
-#: src/Admin.php:102
+#: src/Admin.php:105
 msgid "You do not have permission to view costs."
 msgstr ""
 
 #. translators: %s: monthly cap in dollars
-#: src/Admin.php:117
+#: src/Admin.php:120
 #, php-format
 msgid "of %s this month"
 msgstr ""
 
-#: src/Admin.php:119
+#: src/Admin.php:122
 msgid "this month (no cap set)"
 msgstr ""
 
-#: src/Admin.php:126
+#: src/Admin.php:129
 msgid "Costs are estimates from token counts and the prices in Settings. Your Anthropic and Google consoles show the exact bill."
 msgstr ""
 
-#: src/Admin.php:129
+#: src/Admin.php:132
 msgid "This month by job"
 msgstr ""
 
-#: src/Admin.php:131
+#: src/Admin.php:134
 msgid "Job"
 msgstr ""
 
-#: src/Admin.php:131
-#: src/Admin.php:153
-#: admin/js/app.js:468
+#: src/Admin.php:134
+#: src/Admin.php:156
+#: src/Admin.php:224
+#: admin/js/app.js:505
 msgid "Cost"
 msgstr ""
 
-#: src/Admin.php:131
+#: src/Admin.php:134
 msgid "Last activity"
 msgstr ""
 
-#: src/Admin.php:134
+#: src/Admin.php:137
 msgid "Nothing spent yet this month."
 msgstr ""
 
-#: src/Admin.php:151
+#: src/Admin.php:154
 msgid "Latest API calls"
 msgstr ""
 
-#: src/Admin.php:153
+#: src/Admin.php:156
 msgid "When"
 msgstr ""
 
-#: src/Admin.php:153
+#: src/Admin.php:156
 msgid "Service"
 msgstr ""
 
-#: src/Admin.php:153
+#: src/Admin.php:156
 msgid "Step"
 msgstr ""
 
-#: src/Admin.php:153
+#: src/Admin.php:156
 msgid "Details"
+msgstr ""
+
+#: src/Admin.php:189
+msgid "Deleted."
+msgstr ""
+
+#: src/Admin.php:192
+msgid "Claude's notes and sources from every research step are kept here. When you write about a related topic, Claude starts from these notes and searches only for what is missing or may have changed, which uses fewer searches and tokens."
+msgstr ""
+
+#: src/Admin.php:193
+msgid "Claude's raw search results come back encrypted and can only be read inside the request that made them, so the notes Claude wrote from them are what is saved."
+msgstr ""
+
+#: src/Admin.php:195
+msgid "Reusing saved research is turned off in Settings."
+msgstr ""
+
+#: src/Admin.php:200
+msgid "Average research cost per article:"
+msgstr ""
+
+#. translators: 1: cost, 2: number of articles
+#: src/Admin.php:204
+#, php-format
+msgid "%1$s from scratch (articles: %2$d)"
+msgstr ""
+
+#: src/Admin.php:205
+msgid "no article researched from scratch yet"
+msgstr ""
+
+#. translators: 1: cost, 2: number of articles
+#: src/Admin.php:211
+#, php-format
+msgid "%1$s with saved notes (articles: %2$d)"
+msgstr ""
+
+#: src/Admin.php:212
+msgid "no article has used saved notes yet"
+msgstr ""
+
+#: src/Admin.php:221
+msgid "Date"
+msgstr ""
+
+#: src/Admin.php:222
+#: admin/js/app.js:55
+msgid "Research"
+msgstr ""
+
+#: src/Admin.php:223
+msgid "Searches"
+msgstr ""
+
+#: src/Admin.php:225
+msgid "Times reused"
+msgstr ""
+
+#: src/Admin.php:226
+msgid "Actions"
+msgstr ""
+
+#: src/Admin.php:230
+msgid "Nothing saved yet. The research of your next article or topic search will appear here."
+msgstr ""
+
+#: src/Admin.php:236
+msgid "Topic search without a focus"
+msgstr ""
+
+#: src/Admin.php:244
+msgid "Topic search"
+msgstr ""
+
+#: src/Admin.php:244
+msgid "Article research"
+msgstr ""
+
+#. translators: %s: titles of earlier articles
+#: src/Admin.php:254
+#, php-format
+msgid "Started from: %s"
+msgstr ""
+
+#. translators: %s: titles of earlier articles
+#: src/Admin.php:254
+msgid "Started from saved notes"
+msgstr ""
+
+#. translators: %d: number of sources
+#: src/Admin.php:262
+#, php-format
+msgid "Notes and sources (%d)"
+msgstr ""
+
+#: src/Admin.php:283
+msgid "Delete"
 msgstr ""
 
 #: src/Article.php:19
 msgid "The topic needs a title."
 msgstr ""
 
-#: src/Article.php:111
+#: src/Article.php:185
 msgid "The outline needs a title."
 msgstr ""
 
-#: src/Article.php:182
+#: src/Article.php:256
 msgid "The outline needs at least one section."
 msgstr ""
 
-#: src/Article.php:219
+#: src/Article.php:293
 msgid "This outline is not waiting for approval."
 msgstr ""
 
-#: src/Article.php:428
+#: src/Article.php:502
 msgid "not one of the researched sources"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:438
+#: src/Article.php:512
 #, php-format
 msgid "site blocks automated checks (HTTP %d)"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:438
+#: src/Article.php:512
 #, php-format
 msgid "broken link (HTTP %d)"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:438
+#: src/Article.php:512
 msgid "site did not respond"
 msgstr ""
 
-#: src/Article.php:452
+#: src/Article.php:526
 msgid "not a published post"
 msgstr ""
 
-#: src/Article.php:466
+#: src/Article.php:540
 msgid "invalid link"
 msgstr ""
 
@@ -201,7 +308,7 @@ msgstr ""
 msgid "Open this post in Ana Afdal Writer (sources, backlink suggestions, cost)"
 msgstr ""
 
-#: src/Installer.php:63
+#: src/Installer.php:67
 msgid "The plugin was updated while this step was waiting or running. Click Try this step again to continue."
 msgstr ""
 
@@ -260,7 +367,7 @@ msgid "About %1$d words (target %2$d–%3$d)."
 msgstr ""
 
 #: src/Quality.php:160
-#: admin/js/app.js:655
+#: admin/js/app.js:699
 msgid "Internal links"
 msgstr ""
 
@@ -367,304 +474,324 @@ msgstr ""
 msgid "New category created"
 msgstr ""
 
-#: src/Rest.php:80
+#: src/Rest.php:82
 msgid "Add your Claude API key in Settings first."
 msgstr ""
 
-#: src/Rest.php:83
+#: src/Rest.php:85
 msgid "This month's spending cap is reached. Raise it in Settings or wait until next month."
 msgstr ""
 
-#: src/Rest.php:115
-#: src/Rest.php:146
+#: src/Rest.php:118
+#: src/Rest.php:149
 msgid "Not found."
 msgstr ""
 
-#: src/Rest.php:136
+#: src/Rest.php:139
 msgid "Only a failed step can be retried."
 msgstr ""
 
-#: src/Rest.php:255
+#: src/Rest.php:261
 msgid "No key"
 msgstr ""
 
-#: src/Rest.php:270
+#: src/Rest.php:276
 msgid "No key (AI images off)"
 msgstr ""
 
-#: src/Rest.php:285
+#: src/Rest.php:291
 msgid "No key (stock photos off)"
 msgstr ""
 
-#: src/Rest.php:289
+#: src/Rest.php:295
 msgid "Key saved (tested on first use)"
 msgstr ""
 
-#: src/Rest.php:290
+#: src/Rest.php:296
 msgid "No key (screenshots off)"
 msgstr ""
 
-#: src/Rest.php:293
+#: src/Rest.php:299
 msgid "Server can draw covers"
 msgstr ""
 
-#: src/Rest.php:294
+#: src/Rest.php:300
 msgid "PHP GD with FreeType is missing"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:305
+#: src/Rest.php:311
 #, php-format
 msgid "Time limit OK (%1$ds, can raise: %2$s)"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:305
+#: src/Rest.php:311
 msgid "yes"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:305
+#: src/Rest.php:311
 msgid "no"
 msgstr ""
 
 #. translators: %d: seconds
-#: src/Rest.php:308
+#: src/Rest.php:314
 #, php-format
 msgid "PHP time limit is %ds and cannot be raised. Ask your host for 300s."
 msgstr ""
 
-#: src/Rest.php:320
+#: src/Rest.php:326
 msgid "Connected"
 msgstr ""
 
-#: src/Rest.php:323
+#: src/Rest.php:329
 msgid "Key rejected"
 msgstr ""
 
-#: src/Rest.php:326
+#: src/Rest.php:332
 msgid "Model or endpoint not found — check the model name"
 msgstr ""
 
 #. translators: %s: HTTP status or error
-#: src/Rest.php:329
+#: src/Rest.php:335
 #, php-format
 msgid "Failed (%s)"
 msgstr ""
 
-#: src/Settings.php:166
+#: src/Settings.php:171
 msgid "You do not have permission to change these settings."
 msgstr ""
 
-#: src/Settings.php:171
+#: src/Settings.php:176
 msgid "Ana Afdal Writer settings"
 msgstr ""
 
-#: src/Settings.php:175
+#: src/Settings.php:180
 msgid "API keys"
 msgstr ""
 
-#: src/Settings.php:176
+#: src/Settings.php:181
 msgid "Keys are stored in the database and never sent to the browser. To keep them out of the database entirely, define them in wp-config.php instead (AAW_ANTHROPIC_API_KEY, AAW_GEMINI_API_KEY, AAW_PEXELS_API_KEY, AAW_SCREENSHOT_API_KEY)."
 msgstr ""
 
-#: src/Settings.php:179
+#: src/Settings.php:184
 msgid "Claude (Anthropic) API key"
 msgstr ""
 
-#: src/Settings.php:179
+#: src/Settings.php:184
 msgid "Required. Writes the posts and searches the web. Create one at platform.claude.com."
 msgstr ""
 
-#: src/Settings.php:180
+#: src/Settings.php:185
 msgid "Google Gemini API key"
 msgstr ""
 
-#: src/Settings.php:180
+#: src/Settings.php:185
 msgid "Optional. Needed for AI images. Create one at aistudio.google.com."
 msgstr ""
 
-#: src/Settings.php:181
+#: src/Settings.php:186
 msgid "Pexels API key"
 msgstr ""
 
-#: src/Settings.php:181
+#: src/Settings.php:186
 msgid "Optional. Needed for stock photos. Free at pexels.com/api."
 msgstr ""
 
-#: src/Settings.php:182
+#: src/Settings.php:187
 msgid "Screenshot service key"
 msgstr ""
 
-#: src/Settings.php:182
+#: src/Settings.php:187
 msgid "Optional. Needed for website screenshots. The default service is ScreenshotOne (free plan available at screenshotone.com)."
 msgstr ""
 
-#: src/Settings.php:186
+#: src/Settings.php:191
 msgid "Test connections"
 msgstr ""
 
-#: src/Settings.php:190
+#: src/Settings.php:195
 #: admin/js/app.js:152
 msgid "Background work"
 msgstr ""
 
-#: src/Settings.php:191
+#: src/Settings.php:196
 msgid "While an article page is open, the page runs each step itself, so nothing waits. When you close the page, the work continues in the background only if your server allows it. Test connections checks this."
 msgstr ""
 
-#: src/Settings.php:193
+#: src/Settings.php:198
 msgid "Your site runs on LiteSpeed, which stops background work as soon as the request that started it disconnects. To let steps finish after you close the page, add these lines at the very top of the .htaccess file in your WordPress folder (for example with your host's File Manager):"
 msgstr ""
 
-#: src/Settings.php:197
+#: src/Settings.php:202
 msgid "Budget"
 msgstr ""
 
-#: src/Settings.php:200
+#: src/Settings.php:205
 msgid "Monthly spending cap (USD)"
 msgstr ""
 
-#: src/Settings.php:203
+#: src/Settings.php:208
 msgid "New topic suggestions and new posts stop once this month's spending reaches the cap. Posts already in progress can finish. Set 0 for no cap."
 msgstr ""
 
-#: src/Settings.php:208
+#: src/Settings.php:213
 #: admin/js/app.js:58
 msgid "Writing"
 msgstr ""
 
-#: src/Settings.php:211
+#: src/Settings.php:216
 msgid "Claude model"
 msgstr ""
 
-#: src/Settings.php:211
+#: src/Settings.php:216
 msgid "Default: claude-sonnet-5-5. If you switch models, update the Claude prices below too."
 msgstr ""
 
-#: src/Settings.php:214
+#: src/Settings.php:219
 msgid "Speed"
 msgstr ""
 
-#: src/Settings.php:217
+#: src/Settings.php:222
 msgid "Fast (recommended)"
 msgstr ""
 
-#: src/Settings.php:218
+#: src/Settings.php:223
 msgid "Thorough"
 msgstr ""
 
-#: src/Settings.php:220
+#: src/Settings.php:225
 msgid "Fast: Claude answers without thinking silently first, which makes each step several times quicker. Thorough: Claude thinks before research, planning and the quality check; slower and costs more."
 msgstr ""
 
-#: src/Settings.php:224
+#: src/Settings.php:229
 msgid "Web searches per research step"
 msgstr ""
 
-#: src/Settings.php:224
+#: src/Settings.php:229
 msgid "Each search costs about $0.01."
 msgstr ""
 
-#: src/Settings.php:225
+#: src/Settings.php:232
+msgid "Reuse saved research"
+msgstr ""
+
+#: src/Settings.php:235
+msgid "Start from saved notes when an earlier article covered a related topic"
+msgstr ""
+
+#: src/Settings.php:236
+msgid "Claude gets the notes and sources of up to 2 related earlier articles and searches only for what is missing or may have changed, so research needs fewer searches. Topic suggestions with the same focus reuse a topic search from the last 3 days."
+msgstr ""
+
+#: src/Settings.php:240
+msgid "Reuse notes for up to (days)"
+msgstr ""
+
+#: src/Settings.php:240
+msgid "News articles never reuse notes older than 7 days. Notes are deleted after 180 days."
+msgstr ""
+
+#: src/Settings.php:241
 msgid "Telegram channel link"
 msgstr ""
 
-#: src/Settings.php:225
+#: src/Settings.php:241
 msgid "Every post ends with an invitation to this channel."
 msgstr ""
 
-#: src/Settings.php:226
+#: src/Settings.php:242
 msgid "Telegram invitation text"
 msgstr ""
 
-#: src/Settings.php:230
+#: src/Settings.php:246
 #: admin/js/app.js:59
 msgid "Images"
 msgstr ""
 
-#: src/Settings.php:233
+#: src/Settings.php:249
 msgid "Cover background colour"
 msgstr ""
 
-#: src/Settings.php:233
+#: src/Settings.php:249
 msgid "Used for the branded featured image."
 msgstr ""
 
-#: src/Settings.php:234
+#: src/Settings.php:250
 msgid "Cover logo (attachment ID)"
 msgstr ""
 
-#: src/Settings.php:234
+#: src/Settings.php:250
 msgid "Optional. A PNG logo from the Media Library to place on covers. Leave 0 to use the site's logo if it has one."
 msgstr ""
 
-#: src/Settings.php:235
+#: src/Settings.php:251
 msgid "Gemini image model"
 msgstr ""
 
-#: src/Settings.php:235
+#: src/Settings.php:251
 msgid "Default: gemini-nano-banana-2.1."
 msgstr ""
 
-#: src/Settings.php:236
+#: src/Settings.php:252
 msgid "Screenshot request URL"
 msgstr ""
 
-#: src/Settings.php:236
+#: src/Settings.php:252
 msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
 msgstr ""
 
-#: src/Settings.php:240
+#: src/Settings.php:256
 msgid "Prices used for cost tracking (USD)"
 msgstr ""
 
-#: src/Settings.php:243
+#: src/Settings.php:259
 msgid "Claude input, per million tokens"
 msgstr ""
 
-#: src/Settings.php:244
+#: src/Settings.php:260
 msgid "Claude output, per million tokens"
 msgstr ""
 
-#: src/Settings.php:245
+#: src/Settings.php:261
 msgid "Claude cache write, per million tokens"
 msgstr ""
 
-#: src/Settings.php:246
+#: src/Settings.php:262
 msgid "Claude cache read, per million tokens"
 msgstr ""
 
-#: src/Settings.php:247
+#: src/Settings.php:263
 msgid "Claude web search, per search"
 msgstr ""
 
-#: src/Settings.php:248
+#: src/Settings.php:264
 msgid "Gemini image, per image"
 msgstr ""
 
-#: src/Settings.php:249
+#: src/Settings.php:265
 msgid "Screenshot, per capture"
 msgstr ""
 
-#: src/Settings.php:249
+#: src/Settings.php:265
 msgid "0 while you are on a free plan."
 msgstr ""
 
-#: src/Settings.php:267
+#: src/Settings.php:283
 msgid "Set in wp-config.php"
 msgstr ""
 
-#: src/Settings.php:271
-#: admin/js/app.js:602
+#: src/Settings.php:287
+#: admin/js/app.js:646
 msgid "Remove"
 msgstr ""
 
-#: src/Worker.php:370
+#: src/Worker.php:374
 msgid "Background work keeps running after you leave the page"
 msgstr ""
 
-#: src/Worker.php:376
+#: src/Worker.php:380
 msgid "The server stops background work. Keep the article page open while it works, or add the LiteSpeed rule shown below."
 msgstr ""
 
@@ -698,10 +825,6 @@ msgstr ""
 
 #: admin/js/app.js:51
 msgid "No image"
-msgstr ""
-
-#: admin/js/app.js:55
-msgid "Research"
 msgstr ""
 
 #: admin/js/app.js:56
@@ -806,8 +929,8 @@ msgstr ""
 
 #: admin/js/app.js:200
 #: admin/js/app.js:205
-#: admin/js/app.js:539
-#: admin/js/app.js:766
+#: admin/js/app.js:583
+#: admin/js/app.js:810
 msgid "Starting…"
 msgstr ""
 
@@ -913,396 +1036,432 @@ msgstr ""
 msgid "Claude was busy for a moment; the plugin retried automatically."
 msgstr ""
 
-#: admin/js/app.js:283
+#: admin/js/app.js:287
+#, js-format
+msgid "Using saved notes from related articles (%d), so fewer searches are needed."
+msgstr ""
+
+#: admin/js/app.js:288
+msgid "Using the notes of the topic search that suggested this article."
+msgstr ""
+
+#: admin/js/app.js:292
 #, js-format
 msgid "The server stopped this step before it finished, so it started again (attempt %d)."
 msgstr ""
 
-#: admin/js/app.js:297
+#: admin/js/app.js:306
 msgid "Keep this page open: it runs each step itself, which is the fastest way. If you leave, the work continues in the background only when your server allows it."
 msgstr ""
 
-#: admin/js/app.js:347
+#: admin/js/app.js:356
 #, js-format
 msgid "Add your Claude API key in %s to start writing."
 msgstr ""
 
-#: admin/js/app.js:348
+#: admin/js/app.js:357
 msgid "An administrator needs to add the Claude API key before you can write."
 msgstr ""
 
-#: admin/js/app.js:353
+#: admin/js/app.js:362
 msgid "stock photos"
 msgstr ""
 
-#: admin/js/app.js:356
+#: admin/js/app.js:365
 msgid "AI images"
 msgstr ""
 
-#: admin/js/app.js:359
+#: admin/js/app.js:368
 msgid "screenshots"
 msgstr ""
 
-#: admin/js/app.js:362
+#: admin/js/app.js:371
 #, js-format
 msgid "Off until their keys are added: %s."
 msgstr ""
 
-#: admin/js/app.js:368
+#: admin/js/app.js:377
 #, js-format
 msgid "of %s spent this month"
 msgstr ""
 
-#: admin/js/app.js:368
+#: admin/js/app.js:377
 msgid "spent this month (no cap)"
 msgstr ""
 
-#: admin/js/app.js:370
+#: admin/js/app.js:379
 msgid "The monthly cap is reached, so new posts are paused. Posts already in progress can finish."
 msgstr ""
 
-#: admin/js/app.js:377
+#: admin/js/app.js:386
 #, js-format
 msgid "New category: %s"
 msgstr ""
 
-#: admin/js/app.js:391
+#: admin/js/app.js:411
+#, js-format
+msgid "Reuse the topic search from %s (no new web searches)"
+msgstr ""
+
+#: admin/js/app.js:422
+msgid "No new ideas were left in the saved topic search. Untick \"Reuse\" and suggest again to search the web."
+msgstr ""
+
+#: admin/js/app.js:425
+#, js-format
+msgid "from the saved topic search of %s, with no new searches"
+msgstr ""
+
+#: admin/js/app.js:427
 #, js-format
 msgid "Suggested %s"
 msgstr ""
 
-#: admin/js/app.js:400
+#: admin/js/app.js:436
 msgid "Keyphrase:"
 msgstr ""
 
-#: admin/js/app.js:404
-#: admin/js/app.js:548
+#: admin/js/app.js:440
+#: admin/js/app.js:592
 msgid "Write this"
 msgstr ""
 
-#: admin/js/app.js:412
+#: admin/js/app.js:448
 msgid "1. Get topic ideas"
 msgstr ""
 
-#: admin/js/app.js:414
+#: admin/js/app.js:450
 msgid "Focus (optional)"
 msgstr ""
 
-#: admin/js/app.js:415
+#: admin/js/app.js:451
 msgid "Optional focus, e.g. scholarships in Europe or AI tools for students"
 msgstr ""
 
-#: admin/js/app.js:416
+#: admin/js/app.js:452
 msgid "Suggest topics"
 msgstr ""
 
-#: admin/js/app.js:428
+#: admin/js/app.js:465
 msgid "Let the writer choose"
 msgstr ""
 
-#: admin/js/app.js:430
+#: admin/js/app.js:467
 msgid "New category…"
 msgstr ""
 
-#: admin/js/app.js:432
+#: admin/js/app.js:469
 msgid "New category name"
 msgstr ""
 
-#: admin/js/app.js:437
+#: admin/js/app.js:474
 msgid "2. Or write about your own topic"
 msgstr ""
 
-#: admin/js/app.js:439
+#: admin/js/app.js:476
 msgid "Working title"
 msgstr ""
 
-#: admin/js/app.js:440
+#: admin/js/app.js:477
 msgid "Focus keyphrase (what readers search)"
 msgstr ""
 
-#: admin/js/app.js:442
-#: admin/js/app.js:639
+#: admin/js/app.js:479
+#: admin/js/app.js:683
 msgid "Post type"
 msgstr ""
 
-#: admin/js/app.js:445
-#: admin/js/app.js:640
+#: admin/js/app.js:482
+#: admin/js/app.js:684
 msgid "Category"
 msgstr ""
 
-#: admin/js/app.js:447
+#: admin/js/app.js:484
 msgid "Notes for the writer (optional)"
 msgstr ""
 
-#: admin/js/app.js:448
+#: admin/js/app.js:485
 msgid "Start research"
 msgstr ""
 
-#: admin/js/app.js:457
-#: admin/js/app.js:892
+#: admin/js/app.js:494
+#: admin/js/app.js:940
 msgid "(untitled)"
 msgstr ""
 
-#: admin/js/app.js:466
+#: admin/js/app.js:503
 msgid "Articles"
 msgstr ""
 
-#: admin/js/app.js:468
+#: admin/js/app.js:505
 msgid "Title"
 msgstr ""
 
-#: admin/js/app.js:468
+#: admin/js/app.js:505
 msgid "Status"
 msgstr ""
 
-#: admin/js/app.js:468
+#: admin/js/app.js:505
 msgid "Updated"
 msgstr ""
 
-#: admin/js/app.js:469
+#: admin/js/app.js:506
 msgid "No articles yet. Pick a topic above to start."
 msgstr ""
 
-#: admin/js/app.js:581
+#: admin/js/app.js:625
 msgid "Image"
 msgstr ""
 
-#: admin/js/app.js:584
+#: admin/js/app.js:628
 msgid "Search words (English)"
 msgstr ""
 
-#: admin/js/app.js:586
+#: admin/js/app.js:630
 msgid "What to draw (English)"
 msgstr ""
 
-#: admin/js/app.js:588
+#: admin/js/app.js:632
 msgid "Page to capture"
 msgstr ""
 
-#: admin/js/app.js:590
+#: admin/js/app.js:634
 msgid "Alt text (Arabic)"
 msgstr ""
 
-#: admin/js/app.js:599
+#: admin/js/app.js:643
 msgid "Section heading"
 msgstr ""
 
-#: admin/js/app.js:600
+#: admin/js/app.js:644
 msgid "Move up"
 msgstr ""
 
-#: admin/js/app.js:601
+#: admin/js/app.js:645
 msgid "Move down"
 msgstr ""
 
-#: admin/js/app.js:604
+#: admin/js/app.js:648
 msgid "Notes for the writer, one per line"
 msgstr ""
 
-#: admin/js/app.js:618
+#: admin/js/app.js:662
 msgid "cited"
 msgstr ""
 
-#: admin/js/app.js:628
+#: admin/js/app.js:672
 msgid "Review the outline"
 msgstr ""
 
-#: admin/js/app.js:629
+#: admin/js/app.js:673
 msgid "Change anything you like. Nothing is written or paid for beyond this point until you approve."
 msgstr ""
 
-#: admin/js/app.js:632
+#: admin/js/app.js:676
 msgid "Title (H1)"
 msgstr ""
 
-#: admin/js/app.js:633
+#: admin/js/app.js:677
 msgid "SEO title"
 msgstr ""
 
-#: admin/js/app.js:634
+#: admin/js/app.js:678
 msgid "Meta description"
 msgstr ""
 
-#: admin/js/app.js:636
+#: admin/js/app.js:680
 msgid "Focus keyphrase"
 msgstr ""
 
-#: admin/js/app.js:637
+#: admin/js/app.js:681
 msgid "URL slug (English)"
 msgstr ""
 
-#: admin/js/app.js:641
+#: admin/js/app.js:685
 msgid "Author"
 msgstr ""
 
-#: admin/js/app.js:645
+#: admin/js/app.js:689
 msgid "Sections"
 msgstr ""
 
-#: admin/js/app.js:646
+#: admin/js/app.js:690
 msgid "The introduction, FAQ, summary and Telegram invitation are added automatically."
 msgstr ""
 
-#: admin/js/app.js:648
+#: admin/js/app.js:692
 msgid "Add section"
 msgstr ""
 
-#: admin/js/app.js:650
+#: admin/js/app.js:694
 msgid "FAQ questions"
 msgstr ""
 
-#: admin/js/app.js:656
+#: admin/js/app.js:700
 msgid "None suggested."
 msgstr ""
 
-#: admin/js/app.js:659
+#: admin/js/app.js:703
 msgid "Sources to cite"
 msgstr ""
 
-#: admin/js/app.js:660
+#: admin/js/app.js:704
 msgid "Ticked sources are offered to the writer; each link is checked live before the draft is saved."
 msgstr ""
 
-#: admin/js/app.js:661
+#: admin/js/app.js:705
 msgid "No sources found."
 msgstr ""
 
-#: admin/js/app.js:666
-#: admin/js/app.js:775
+#: admin/js/app.js:710
+#: admin/js/app.js:819
 msgid "Approve and write"
 msgstr ""
 
-#: admin/js/app.js:667
+#: admin/js/app.js:711
 msgid "Writing, images and checks usually take 2–4 minutes. Keep this page open for the fastest result."
 msgstr ""
 
-#: admin/js/app.js:757
+#: admin/js/app.js:801
 msgid "Add at least one section."
 msgstr ""
 
-#: admin/js/app.js:761
+#: admin/js/app.js:805
 msgid "Name the new category, or pick an existing one."
 msgstr ""
 
-#: admin/js/app.js:790
+#: admin/js/app.js:834
 msgid "Review checklist"
 msgstr ""
 
-#: admin/js/app.js:791
+#: admin/js/app.js:835
 #, js-format
 msgid "%d item(s) need a look before you publish."
 msgstr ""
 
-#: admin/js/app.js:791
+#: admin/js/app.js:835
 msgid "Everything passed. Give it a final read and publish."
 msgstr ""
 
-#: admin/js/app.js:808
+#: admin/js/app.js:852
 msgid "Approve"
 msgstr ""
 
-#: admin/js/app.js:809
+#: admin/js/app.js:853
 msgid "Dismiss"
 msgstr ""
 
-#: admin/js/app.js:812
+#: admin/js/app.js:856
 msgid "Approved"
 msgstr ""
 
-#: admin/js/app.js:812
+#: admin/js/app.js:856
 msgid "Approved — added when you publish"
 msgstr ""
 
-#: admin/js/app.js:813
+#: admin/js/app.js:857
 msgid "Link added"
 msgstr ""
 
-#: admin/js/app.js:814
+#: admin/js/app.js:858
 msgid "Dismissed"
 msgstr ""
 
-#: admin/js/app.js:815
+#: admin/js/app.js:859
 msgid "Could not add"
 msgstr ""
 
-#: admin/js/app.js:830
+#: admin/js/app.js:874
 msgid "Links from older posts"
 msgstr ""
 
-#: admin/js/app.js:831
+#: admin/js/app.js:875
 msgid "Approved links are added to the older posts once this post is published, so no reader lands on a draft."
 msgstr ""
 
-#: admin/js/app.js:832
+#: admin/js/app.js:876
 msgid "No good spots found in older posts this time."
 msgstr ""
 
-#: admin/js/app.js:843
+#: admin/js/app.js:886
+msgid "the topic search that suggested this article"
+msgstr ""
+
+#: admin/js/app.js:890
 #, js-format
 msgid "Research sources (%d)"
 msgstr ""
 
-#: admin/js/app.js:845
+#: admin/js/app.js:891
+#, js-format
+msgid "Started from saved research: %s"
+msgstr ""
+
+#: admin/js/app.js:893
+msgid "from saved research"
+msgstr ""
+
+#: admin/js/app.js:893
 msgid "linked in post"
 msgstr ""
 
-#: admin/js/app.js:852
+#: admin/js/app.js:900
 msgid "Activity"
 msgstr ""
 
-#: admin/js/app.js:866
+#: admin/js/app.js:914
 msgid "This step failed:"
 msgstr ""
 
-#: admin/js/app.js:867
+#: admin/js/app.js:915
 msgid "Try this step again"
 msgstr ""
 
-#: admin/js/app.js:875
+#: admin/js/app.js:923
 msgid "Published post"
 msgstr ""
 
-#: admin/js/app.js:875
+#: admin/js/app.js:923
 msgid "Your draft"
 msgstr ""
 
-#: admin/js/app.js:876
+#: admin/js/app.js:924
 #, js-format
 msgid "About %d words."
 msgstr ""
 
-#: admin/js/app.js:876
+#: admin/js/app.js:924
 #, js-format
 msgid "%1$d internal and %2$d external links."
 msgstr ""
 
-#: admin/js/app.js:878
+#: admin/js/app.js:926
 msgid "Open in the editor"
 msgstr ""
 
-#: admin/js/app.js:879
+#: admin/js/app.js:927
 msgid "View"
 msgstr ""
 
-#: admin/js/app.js:879
+#: admin/js/app.js:927
 msgid "Preview"
 msgstr ""
 
-#: admin/js/app.js:890
-#: admin/js/app.js:954
+#: admin/js/app.js:938
+#: admin/js/app.js:1002
 msgid "All articles"
 msgstr ""
 
-#: admin/js/app.js:893
-#: admin/js/app.js:921
+#: admin/js/app.js:941
+#: admin/js/app.js:969
 #, js-format
 msgid "Cost so far: %s"
 msgstr ""
 
-#: admin/js/app.js:894
+#: admin/js/app.js:942
 msgid "Cancel"
 msgstr ""
 
-#: admin/js/app.js:1008
+#: admin/js/app.js:1057
 msgid "Stop working on this article? Anything already saved stays."
 msgstr ""

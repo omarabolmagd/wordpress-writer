@@ -12,7 +12,9 @@ use AnaAfdal\Writer\Claude;
 use AnaAfdal\Writer\Costs;
 use AnaAfdal\Writer\Http;
 use AnaAfdal\Writer\Jobs;
+use AnaAfdal\Writer\Library;
 use AnaAfdal\Writer\Links;
+use AnaAfdal\Writer\Progress;
 use AnaAfdal\Writer\Quality;
 use AnaAfdal\Writer\Settings;
 use AnaAfdal\Writer\Topics;
@@ -324,7 +326,7 @@ $j2 = Jobs::get( $job2 );
 $check( 'failed' === $j2['status'] && str_contains( $j2['error'], 'several times' ), 'after repeated stops it fails with advice' );
 
 echo "Cancel while Claude is writing\n";
-$job7     = Topics::start( 1, '' );
+$job7     = Topics::start( 1, '', false );
 $original = Claude::$sse_transport;
 Claude::$sse_transport = static function ( array $body, callable $write ) use ( $job7, $original ) {
 	$events = aaw_test_sse_events( aaw_test_claude_reply( $body ) );
@@ -344,10 +346,141 @@ $check( str_contains( wp_json_encode( $j7['log'] ), 'Stopped' ) && empty( $j7['d
 Claude::$sse_transport = $original;
 
 echo "Live progress\n";
-$events = $research_progress['events'] ?? array();
-$check( $events && 'search' === $events[0]['type'] && 'test' === $events[0]['text'] && 5 === ( $events[0]['results'] ?? 0 ), 'searches and their result counts are reported live' );
+$events = array_values( array_filter( $research_progress['events'] ?? array(), static fn( $e ) => 'search' === $e['type'] ) );
+$check( $events && 'test' === $events[0]['text'] && 5 === ( $events[0]['results'] ?? 0 ), 'searches and their result counts are reported live' );
 $wp = AnaAfdal\Writer\Progress::count_words( '{"intro":["إذا كنت تبحث عن كورسات","الذكاء الاصطناعي"],"sections":[{"heading":"x"}]}' );
 $check( 7 === $wp, 'word estimate ignores JSON keys: ' . $wp );
+
+echo "Saved research\n";
+global $wpdb;
+$lib_table   = Library::table();
+$first       = Jobs::get( $job_id );
+$lib_first   = Library::get( (int) ( $first['data']['research']['library_id'] ?? 0 ) );
+$check( $lib_first && Library::KIND_ARTICLE === $lib_first['kind'] && $job_id === $lib_first['job_id'] && str_contains( $lib_first['notes'], 'AI For Everyone' ) && count( $lib_first['sources'] ) >= 5 && $lib_first['cost'] > 0, 'an article\'s research is saved with its sources and cost' );
+$check( 1 === count( $first['data']['research']['reused'] ) && 'ideas' === $first['data']['research']['reused'][0]['kind'], 'the notes of the topic search that suggested it were passed on' );
+$fb = $bodies_for( 'Notes from the topic search that suggested this article' );
+$check( $fb && 6 === $fb[0]['tools'][0]['max_uses'], 'topic-search notes alone do not cut the number of searches' );
+$check( array( 'كورس', 'ذكاء', 'اصطناع', 'مجان', 'شهاد' ) === Library::terms( 'أفضل كورسات الذكاء الاصطناعي المجانية بشهادات في 2026' ), 'Arabic titles are reduced to comparable words' );
+$check( Library::focus_key( ' مِنَح  في أوروبا ' ) === Library::focus_key( 'منح في اوروبا' ), 'the same focus typed differently matches' );
+
+$research_body_after = static function ( int $from ) {
+	foreach ( array_slice( $GLOBALS['aaw_test_bodies'], $from ) as $b ) {
+		if ( ! empty( $b['tools'] ) ) {
+			return $b;
+		}
+	}
+	return null;
+};
+$start_research = static function ( array $topic ) {
+	$id = Article::start( 1, $topic );
+	Worker::run_pending( 600, null, 1 );
+	return $id;
+};
+
+// A closely related article starts from the saved research, with fewer searches.
+// Give every saved article a cited source the new research won't find again, and one it never cited.
+foreach ( $wpdb->get_results( "SELECT id, sources FROM {$lib_table} WHERE kind = 'article'", ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	$srcs   = json_decode( $row['sources'], true );
+	$srcs[] = array( 'url' => 'https://www.example.org/ai-certificates-guide', 'title' => 'AI certificates guide', 'cited' => true );
+	$srcs[] = array( 'url' => 'https://www.example.org/unrelated-page', 'title' => 'Unrelated', 'cited' => false );
+	$wpdb->update( $lib_table, array( 'sources' => wp_json_encode( $srcs ) ), array( 'id' => $row['id'] ) );
+}
+$n       = count( $GLOBALS['aaw_test_bodies'] );
+$job_rel = $start_research( array( 'title' => 'كورسات الذكاء الاصطناعي المجانية من جوجل', 'focus_keyphrase' => 'كورسات ذكاء اصطناعي مجانية', 'post_type' => 'guide' ) );
+$rb      = $research_body_after( $n );
+$jr      = Jobs::get( $job_rel );
+$check( $rb && 3 === $rb['tools'][0]['max_uses'], 'a close match halves the searches: ' . ( $rb['tools'][0]['max_uses'] ?? '?' ) );
+$check( $rb && str_contains( $rb['messages'][0]['content'], 'Research for the article "' ) && str_contains( $rb['messages'][0]['content'], 'free to audit' ) && str_contains( $rb['messages'][0]['content'], 'https://www.deeplearning.ai/courses/' ), 'the earlier notes and sources are in the research request' );
+$check( $jr['data']['research']['reused'] && 'article' === $jr['data']['research']['reused'][0]['kind'], 'the job records the research it started from' );
+$reuse_events = array_values( array_filter( Progress::get( $job_rel )['events'] ?? array(), static fn( $e ) => 'reuse' === $e['type'] ) );
+$check( $reuse_events && $reuse_events[0]['articles'] >= 1, 'the live view says saved notes are used' );
+$lib_rel = Library::get( (int) $jr['data']['research']['library_id'] );
+$check( $lib_rel && $lib_rel['meta']['reused_from'] && Library::get( (int) $lib_rel['meta']['reused_from'][0] )['reused_count'] >= 1, 'the new research is saved too, and the reuse is counted' );
+$rel_urls = wp_list_pluck( $jr['data']['research']['sources'], 'url' );
+$check( in_array( 'https://www.example.org/ai-certificates-guide', $rel_urls, true ) && ! in_array( 'https://www.example.org/unrelated-page', $rel_urls, true ), 'cited sources from the saved research stay available to cite; uncited ones are dropped' );
+Jobs::update( $job_rel, static fn( $s ) => array_merge( $s, array( 'status' => 'cancelled' ) ) );
+
+// A topic that only shares generic words is researched from scratch.
+$n      = count( $GLOBALS['aaw_test_bodies'] );
+$job_un = $start_research( array( 'title' => 'أفضل مواقع لتعلم اللغة الإنجليزية مجانا', 'focus_keyphrase' => 'تعلم اللغة الإنجليزية', 'post_type' => 'list' ) );
+$rb     = $research_body_after( $n );
+$check( $rb && 6 === $rb['tools'][0]['max_uses'] && ! str_contains( $rb['messages'][0]['content'], 'Saved research' ), 'an unrelated topic is researched from scratch' );
+Jobs::update( $job_un, static fn( $s ) => array_merge( $s, array( 'status' => 'cancelled' ) ) );
+
+// News only reuses recent notes; guides can use older ones.
+$wpdb->query( $wpdb->prepare( "UPDATE {$lib_table} SET created_gmt = %s WHERE kind = 'article'", gmdate( 'Y-m-d H:i:s', time() - 10 * DAY_IN_SECONDS ) ) );
+$n        = count( $GLOBALS['aaw_test_bodies'] );
+$job_news = $start_research( array( 'title' => 'كورسات الذكاء الاصطناعي المجانية الجديدة', 'focus_keyphrase' => 'كورسات ذكاء اصطناعي مجانية', 'post_type' => 'news' ) );
+$rb       = $research_body_after( $n );
+$check( $rb && ! str_contains( $rb['messages'][0]['content'], 'Saved research' ), 'news does not reuse notes older than 7 days' );
+Jobs::update( $job_news, static fn( $s ) => array_merge( $s, array( 'status' => 'cancelled' ) ) );
+$n         = count( $GLOBALS['aaw_test_bodies'] );
+$job_guide = $start_research( array( 'title' => 'كورسات الذكاء الاصطناعي المجانية الجديدة', 'focus_keyphrase' => 'كورسات ذكاء اصطناعي مجانية', 'post_type' => 'guide' ) );
+$rb        = $research_body_after( $n );
+$check( $rb && str_contains( $rb['messages'][0]['content'], 'Saved research' ), 'a guide reuses notes from 10 days ago' );
+Jobs::update( $job_guide, static fn( $s ) => array_merge( $s, array( 'status' => 'cancelled' ) ) );
+
+// Turned off in Settings.
+$settings                   = Settings::all();
+$settings['reuse_research'] = 0;
+update_option( Settings::OPTION, $settings );
+$n       = count( $GLOBALS['aaw_test_bodies'] );
+$job_off = $start_research( array( 'title' => 'كورسات الذكاء الاصطناعي المجانية من جوجل', 'focus_keyphrase' => 'كورسات ذكاء اصطناعي مجانية', 'post_type' => 'guide' ) );
+$rb      = $research_body_after( $n );
+$check( $rb && 6 === $rb['tools'][0]['max_uses'] && ! str_contains( $rb['messages'][0]['content'], 'Saved research' ), 'nothing is reused when the setting is off' );
+Jobs::update( $job_off, static fn( $s ) => array_merge( $s, array( 'status' => 'cancelled' ) ) );
+$settings['reuse_research'] = 1;
+update_option( Settings::OPTION, $settings );
+
+// Topic ideas: a second request with the same focus picks new ideas from the saved search.
+$searches_before = count( array_filter( $calls, static fn( $c ) => 'topics_research' === $c ) );
+$tj1             = Topics::start( 1, 'منح' );
+$run_queue();
+$n   = count( $GLOBALS['aaw_test_bodies'] );
+$tj2 = Topics::start( 1, ' مِنَح ' );
+$run_queue();
+$t2  = Jobs::get( $tj2 );
+$searches_after = count( array_filter( $calls, static fn( $c ) => 'topics_research' === $c ) );
+$check( 1 === $searches_after - $searches_before && 'done' === $t2['status'] && ! empty( $t2['data']['reused_ideas'] ), 'the same focus within 3 days reuses the topic search' );
+$sb = $bodies_for( 'already suggested to the editor' );
+$check( $sb && str_contains( wp_json_encode( end( $sb ), JSON_UNESCAPED_UNICODE ), 'أفضل كورسات الذكاء الاصطناعي المجانية بشهادات في 2026' ), 'ideas already suggested are excluded' );
+$check( $t2['data']['topics'] && $t2['data']['topics'][0]['ideas_id'] === (int) Jobs::get( $tj1 )['data']['ideas_id'], 'suggested topics remember their topic search' );
+$recent = wp_list_pluck( Library::recent_ideas(), 'focus' );
+$check( in_array( 'منح', $recent, true ), 'the topics form can offer the saved search' );
+$tj3 = Topics::start( 1, 'منح', false );
+$run_queue();
+$check( 2 === count( array_filter( $calls, static fn( $c ) => 'topics_research' === $c ) ) - $searches_before, 'unticking Reuse searches the web again' );
+
+// Average costs for the Research page, measured from the cost log.
+$avg = Library::average_costs();
+$check( $avg['fresh_count'] >= 1 && $avg['reuse_count'] >= 1 && null !== $avg['fresh'] && null !== $avg['reuse'], 'average research cost is measured with and without saved notes' );
+
+// Old notes are deleted.
+$old_id = Library::save( array( 'kind' => 'article', 'job_id' => 0, 'title' => 'Old', 'notes' => 'old notes', 'created' => time() - 200 * DAY_IN_SECONDS ) );
+Library::cleanup();
+$check( $old_id && null === Library::get( $old_id ) && null !== Library::get( (int) $lib_rel['id'] ), 'notes older than 180 days are deleted, newer ones kept' );
+
+// Updating from 1.1 fills the library from earlier jobs.
+$wpdb->query( "DELETE FROM {$lib_table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+update_option( 'aaw_db_version', '2' );
+AnaAfdal\Writer\Installer::maybe_upgrade();
+$kinds = $wpdb->get_col( "SELECT kind FROM {$lib_table} WHERE job_id = {$job_id} OR job_id = {$topics_job}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+sort( $kinds );
+$check( array( 'article', 'ideas' ) === $kinds && '3' === get_option( 'aaw_db_version' ), 'updating adds the research of earlier jobs to the library' );
+$back = $wpdb->get_row( "SELECT searches, cost FROM {$lib_table} WHERE job_id = {$job_id}", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+$check( $back && (int) $back['searches'] > 0 && (float) $back['cost'] > 0, 'their searches and cost come from the cost log' );
+$check( ! $wpdb->get_var( "SELECT COUNT(*) FROM {$lib_table} WHERE job_id = {$tj2}" ), 'a topic run that reused a search is not saved twice' ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+// WordPress may reactivate the plugin during an update instead of loading it: same result.
+$wpdb->query( "DELETE FROM {$lib_table}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+update_option( 'aaw_db_version', '2' );
+AnaAfdal\Writer\Installer::activate();
+$check( Library::count() > 0 && '3' === get_option( 'aaw_db_version' ), 'updating by reactivating the plugin fills the library too' );
+
+// The Research page renders.
+ob_start();
+AnaAfdal\Writer\Admin::render_research();
+$page = ob_get_clean();
+$check( str_contains( $page, 'AI For Everyone' ) && str_contains( $page, 'aaw_delete_research' ), 'the Saved research page lists notes with a delete button' );
 
 echo "Upgrade from 1.0\n";
 $old_running = Jobs::create( Jobs::TYPE_ARTICLE, 1, 'Old running job', array() );
@@ -362,7 +495,7 @@ $j = Jobs::get( $old_running );
 $check( 'failed' === $j['status'] && 'write' === $j['failed_stage'] && 'failed' === Jobs::status_fresh( $old_running ), 'a step that was running during the update stops and can be retried' );
 $check( 'waiting' === Jobs::status_fresh( $old_waiting ), 'other jobs keep their status' );
 $check( ! in_array( $old_running, Worker::pending_ids(), true ), 'old jobs are not restarted in the background' );
-$check( (bool) wp_next_scheduled( Worker::CRON_HOOK ) && '2' === get_option( 'aaw_db_version' ), 'the minute check is scheduled after updating' );
+$check( (bool) wp_next_scheduled( Worker::CRON_HOOK ) && version_compare( (string) get_option( 'aaw_db_version' ), '2', '>=' ), 'the minute check is scheduled after updating' );
 wp_delete_post( $old_running, true );
 wp_delete_post( $old_waiting, true );
 

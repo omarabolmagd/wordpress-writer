@@ -114,3 +114,16 @@ details.aaw-card > summary { cursor: pointer; }
 .aaw-live-pending { color: var(--aaw-muted); }
 .aaw-live-bad { color: #b32d2e; }
 .aaw-live-note { margin: 8px 0 0; color: #8a5a00; }
+
+/* Saved research */
+.aaw-live-good { margin: 8px 0 0; color: var(--aaw-brand-dark); }
+.aaw-reuse { margin: 8px 0 0; }
+.aaw-reuse:empty { display: none; }
+.aaw-pill-muted { background: #f0f0f1; color: var(--aaw-muted); }
+.aaw-research-avg { font-size: 14px; }
+.aaw-research-table td { vertical-align: top; }
+.aaw-research-table td:first-child { white-space: nowrap; }
+.aaw-research-notes { margin-top: 6px; }
+.aaw-research-notes summary { cursor: pointer; color: var(--aaw-brand-dark); }
+.aaw-notes-text { white-space: pre-wrap; max-height: 320px; overflow: auto; margin: 8px 0; padding: 10px 12px; background: #f6f7f7; border: 1px solid var(--aaw-border); border-radius: 4px; font-size: 13px; line-height: 1.6; }
+.aaw-research-table form { margin: 0; }

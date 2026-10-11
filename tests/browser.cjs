@@ -36,6 +36,11 @@ fs.mkdirSync( out, { recursive: true } );
 
 	// Topic suggestions.
 	await page.fill( '#aaw-focus', 'AI' );
+	// Search the web this time even if a recent topic search for this focus is saved.
+	const reuseBox = await page.$( '[name="reuse_ideas"]' );
+	if ( reuseBox ) {
+		await reuseBox.uncheck();
+	}
 	// Wait for the new run to be accepted, then for its suggestions (mocked APIs can finish instantly).
 	await Promise.all( [
 		page.waitForResponse( ( r ) => r.url().includes( '/aaw/v1/topics' ) && r.request().method() === 'POST' ),
@@ -103,6 +108,22 @@ fs.mkdirSync( out, { recursive: true } );
 	await shot( '7-settings' );
 	await page.goto( base + '/wp-admin/admin.php?page=aaw-costs' );
 	await shot( '8-costs' );
+
+	// Saved research, then a topic run that reuses the saved topic search.
+	await page.goto( base + '/wp-admin/admin.php?page=aaw-research' );
+	await page.click( '.aaw-research-notes summary' );
+	await shot( '8a-saved-research' );
+	await page.goto( base + '/wp-admin/admin.php?page=aaw-writer' );
+	await page.waitForSelector( '[data-form="topics"]' );
+	await page.fill( '#aaw-focus', 'AI' );
+	await page.waitForSelector( '[name="reuse_ideas"]:checked' );
+	await shot( '8b-topics-reuse' );
+	await Promise.all( [
+		page.waitForResponse( ( r ) => r.url().includes( '/aaw/v1/topics' ) && r.request().method() === 'POST' ),
+		page.click( '[data-form="topics"] [type="submit"]' ),
+	] );
+	await page.waitForSelector( '[data-region="topics"] .aaw-topic', { timeout: 120000 } );
+	await shot( '8c-topics-reused' );
 
 	// Preview the post on the front end.
 	await page.goto( previewHref );
