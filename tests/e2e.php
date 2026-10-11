@@ -15,6 +15,7 @@ use AnaAfdal\Writer\Jobs;
 use AnaAfdal\Writer\Library;
 use AnaAfdal\Writer\Links;
 use AnaAfdal\Writer\Progress;
+use AnaAfdal\Writer\Prompts;
 use AnaAfdal\Writer\Quality;
 use AnaAfdal\Writer\Settings;
 use AnaAfdal\Writer\Topics;
@@ -113,7 +114,13 @@ $check( 'free-ai-courses-with-certificates-2026' === $post->post_name, 'draft ha
 $check( (int) get_user_by( 'login', 'amal' )->ID === (int) $post->post_author, 'author chosen at outline step' );
 $cats = wp_get_post_categories( $post_id, array( 'fields' => 'names' ) );
 $check( array( 'ذكاء اصطناعي' ) === $cats, 'new category created and assigned: ' . implode( ',', $cats ) );
-$check( has_post_thumbnail( $post_id ), 'branded cover set as featured image' );
+$thumb = (int) get_post_thumbnail_id( $post_id );
+$check( $thumb && 'ai' === get_post_meta( $thumb, '_aaw_image_source', true ) && 'cover' === get_post_meta( $thumb, '_aaw_image_role', true ), 'the featured image is a Gemini photo, not the title cover' );
+$check( 'طالب يتابع كورس ذكاء اصطناعي على حاسوبه' === get_post_meta( $thumb, '_wp_attachment_image_alt', true ), 'the featured image has the planned Arabic alt text' );
+$cover_requests = array_values( array_filter( $GLOBALS['aaw_test_gemini'] ?? array(), static fn( $b ) => str_contains( wp_json_encode( $b ), 'online AI course' ) ) );
+$cover_input    = (string) ( $cover_requests[0]['input'] ?? '' );
+$check( str_contains( $cover_input, 'Photorealistic' ) && str_contains( $cover_input, 'no text' ) && ! str_contains( $cover_input, $a['data']['outline']['title'] ), 'Gemini is asked for a photo of the scene with no text, not the title' );
+$check( 1 === (int) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT COUNT(*) FROM ' . Costs::table() . ' WHERE job_id = %d AND item = %s', $job_id, 'ai_cover' ) ), 'the featured photo\'s cost is logged' );
 $check( 'كورسات الذكاء الاصطناعي المجانية' === get_post_meta( $post_id, '_yoast_wpseo_focuskw', true ), 'Yoast focus keyphrase set' );
 $check( str_starts_with( (string) get_post_meta( $post_id, '_yoast_wpseo_metadesc', true ), 'تعرف على' ), 'Yoast meta description set' );
 
@@ -350,6 +357,58 @@ $events = array_values( array_filter( $research_progress['events'] ?? array(), s
 $check( $events && 'test' === $events[0]['text'] && 5 === ( $events[0]['results'] ?? 0 ), 'searches and their result counts are reported live' );
 $wp = AnaAfdal\Writer\Progress::count_words( '{"intro":["إذا كنت تبحث عن كورسات","الذكاء الاصطناعي"],"sections":[{"heading":"x"}]}' );
 $check( 7 === $wp, 'word estimate ignores JSON keys: ' . $wp );
+
+echo "Featured image\n";
+$o_first = Jobs::get( $job_id )['data']['outline'];
+$check( str_contains( $o_first['cover']['prompt'], 'student' ) && '' !== $o_first['cover']['query'], 'the outline plans a scene for the featured image' );
+$check( in_array( 'cover', Prompts::outline_schema()['required'], true ), 'Claude must plan the featured image' );
+$plan  = array( 'prompt' => 'Students arriving at a university', 'query' => 'students university', 'alt' => 'طلاب' );
+$flags = &$GLOBALS['aaw_test_flags'];
+$flags['gemini_fail'] = true;
+$c = AnaAfdal\Writer\Images::cover( $plan, 'منحة', 'منح', 0, 'test-cover' );
+$check( 'pexels' === $c['source'] && isset( $c['errors']['ai'] ), 'when Gemini fails, a Pexels photo of the scene is used' );
+$s2               = Settings::all();
+$s2['pexels_key'] = '';
+update_option( Settings::OPTION, $s2 );
+$c = AnaAfdal\Writer\Images::cover( $plan, 'منحة', 'منح', 0, 'test-cover' );
+$check( 'branded' === $c['source'], 'with no photo source working, the title cover is drawn' );
+$flags['gemini_fail'] = false;
+$s2['pexels_key']  = 'pex-test';
+$s2['cover_style'] = 'branded';
+update_option( Settings::OPTION, $s2 );
+$before = count( $GLOBALS['aaw_test_gemini'] ?? array() );
+$c      = AnaAfdal\Writer\Images::cover( $plan, 'منحة', 'منح', 0, 'test-cover' );
+$check( 'branded' === $c['source'] && count( $GLOBALS['aaw_test_gemini'] ?? array() ) === $before, 'the title cover style still works, without calling Gemini' );
+$s2['cover_style'] = 'pexels';
+update_option( Settings::OPTION, $s2 );
+$c = AnaAfdal\Writer\Images::cover( $plan, 'منحة', 'منح', 0, 'test-cover' );
+$check( 'pexels' === $c['source'], 'the stock photo style uses Pexels' );
+$s2['cover_style'] = 'ai';
+update_option( Settings::OPTION, $s2 );
+
+// A new featured image for a finished article.
+$old_thumb = (int) get_post_thumbnail_id( $post_id );
+$res       = Article::new_cover( $job_id, 'A young woman in a job interview, smiling across the table' );
+$new_thumb = (int) get_post_thumbnail_id( $post_id );
+$last      = end( $GLOBALS['aaw_test_gemini'] );
+$check( $new_thumb && $new_thumb !== $old_thumb && 'ai' === $res['source'] && str_contains( (string) ( $last['input'] ?? '' ), 'job interview' ), 'a new featured image can be made from a typed scene' );
+$check( str_contains( Jobs::get( $job_id )['data']['outline']['cover']['prompt'], 'job interview' ) && get_post( $old_thumb ), 'the scene is remembered and the old image is kept in the Media Library' );
+// An article planned before scenes existed: Claude describes one from the title.
+Jobs::update( $job_id, static function ( $s ) { unset( $s['data']['outline']['cover'] ); return $s; } );
+$n_calls = count( $calls );
+Article::new_cover( $job_id );
+$check( in_array( 'cover_scene', array_slice( $calls, $n_calls ), true ) && str_contains( (string) ( end( $GLOBALS['aaw_test_gemini'] )['input'] ?? '' ), 'CV' ), 'without a planned scene, Claude describes one from the title' );
+// If Gemini fails, the current image stays and the editor sees why.
+$flags['gemini_fail'] = true;
+$kept  = (int) get_post_thumbnail_id( $post_id );
+$error = '';
+try {
+	Article::new_cover( $job_id, 'Another scene' );
+} catch ( \Throwable $e ) {
+	$error = $e->getMessage();
+}
+$flags['gemini_fail'] = false;
+$check( str_contains( $error, 'overloaded' ) && $kept === (int) get_post_thumbnail_id( $post_id ), 'a failed remake keeps the current image and reports the error' );
 
 echo "Saved research\n";
 global $wpdb;

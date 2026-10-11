@@ -213,11 +213,16 @@ final class Quality {
 			$items[] = self::item( 'alt_text', false, __( 'Image alt text', 'ana-afdal-writer' ), sprintf( __( '%d image(s) have no alt text.', 'ana-afdal-writer' ), $missing_alt ) );
 		}
 
-		$items[] = self::item(
+		$cover    = (array) ( $images['cover'] ?? array() );
+		$fallback = ! empty( $cover['errors'] );
+		$items[]  = self::item(
 			'featured_image',
-			$post_id && has_post_thumbnail( $post_id ),
+			$post_id && has_post_thumbnail( $post_id ) && ! $fallback,
 			__( 'Featured image', 'ana-afdal-writer' ),
-			! empty( $images['cover']['error'] ) ? $images['cover']['error'] : ''
+			! empty( $cover['error'] )
+				? $cover['error']
+				/* translators: %s: why the first choice of image failed */
+				: ( $fallback ? sprintf( __( 'The first choice failed, so another image was used. You can make a new one on the article page. (%s)', 'ana-afdal-writer' ), implode( ' ', (array) $cover['errors'] ) ) : '' )
 		);
 
 		$len     = mb_strlen( $outline['meta_description'] );

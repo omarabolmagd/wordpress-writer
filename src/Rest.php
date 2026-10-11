@@ -26,6 +26,7 @@ final class Rest {
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/approve', array( 'methods' => 'POST', 'callback' => array( self::class, 'approve' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/retry', array( 'methods' => 'POST', 'callback' => array( self::class, 'retry' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/cancel', array( 'methods' => 'POST', 'callback' => array( self::class, 'cancel' ), 'permission_callback' => $use, 'args' => $id ) );
+		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/cover', array( 'methods' => 'POST', 'callback' => array( self::class, 'new_cover' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/backlinks/(?P<index>\d+)', array( 'methods' => 'POST', 'callback' => array( self::class, 'backlink' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/test-connections', array( 'methods' => 'POST', 'callback' => array( self::class, 'test_connections' ), 'permission_callback' => $manage ) );
 	}
@@ -59,6 +60,7 @@ final class Rest {
 				'current_user'  => get_current_user_id(),
 				'templates'     => $templates,
 				'image_sources' => Images::available_sources(),
+				'cover_style'   => (string) Settings::get( 'cover_style' ),
 				'articles'      => $articles,
 				'topics_job'    => $topics_jobs ? self::present( $topics_jobs[0] ) : null,
 				'saved_ideas'   => Library::recent_ideas(),
@@ -142,6 +144,34 @@ final class Rest {
 		return rest_ensure_response( self::present( Jobs::get( (int) $job['id'] ) ) );
 	}
 
+	/** Makes a new featured image for a finished article. */
+	public static function new_cover( \WP_REST_Request $request ) {
+		$job = Jobs::get( (int) $request['id'] );
+		if ( ! $job || Jobs::TYPE_ARTICLE !== $job['type'] ) {
+			return self::error( __( 'Not found.', 'ana-afdal-writer' ), 404 );
+		}
+		$post_id = (int) ( $job['data']['post_id'] ?? 0 );
+		if ( $post_id && ! current_user_can( 'edit_post', $post_id ) ) {
+			return self::error( __( 'You do not have permission to edit this post.', 'ana-afdal-writer' ), 403 );
+		}
+		if ( in_array( $job['status'], array( 'queued', 'running' ), true ) ) {
+			return self::error( __( 'Wait until the article is finished.', 'ana-afdal-writer' ) );
+		}
+		$blocked = self::check_budget_and_key();
+		if ( $blocked ) {
+			return $blocked;
+		}
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( 300 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+		try {
+			Article::new_cover( (int) $job['id'], sanitize_textarea_field( (string) $request->get_param( 'prompt' ) ) );
+		} catch ( \Throwable $e ) {
+			return self::error( $e->getMessage() );
+		}
+		return rest_ensure_response( self::present( Jobs::get( (int) $job['id'] ) ) );
+	}
+
 	public static function cancel( \WP_REST_Request $request ) {
 		$job_id = (int) $request['id'];
 		$job    = Jobs::get( $job_id );
@@ -206,6 +236,12 @@ final class Rest {
 				),
 				$job['data']['research']['sources'] ?? array()
 			)
+		);
+		$cover_id             = (int) ( $job['data']['images']['cover']['id'] ?? 0 );
+		$out['cover']         = array(
+			'url'    => $cover_id ? (string) wp_get_attachment_image_url( $cover_id, 'medium_large' ) : '',
+			'source' => (string) ( $job['data']['images']['cover']['source'] ?? ( $cover_id ? 'branded' : '' ) ),
+			'prompt' => (string) ( $job['data']['outline']['cover']['prompt'] ?? '' ),
 		);
 		$out['reused']        = $job['data']['research']['reused'] ?? array();
 		$out['reused_ideas']  = $job['data']['reused_ideas'] ?? null;

@@ -36,6 +36,7 @@ final class Settings {
 			'monthly_cap'              => 20,
 			'telegram_url'             => 'https://t.me/fyb2020',
 			'telegram_text'            => 'انضم إلى قناتنا على تيليجرام ليصلك جديد الكورسات والمنح والوظائف أولًا بأول.',
+			'cover_style'              => 'ai',
 			'brand_color'              => '#00AEAD',
 			'cover_logo_id'            => 0,
 			'gemini_model'             => 'gemini-nano-banana-2.1',
@@ -147,6 +148,8 @@ final class Settings {
 		$out['telegram_url']  = esc_url_raw( $input['telegram_url'] ?? $current['telegram_url'], array( 'https' ) );
 		$out['telegram_text'] = sanitize_text_field( $input['telegram_text'] ?? $current['telegram_text'] );
 
+		$out['cover_style'] = isset( Images::COVER_ORDER[ $input['cover_style'] ?? '' ] ) ? $input['cover_style'] : $current['cover_style'];
+
 		$color              = sanitize_hex_color( $input['brand_color'] ?? '' );
 		$out['brand_color'] = $color ? $color : $current['brand_color'];
 
@@ -245,9 +248,20 @@ final class Settings {
 
 				<h2><?php esc_html_e( 'Images', 'ana-afdal-writer' ); ?></h2>
 				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><label for="aaw-cover-style"><?php esc_html_e( 'Featured image', 'ana-afdal-writer' ); ?></label></th>
+						<td>
+							<select id="aaw-cover-style" name="<?php echo esc_attr( self::OPTION ); ?>[cover_style]">
+								<option value="ai" <?php selected( $s['cover_style'], 'ai' ); ?>><?php esc_html_e( 'AI photo of the topic, made with Gemini (recommended)', 'ana-afdal-writer' ); ?></option>
+								<option value="pexels" <?php selected( $s['cover_style'], 'pexels' ); ?>><?php esc_html_e( 'Stock photo of the topic, from Pexels', 'ana-afdal-writer' ); ?></option>
+								<option value="branded" <?php selected( $s['cover_style'], 'branded' ); ?>><?php esc_html_e( 'Title written on the brand colour', 'ana-afdal-writer' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'The photo shows a scene about the topic, such as someone reviewing their CV for a jobs article, with no text on it. You can change the scene when you approve the outline. If the photo can\'t be made, the other source is tried, then the title cover.', 'ana-afdal-writer' ); ?></p>
+						</td>
+					</tr>
 					<?php
-					self::text_row( 'brand_color', __( 'Cover background colour', 'ana-afdal-writer' ), $s['brand_color'], __( 'Used for the branded featured image.', 'ana-afdal-writer' ) );
-					self::number_row( 'cover_logo_id', __( 'Cover logo (attachment ID)', 'ana-afdal-writer' ), $s['cover_logo_id'], __( 'Optional. A PNG logo from the Media Library to place on covers. Leave 0 to use the site\'s logo if it has one.', 'ana-afdal-writer' ), '1' );
+					self::text_row( 'brand_color', __( 'Cover background colour', 'ana-afdal-writer' ), $s['brand_color'], __( 'Used for the title cover, and as a soft accent in AI illustrations.', 'ana-afdal-writer' ) );
+					self::number_row( 'cover_logo_id', __( 'Cover logo (attachment ID)', 'ana-afdal-writer' ), $s['cover_logo_id'], __( 'Optional. A PNG logo from the Media Library to place on title covers. Leave 0 to use the site\'s logo if it has one.', 'ana-afdal-writer' ), '1' );
 					self::text_row( 'gemini_model', __( 'Gemini image model', 'ana-afdal-writer' ), $s['gemini_model'], __( 'Default: gemini-nano-banana-2.1.', 'ana-afdal-writer' ) );
 					self::text_row( 'screenshot_url_template', __( 'Screenshot request URL', 'ana-afdal-writer' ), $s['screenshot_url_template'], __( 'Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services.', 'ana-afdal-writer' ), 'url', 'large-text code' );
 					?>

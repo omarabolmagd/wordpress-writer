@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ana Afdal Writer 1.2.0\n"
+"Project-Id-Version: Ana Afdal Writer 1.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ana-afdal-writer\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
-"POT-Creation-Date: 2026-10-11T16:18:34+00:00\n"
+"POT-Creation-Date: 2026-10-11T17:12:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ana-afdal-writer\n"
@@ -48,7 +48,7 @@ msgstr "مقال جديد"
 
 #: src/Admin.php:34
 #: src/Admin.php:187
-#: admin/js/app.js:891
+#: admin/js/app.js:933
 msgid "Saved research"
 msgstr "الأبحاث المحفوظة"
 
@@ -248,44 +248,48 @@ msgstr "حذف"
 msgid "The topic needs a title."
 msgstr "الموضوع يحتاج إلى عنوان."
 
-#: src/Article.php:185
+#: src/Article.php:186
 msgid "The outline needs a title."
 msgstr "المخطط يحتاج إلى عنوان."
 
-#: src/Article.php:256
+#: src/Article.php:257
 msgid "The outline needs at least one section."
 msgstr "المخطط يحتاج إلى قسم واحد على الأقل."
 
-#: src/Article.php:293
+#: src/Article.php:303
 msgid "This outline is not waiting for approval."
 msgstr "هذا المخطط لا ينتظر الموافقة."
 
-#: src/Article.php:502
+#: src/Article.php:507
+msgid "This article has no saved draft yet."
+msgstr "لم تُحفظ مسودة لهذا المقال بعد."
+
+#: src/Article.php:586
 msgid "not one of the researched sources"
 msgstr "ليس من المصادر التي تم بحثها"
 
 #. translators: %d: HTTP status code
-#: src/Article.php:512
+#: src/Article.php:596
 #, php-format
 msgid "site blocks automated checks (HTTP %d)"
 msgstr "الموقع يرفض الفحص الآلي (HTTP %d)"
 
 #. translators: %d: HTTP status code
-#: src/Article.php:512
+#: src/Article.php:596
 #, php-format
 msgid "broken link (HTTP %d)"
 msgstr "رابط معطل (HTTP %d)"
 
 #. translators: %d: HTTP status code
-#: src/Article.php:512
+#: src/Article.php:596
 msgid "site did not respond"
 msgstr "الموقع لم يستجب"
 
-#: src/Article.php:526
+#: src/Article.php:610
 msgid "not a published post"
 msgstr "ليس مقالًا منشورًا"
 
-#: src/Article.php:540
+#: src/Article.php:624
 msgid "invalid link"
 msgstr "رابط غير صالح"
 
@@ -309,7 +313,7 @@ msgstr "تظهر قائمة المراجعة هنا بعد انتهاء فحص �
 msgid "Open this post in Ana Afdal Writer (sources, backlink suggestions, cost)"
 msgstr "افتح هذا المقال في كاتب انا افضل (المصادر، اقتراحات الروابط، التكلفة)"
 
-#: src/Installer.php:67
+#: src/Installer.php:70
 msgid "The plugin was updated while this step was waiting or running. Click Try this step again to continue."
 msgstr "تم تحديث الإضافة أثناء انتظار هذه الخطوة أو تشغيلها. اضغط «أعد محاولة هذه الخطوة» للمتابعة."
 
@@ -368,7 +372,7 @@ msgid "About %1$d words (target %2$d–%3$d)."
 msgstr "نحو %1$d كلمة (المطلوب %2$d–%3$d)."
 
 #: src/Quality.php:160
-#: admin/js/app.js:699
+#: admin/js/app.js:730
 msgid "Internal links"
 msgstr "الروابط الداخلية"
 
@@ -423,367 +427,401 @@ msgstr "النص البديل للصور"
 msgid "%d image(s) have no alt text."
 msgstr "%d صورة بدون نص بديل."
 
-#: src/Quality.php:219
+#: src/Quality.php:221
+#: src/Settings.php:252
+#: admin/js/app.js:717
+#: admin/js/app.js:962
 msgid "Featured image"
 msgstr "الصورة البارزة"
 
-#: src/Quality.php:227
+#. translators: %s: why the first choice of image failed
+#: src/Quality.php:225
+#, php-format
+msgid "The first choice failed, so another image was used. You can make a new one on the article page. (%s)"
+msgstr "تعذّر إنشاء الصورة بالطريقة الأولى، فاستُخدمت صورة بديلة. يمكنك إنشاء صورة جديدة من صفحة المقال. (%s)"
+
+#: src/Quality.php:232
 msgid "Meta description length"
 msgstr "طول الوصف التعريفي"
 
 #. translators: %d: number of characters
-#: src/Quality.php:229
+#: src/Quality.php:234
 #, php-format
 msgid "%d characters (target 120–155)."
 msgstr "%d حرفًا (المطلوب 120–155)."
 
-#: src/Quality.php:236
+#: src/Quality.php:241
 msgid "title"
 msgstr "العنوان"
 
-#: src/Quality.php:239
+#: src/Quality.php:244
 msgid "first paragraph"
 msgstr "الفقرة الأولى"
 
-#: src/Quality.php:242
+#: src/Quality.php:247
 msgid "meta description"
 msgstr "الوصف التعريفي"
 
-#: src/Quality.php:247
+#: src/Quality.php:252
 msgid "Focus keyphrase placement"
 msgstr "مواضع الكلمة المفتاحية"
 
-#: src/Quality.php:248
+#: src/Quality.php:253
 msgid "Exact keyphrase not found in:"
 msgstr "لم تُذكر الكلمة المفتاحية بنصها في:"
 
-#: src/Quality.php:255
+#: src/Quality.php:260
 msgid "English URL slug"
 msgstr "رابط المقال بالإنجليزية"
 
-#: src/Quality.php:263
+#: src/Quality.php:268
 msgid "FAQ with schema"
 msgstr "الأسئلة الشائعة مع Schema"
 
 #. translators: %d: number of questions
-#: src/Quality.php:265
+#: src/Quality.php:270
 #, php-format
 msgid "%d questions in the Yoast FAQ block."
 msgstr "%d أسئلة في كتلة الأسئلة الشائعة من Yoast."
 
-#: src/Quality.php:272
+#: src/Quality.php:277
 msgid "New category created"
 msgstr "تم إنشاء تصنيف جديد"
 
-#: src/Rest.php:82
+#: src/Rest.php:84
 msgid "Add your Claude API key in Settings first."
 msgstr "أضف مفتاح Claude API من الإعدادات أولًا."
 
-#: src/Rest.php:85
+#: src/Rest.php:87
 msgid "This month's spending cap is reached. Raise it in Settings or wait until next month."
 msgstr "تم بلوغ حد الإنفاق لهذا الشهر. ارفعه من الإعدادات أو انتظر حتى الشهر القادم."
 
-#: src/Rest.php:118
-#: src/Rest.php:149
+#: src/Rest.php:120
+#: src/Rest.php:151
+#: src/Rest.php:179
 msgid "Not found."
 msgstr "غير موجود."
 
-#: src/Rest.php:139
+#: src/Rest.php:141
 msgid "Only a failed step can be retried."
 msgstr "يمكن إعادة المحاولة فقط للخطوة التي فشلت."
 
-#: src/Rest.php:261
+#: src/Rest.php:155
+msgid "You do not have permission to edit this post."
+msgstr "ليست لديك صلاحية تعديل هذا المقال."
+
+#: src/Rest.php:158
+msgid "Wait until the article is finished."
+msgstr "انتظر حتى يكتمل المقال."
+
+#: src/Rest.php:297
 msgid "No key"
 msgstr "لا يوجد مفتاح"
 
-#: src/Rest.php:276
+#: src/Rest.php:312
 msgid "No key (AI images off)"
 msgstr "لا يوجد مفتاح (صور الذكاء الاصطناعي متوقفة)"
 
-#: src/Rest.php:291
+#: src/Rest.php:327
 msgid "No key (stock photos off)"
 msgstr "لا يوجد مفتاح (الصور الجاهزة متوقفة)"
 
-#: src/Rest.php:295
+#: src/Rest.php:331
 msgid "Key saved (tested on first use)"
 msgstr "المفتاح محفوظ (يُختبر عند أول استخدام)"
 
-#: src/Rest.php:296
+#: src/Rest.php:332
 msgid "No key (screenshots off)"
 msgstr "لا يوجد مفتاح (لقطات الشاشة متوقفة)"
 
-#: src/Rest.php:299
+#: src/Rest.php:335
 msgid "Server can draw covers"
 msgstr "الخادم يستطيع رسم صور الغلاف"
 
-#: src/Rest.php:300
+#: src/Rest.php:336
 msgid "PHP GD with FreeType is missing"
 msgstr "مكتبة PHP GD مع FreeType غير متوفرة"
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:311
+#: src/Rest.php:347
 #, php-format
 msgid "Time limit OK (%1$ds, can raise: %2$s)"
 msgstr "الحد الزمني مناسب (%1$d ث، يمكن رفعه: %2$s)"
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:311
+#: src/Rest.php:347
 msgid "yes"
 msgstr "نعم"
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:311
+#: src/Rest.php:347
 msgid "no"
 msgstr "لا"
 
 #. translators: %d: seconds
-#: src/Rest.php:314
+#: src/Rest.php:350
 #, php-format
 msgid "PHP time limit is %ds and cannot be raised. Ask your host for 300s."
 msgstr "الحد الزمني لـ PHP هو %d ث ولا يمكن رفعه. اطلب من الاستضافة 300 ث."
 
-#: src/Rest.php:326
+#: src/Rest.php:362
 msgid "Connected"
 msgstr "متصل"
 
-#: src/Rest.php:329
+#: src/Rest.php:365
 msgid "Key rejected"
 msgstr "المفتاح مرفوض"
 
-#: src/Rest.php:332
+#: src/Rest.php:368
 msgid "Model or endpoint not found — check the model name"
 msgstr "النموذج أو العنوان غير موجود — تحقق من اسم النموذج"
 
 #. translators: %s: HTTP status or error
-#: src/Rest.php:335
+#: src/Rest.php:371
 #, php-format
 msgid "Failed (%s)"
 msgstr "فشل (%s)"
 
-#: src/Settings.php:171
+#: src/Settings.php:174
 msgid "You do not have permission to change these settings."
 msgstr "ليست لديك صلاحية تغيير هذه الإعدادات."
 
-#: src/Settings.php:176
+#: src/Settings.php:179
 msgid "Ana Afdal Writer settings"
 msgstr "إعدادات كاتب انا افضل"
 
-#: src/Settings.php:180
+#: src/Settings.php:183
 msgid "API keys"
 msgstr "مفاتيح API"
 
-#: src/Settings.php:181
+#: src/Settings.php:184
 msgid "Keys are stored in the database and never sent to the browser. To keep them out of the database entirely, define them in wp-config.php instead (AAW_ANTHROPIC_API_KEY, AAW_GEMINI_API_KEY, AAW_PEXELS_API_KEY, AAW_SCREENSHOT_API_KEY)."
 msgstr "تُحفظ المفاتيح في قاعدة البيانات ولا تُرسل إلى المتصفح أبدًا. لإبقائها خارج قاعدة البيانات تمامًا، عرّفها في wp-config.php بدلًا من ذلك (AAW_ANTHROPIC_API_KEY وAAW_GEMINI_API_KEY وAAW_PEXELS_API_KEY وAAW_SCREENSHOT_API_KEY)."
 
-#: src/Settings.php:184
+#: src/Settings.php:187
 msgid "Claude (Anthropic) API key"
 msgstr "مفتاح Claude API (Anthropic)"
 
-#: src/Settings.php:184
+#: src/Settings.php:187
 msgid "Required. Writes the posts and searches the web. Create one at platform.claude.com."
 msgstr "مطلوب. يكتب المقالات ويبحث في الويب. أنشئه من platform.claude.com."
 
-#: src/Settings.php:185
+#: src/Settings.php:188
 msgid "Google Gemini API key"
 msgstr "مفتاح Google Gemini API"
 
-#: src/Settings.php:185
+#: src/Settings.php:188
 msgid "Optional. Needed for AI images. Create one at aistudio.google.com."
 msgstr "اختياري. مطلوب لصور الذكاء الاصطناعي. أنشئه من aistudio.google.com."
 
-#: src/Settings.php:186
+#: src/Settings.php:189
 msgid "Pexels API key"
 msgstr "مفتاح Pexels API"
 
-#: src/Settings.php:186
+#: src/Settings.php:189
 msgid "Optional. Needed for stock photos. Free at pexels.com/api."
 msgstr "اختياري. مطلوب للصور الجاهزة. مجاني من pexels.com/api."
 
-#: src/Settings.php:187
+#: src/Settings.php:190
 msgid "Screenshot service key"
 msgstr "مفتاح خدمة لقطات الشاشة"
 
-#: src/Settings.php:187
+#: src/Settings.php:190
 msgid "Optional. Needed for website screenshots. The default service is ScreenshotOne (free plan available at screenshotone.com)."
 msgstr "اختياري. مطلوب للقطات شاشة المواقع. الخدمة الافتراضية ScreenshotOne (تتوفر خطة مجانية على screenshotone.com)."
 
-#: src/Settings.php:191
+#: src/Settings.php:194
 msgid "Test connections"
 msgstr "اختبار الاتصال"
 
-#: src/Settings.php:195
+#: src/Settings.php:198
 #: admin/js/app.js:152
 msgid "Background work"
 msgstr "العمل في الخلفية"
 
-#: src/Settings.php:196
+#: src/Settings.php:199
 msgid "While an article page is open, the page runs each step itself, so nothing waits. When you close the page, the work continues in the background only if your server allows it. Test connections checks this."
 msgstr "ما دامت صفحة المقال مفتوحة، تشغّل الصفحة كل خطوة بنفسها فلا يتأخر شيء. وعند إغلاق الصفحة يستمر العمل في الخلفية فقط إذا سمح الخادم بذلك. زر «اختبار الاتصال» يتحقق من ذلك."
 
-#: src/Settings.php:198
+#: src/Settings.php:201
 msgid "Your site runs on LiteSpeed, which stops background work as soon as the request that started it disconnects. To let steps finish after you close the page, add these lines at the very top of the .htaccess file in your WordPress folder (for example with your host's File Manager):"
 msgstr "يعمل موقعك على خادم LiteSpeed، وهو يوقف العمل في الخلفية بمجرد انقطاع الطلب الذي بدأه. لكي تكتمل الخطوات بعد إغلاق الصفحة، أضف هذه الأسطر في أعلى ملف ‎.htaccess‎ داخل مجلد ووردبريس (مثلًا عبر مدير الملفات في لوحة الاستضافة):"
 
-#: src/Settings.php:202
+#: src/Settings.php:205
 msgid "Budget"
 msgstr "الميزانية"
 
-#: src/Settings.php:205
+#: src/Settings.php:208
 msgid "Monthly spending cap (USD)"
 msgstr "الحد الشهري للإنفاق (بالدولار)"
 
-#: src/Settings.php:208
+#: src/Settings.php:211
 msgid "New topic suggestions and new posts stop once this month's spending reaches the cap. Posts already in progress can finish. Set 0 for no cap."
 msgstr "تتوقف اقتراحات المواضيع والمقالات الجديدة عندما يبلغ إنفاق الشهر الحد. المقالات الجارية تكتمل. ضع 0 لإلغاء الحد."
 
-#: src/Settings.php:213
+#: src/Settings.php:216
 #: admin/js/app.js:58
 msgid "Writing"
 msgstr "الكتابة"
 
-#: src/Settings.php:216
+#: src/Settings.php:219
 msgid "Claude model"
 msgstr "نموذج Claude"
 
-#: src/Settings.php:216
+#: src/Settings.php:219
 msgid "Default: claude-sonnet-5-5. If you switch models, update the Claude prices below too."
 msgstr "الافتراضي: claude-sonnet-5-5. إذا غيّرت النموذج فحدّث أسعار Claude أدناه أيضًا."
 
-#: src/Settings.php:219
+#: src/Settings.php:222
 msgid "Speed"
 msgstr "السرعة"
 
-#: src/Settings.php:222
+#: src/Settings.php:225
 msgid "Fast (recommended)"
 msgstr "سريع (موصى به)"
 
-#: src/Settings.php:223
+#: src/Settings.php:226
 msgid "Thorough"
 msgstr "متأنٍّ"
 
-#: src/Settings.php:225
+#: src/Settings.php:228
 msgid "Fast: Claude answers without thinking silently first, which makes each step several times quicker. Thorough: Claude thinks before research, planning and the quality check; slower and costs more."
 msgstr "سريع: يجيب Claude مباشرة دون تفكير صامت مسبق، فتصبح كل خطوة أسرع بعدة مرات. متأنٍّ: يفكر Claude قبل البحث والتخطيط ومراجعة الجودة؛ أبطأ وأعلى تكلفة."
 
-#: src/Settings.php:229
+#: src/Settings.php:232
 msgid "Web searches per research step"
 msgstr "عدد عمليات البحث في كل خطوة بحث"
 
-#: src/Settings.php:229
+#: src/Settings.php:232
 msgid "Each search costs about $0.01."
 msgstr "كل عملية بحث تكلف نحو 0.01 دولار."
 
-#: src/Settings.php:232
+#: src/Settings.php:235
 msgid "Reuse saved research"
 msgstr "إعادة استخدام الأبحاث المحفوظة"
 
-#: src/Settings.php:235
+#: src/Settings.php:238
 msgid "Start from saved notes when an earlier article covered a related topic"
 msgstr "البدء من الملاحظات المحفوظة عندما يكون مقال سابق قد تناول موضوعًا قريبًا"
 
-#: src/Settings.php:236
+#: src/Settings.php:239
 msgid "Claude gets the notes and sources of up to 2 related earlier articles and searches only for what is missing or may have changed, so research needs fewer searches. Topic suggestions with the same focus reuse a topic search from the last 3 days."
 msgstr "يحصل Claude على ملاحظات ومصادر مقالين سابقين على الأكثر من المواضيع القريبة، ولا يبحث إلا عمّا ينقصها أو ما قد يكون تغيّر، فيحتاج البحث إلى عمليات بحث أقل. واقتراحات المواضيع بالتركيز نفسه تعيد استخدام بحث مواضيع من آخر 3 أيام."
 
-#: src/Settings.php:240
+#: src/Settings.php:243
 msgid "Reuse notes for up to (days)"
 msgstr "مدة إعادة استخدام الملاحظات (بالأيام)"
 
-#: src/Settings.php:240
+#: src/Settings.php:243
 msgid "News articles never reuse notes older than 7 days. Notes are deleted after 180 days."
 msgstr "مقالات الأخبار لا تستخدم ملاحظات أقدم من 7 أيام. وتُحذف الملاحظات بعد 180 يومًا."
 
-#: src/Settings.php:241
+#: src/Settings.php:244
 msgid "Telegram channel link"
 msgstr "رابط قناة تيليجرام"
 
-#: src/Settings.php:241
+#: src/Settings.php:244
 msgid "Every post ends with an invitation to this channel."
 msgstr "ينتهي كل مقال بدعوة للانضمام إلى هذه القناة."
 
-#: src/Settings.php:242
+#: src/Settings.php:245
 msgid "Telegram invitation text"
 msgstr "نص دعوة تيليجرام"
 
-#: src/Settings.php:246
+#: src/Settings.php:249
 #: admin/js/app.js:59
 msgid "Images"
 msgstr "الصور"
 
-#: src/Settings.php:249
+#: src/Settings.php:255
+msgid "AI photo of the topic, made with Gemini (recommended)"
+msgstr "صورة للموضوع بالذكاء الاصطناعي من Gemini (موصى به)"
+
+#: src/Settings.php:256
+msgid "Stock photo of the topic, from Pexels"
+msgstr "صورة جاهزة للموضوع من Pexels"
+
+#: src/Settings.php:257
+msgid "Title written on the brand colour"
+msgstr "العنوان مكتوبًا على لون الموقع"
+
+#: src/Settings.php:259
+msgid "The photo shows a scene about the topic, such as someone reviewing their CV for a jobs article, with no text on it. You can change the scene when you approve the outline. If the photo can't be made, the other source is tried, then the title cover."
+msgstr "تعرض الصورة مشهدًا عن الموضوع، مثل شخص يراجع سيرته الذاتية في مقال عن الوظائف، دون أي نص عليها. يمكنك تغيير المشهد عند الموافقة على المخطط. وإذا تعذّر إنشاء الصورة، تُجرَّب الطريقة الأخرى ثم غلاف العنوان."
+
+#: src/Settings.php:263
 msgid "Cover background colour"
 msgstr "لون خلفية الغلاف"
 
-#: src/Settings.php:249
-msgid "Used for the branded featured image."
-msgstr "يُستخدم في الصورة البارزة التي تحمل هوية الموقع."
+#: src/Settings.php:263
+msgid "Used for the title cover, and as a soft accent in AI illustrations."
+msgstr "يُستخدم لغلاف العنوان، وكلمسة لونية خفيفة في رسومات الذكاء الاصطناعي."
 
-#: src/Settings.php:250
+#: src/Settings.php:264
 msgid "Cover logo (attachment ID)"
 msgstr "شعار الغلاف (رقم المرفق)"
 
-#: src/Settings.php:250
-msgid "Optional. A PNG logo from the Media Library to place on covers. Leave 0 to use the site's logo if it has one."
-msgstr "اختياري. شعار PNG من مكتبة الوسائط يوضع على صور الغلاف. اتركه 0 لاستخدام شعار الموقع إن وُجد."
+#: src/Settings.php:264
+msgid "Optional. A PNG logo from the Media Library to place on title covers. Leave 0 to use the site's logo if it has one."
+msgstr "اختياري. شعار PNG من مكتبة الوسائط يوضع على أغلفة العنوان. اتركه 0 لاستخدام شعار الموقع إن وُجد."
 
-#: src/Settings.php:251
+#: src/Settings.php:265
 msgid "Gemini image model"
 msgstr "نموذج صور Gemini"
 
-#: src/Settings.php:251
+#: src/Settings.php:265
 msgid "Default: gemini-nano-banana-2.1."
 msgstr "الافتراضي: gemini-nano-banana-2.1."
 
-#: src/Settings.php:252
+#: src/Settings.php:266
 msgid "Screenshot request URL"
 msgstr "رابط طلب لقطة الشاشة"
 
-#: src/Settings.php:252
+#: src/Settings.php:266
 msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
 msgstr "إعداد متقدم. يُستبدل {key} و{url} تلقائيًا. غيّره فقط إذا أردت تغيير خدمة لقطات الشاشة."
 
-#: src/Settings.php:256
+#: src/Settings.php:270
 msgid "Prices used for cost tracking (USD)"
 msgstr "الأسعار المستخدمة لحساب التكلفة (بالدولار)"
 
-#: src/Settings.php:259
+#: src/Settings.php:273
 msgid "Claude input, per million tokens"
 msgstr "مدخلات Claude لكل مليون توكن"
 
-#: src/Settings.php:260
+#: src/Settings.php:274
 msgid "Claude output, per million tokens"
 msgstr "مخرجات Claude لكل مليون توكن"
 
-#: src/Settings.php:261
+#: src/Settings.php:275
 msgid "Claude cache write, per million tokens"
 msgstr "كتابة ذاكرة Claude المؤقتة لكل مليون توكن"
 
-#: src/Settings.php:262
+#: src/Settings.php:276
 msgid "Claude cache read, per million tokens"
 msgstr "قراءة ذاكرة Claude المؤقتة لكل مليون توكن"
 
-#: src/Settings.php:263
+#: src/Settings.php:277
 msgid "Claude web search, per search"
 msgstr "بحث Claude في الويب، لكل عملية"
 
-#: src/Settings.php:264
+#: src/Settings.php:278
 msgid "Gemini image, per image"
 msgstr "صورة Gemini، لكل صورة"
 
-#: src/Settings.php:265
+#: src/Settings.php:279
 msgid "Screenshot, per capture"
 msgstr "لقطة شاشة، لكل لقطة"
 
-#: src/Settings.php:265
+#: src/Settings.php:279
 msgid "0 while you are on a free plan."
 msgstr "0 ما دمت على الخطة المجانية."
 
-#: src/Settings.php:283
+#: src/Settings.php:297
 msgid "Set in wp-config.php"
 msgstr "محدد في wp-config.php"
 
-#: src/Settings.php:287
+#: src/Settings.php:301
 #: admin/js/app.js:646
 msgid "Remove"
 msgstr "إزالة"
@@ -931,7 +969,7 @@ msgstr "الحد الزمني للخادم"
 #: admin/js/app.js:200
 #: admin/js/app.js:205
 #: admin/js/app.js:583
-#: admin/js/app.js:810
+#: admin/js/app.js:852
 msgid "Starting…"
 msgstr "جارٍ البدء…"
 
@@ -1168,12 +1206,12 @@ msgid "Focus keyphrase (what readers search)"
 msgstr "الكلمة المفتاحية (ما يبحث عنه القراء)"
 
 #: admin/js/app.js:479
-#: admin/js/app.js:683
+#: admin/js/app.js:711
 msgid "Post type"
 msgstr "نوع المقال"
 
 #: admin/js/app.js:482
-#: admin/js/app.js:684
+#: admin/js/app.js:712
 msgid "Category"
 msgstr "التصنيف"
 
@@ -1186,7 +1224,7 @@ msgid "Start research"
 msgstr "ابدأ البحث"
 
 #: admin/js/app.js:494
-#: admin/js/app.js:940
+#: admin/js/app.js:1015
 msgid "(untitled)"
 msgstr "(بدون عنوان)"
 
@@ -1227,6 +1265,7 @@ msgid "Page to capture"
 msgstr "الصفحة المراد تصويرها"
 
 #: admin/js/app.js:634
+#: admin/js/app.js:676
 msgid "Alt text (Arabic)"
 msgstr "النص البديل (بالعربية)"
 
@@ -1246,223 +1285,284 @@ msgstr "نقل للأسفل"
 msgid "Notes for the writer, one per line"
 msgstr "ملاحظات للكاتب، ملاحظة في كل سطر"
 
-#: admin/js/app.js:662
+#: admin/js/app.js:664
+msgid "The title written on the brand colour. You can change this in Settings."
+msgstr "العنوان مكتوبًا على لون الموقع. يمكنك تغيير ذلك من الإعدادات."
+
+#: admin/js/app.js:670
+msgid "Scene to show (English)"
+msgstr "المشهد المطلوب (بالإنجليزية)"
+
+#: admin/js/app.js:672
+msgid "A photo made with Gemini, with no text on it. Describe people, places and things, for example: a young woman reviewing her CV on a laptop in a bright cafe."
+msgstr "صورة يُنشئها Gemini دون أي نص عليها. صِف الأشخاص والأماكن والأشياء، مثلًا: شابة تراجع سيرتها الذاتية على حاسوبها في مقهى مضيء."
+
+#: admin/js/app.js:673
+msgid "Stock photo search words (English)"
+msgstr "كلمات البحث عن صورة جاهزة (بالإنجليزية)"
+
+#: admin/js/app.js:690
 msgid "cited"
 msgstr "مُستشهد به"
 
-#: admin/js/app.js:672
+#: admin/js/app.js:700
 msgid "Review the outline"
 msgstr "راجع المخطط"
 
-#: admin/js/app.js:673
+#: admin/js/app.js:701
 msgid "Change anything you like. Nothing is written or paid for beyond this point until you approve."
 msgstr "غيّر ما تشاء. لن يُكتب شيء ولن تُدفع أي تكلفة إضافية حتى توافق."
 
-#: admin/js/app.js:676
+#: admin/js/app.js:704
 msgid "Title (H1)"
 msgstr "العنوان (H1)"
 
-#: admin/js/app.js:677
+#: admin/js/app.js:705
 msgid "SEO title"
 msgstr "عنوان السيو"
 
-#: admin/js/app.js:678
+#: admin/js/app.js:706
 msgid "Meta description"
 msgstr "الوصف التعريفي"
 
-#: admin/js/app.js:680
+#: admin/js/app.js:708
 msgid "Focus keyphrase"
 msgstr "الكلمة المفتاحية"
 
-#: admin/js/app.js:681
+#: admin/js/app.js:709
 msgid "URL slug (English)"
 msgstr "رابط المقال (بالإنجليزية)"
 
-#: admin/js/app.js:685
+#: admin/js/app.js:713
 msgid "Author"
 msgstr "الكاتب"
 
-#: admin/js/app.js:689
+#: admin/js/app.js:720
 msgid "Sections"
 msgstr "الأقسام"
 
-#: admin/js/app.js:690
+#: admin/js/app.js:721
 msgid "The introduction, FAQ, summary and Telegram invitation are added automatically."
 msgstr "تُضاف المقدمة والأسئلة الشائعة والخلاصة ودعوة تيليجرام تلقائيًا."
 
-#: admin/js/app.js:692
+#: admin/js/app.js:723
 msgid "Add section"
 msgstr "إضافة قسم"
 
-#: admin/js/app.js:694
+#: admin/js/app.js:725
 msgid "FAQ questions"
 msgstr "الأسئلة الشائعة"
 
-#: admin/js/app.js:700
+#: admin/js/app.js:731
 msgid "None suggested."
 msgstr "لا توجد اقتراحات."
 
-#: admin/js/app.js:703
+#: admin/js/app.js:734
 msgid "Sources to cite"
 msgstr "مصادر للاستشهاد"
 
-#: admin/js/app.js:704
+#: admin/js/app.js:735
 msgid "Ticked sources are offered to the writer; each link is checked live before the draft is saved."
 msgstr "تُعرض المصادر المحددة على الكاتب، ويُفحص كل رابط مباشرة قبل حفظ المسودة."
 
-#: admin/js/app.js:705
+#: admin/js/app.js:736
 msgid "No sources found."
 msgstr "لم يُعثر على مصادر."
 
-#: admin/js/app.js:710
-#: admin/js/app.js:819
+#: admin/js/app.js:741
+#: admin/js/app.js:861
 msgid "Approve and write"
 msgstr "وافق وابدأ الكتابة"
 
-#: admin/js/app.js:711
+#: admin/js/app.js:742
 msgid "Writing, images and checks usually take 2–4 minutes. Keep this page open for the fastest result."
 msgstr "تستغرق الكتابة والصور والفحوص عادةً من 2 إلى 4 دقائق. أبقِ هذه الصفحة مفتوحة للحصول على أسرع نتيجة."
 
-#: admin/js/app.js:801
+#: admin/js/app.js:843
 msgid "Add at least one section."
 msgstr "أضف قسمًا واحدًا على الأقل."
 
-#: admin/js/app.js:805
+#: admin/js/app.js:847
 msgid "Name the new category, or pick an existing one."
 msgstr "اكتب اسم التصنيف الجديد أو اختر تصنيفًا موجودًا."
 
-#: admin/js/app.js:834
+#: admin/js/app.js:876
 msgid "Review checklist"
 msgstr "قائمة المراجعة"
 
-#: admin/js/app.js:835
+#: admin/js/app.js:877
 #, js-format
 msgid "%d item(s) need a look before you publish."
 msgstr "%d بند يحتاج إلى مراجعة قبل النشر."
 
-#: admin/js/app.js:835
+#: admin/js/app.js:877
 msgid "Everything passed. Give it a final read and publish."
 msgstr "اجتاز كل شيء الفحص. اقرأه قراءة أخيرة ثم انشره."
 
-#: admin/js/app.js:852
+#: admin/js/app.js:894
 msgid "Approve"
 msgstr "موافقة"
 
-#: admin/js/app.js:853
+#: admin/js/app.js:895
 msgid "Dismiss"
 msgstr "تجاهل"
 
-#: admin/js/app.js:856
+#: admin/js/app.js:898
 msgid "Approved"
 msgstr "تمت الموافقة"
 
-#: admin/js/app.js:856
+#: admin/js/app.js:898
 msgid "Approved — added when you publish"
 msgstr "تمت الموافقة — يُضاف عند النشر"
 
-#: admin/js/app.js:857
+#: admin/js/app.js:899
 msgid "Link added"
 msgstr "أُضيف الرابط"
 
-#: admin/js/app.js:858
+#: admin/js/app.js:900
 msgid "Dismissed"
 msgstr "تم التجاهل"
 
-#: admin/js/app.js:859
+#: admin/js/app.js:901
 msgid "Could not add"
 msgstr "تعذّرت الإضافة"
 
-#: admin/js/app.js:874
+#: admin/js/app.js:916
 msgid "Links from older posts"
 msgstr "روابط من المقالات القديمة"
 
-#: admin/js/app.js:875
+#: admin/js/app.js:917
 msgid "Approved links are added to the older posts once this post is published, so no reader lands on a draft."
 msgstr "تُضاف الروابط الموافق عليها إلى المقالات القديمة بعد نشر هذا المقال، حتى لا يصل أي قارئ إلى مسودة."
 
-#: admin/js/app.js:876
+#: admin/js/app.js:918
 msgid "No good spots found in older posts this time."
 msgstr "لم نجد مواضع مناسبة في المقالات القديمة هذه المرة."
 
-#: admin/js/app.js:886
+#: admin/js/app.js:928
 msgid "the topic search that suggested this article"
 msgstr "بحث المواضيع الذي اقترح هذا المقال"
 
-#: admin/js/app.js:890
+#: admin/js/app.js:932
 #, js-format
 msgid "Research sources (%d)"
 msgstr "مصادر البحث (%d)"
 
-#: admin/js/app.js:891
+#: admin/js/app.js:933
 #, js-format
 msgid "Started from saved research: %s"
 msgstr "بدأ من بحث محفوظ: %s"
 
-#: admin/js/app.js:893
+#: admin/js/app.js:935
 msgid "from saved research"
 msgstr "من بحث محفوظ"
 
-#: admin/js/app.js:893
+#: admin/js/app.js:935
 msgid "linked in post"
 msgstr "مرتبط في المقال"
 
-#: admin/js/app.js:900
+#: admin/js/app.js:942
 msgid "Activity"
 msgstr "سجل النشاط"
 
-#: admin/js/app.js:914
+#: admin/js/app.js:951
+msgid "Photo made with Gemini"
+msgstr "صورة من Gemini"
+
+#: admin/js/app.js:952
+msgid "Stock photo from Pexels"
+msgstr "صورة جاهزة من Pexels"
+
+#: admin/js/app.js:953
+msgid "Title cover"
+msgstr "غلاف العنوان"
+
+#: admin/js/app.js:964
+msgid "No featured image yet."
+msgstr "لا توجد صورة بارزة بعد."
+
+#: admin/js/app.js:969
+msgid "Scene for a new photo (English)"
+msgstr "مشهد لصورة جديدة (بالإنجليزية)"
+
+#: admin/js/app.js:970
+msgid "Leave empty and Claude will describe a scene from the title."
+msgstr "اتركه فارغًا وسيصف Claude مشهدًا انطلاقًا من العنوان."
+
+#: admin/js/app.js:971
+#: admin/js/app.js:1097
+msgid "Make a new featured image"
+msgstr "إنشاء صورة بارزة جديدة"
+
+#: admin/js/app.js:972
+msgid "The new photo replaces the current featured image. The old one stays in the Media Library."
+msgstr "تحل الصورة الجديدة محل الصورة البارزة الحالية، وتبقى القديمة في مكتبة الوسائط."
+
+#: admin/js/app.js:973
+msgid "Add a Gemini API key in Settings to make a photo of the topic."
+msgstr "أضف مفتاح Gemini API من الإعدادات لإنشاء صورة للموضوع."
+
+#: admin/js/app.js:986
 msgid "This step failed:"
 msgstr "فشلت هذه الخطوة:"
 
-#: admin/js/app.js:915
+#: admin/js/app.js:987
 msgid "Try this step again"
 msgstr "أعد محاولة هذه الخطوة"
 
-#: admin/js/app.js:923
+#: admin/js/app.js:995
 msgid "Published post"
 msgstr "المقال المنشور"
 
-#: admin/js/app.js:923
+#: admin/js/app.js:995
 msgid "Your draft"
 msgstr "مسودتك"
 
-#: admin/js/app.js:924
+#: admin/js/app.js:996
 #, js-format
 msgid "About %d words."
 msgstr "نحو %d كلمة."
 
-#: admin/js/app.js:924
+#: admin/js/app.js:996
 #, js-format
 msgid "%1$d internal and %2$d external links."
 msgstr "%1$d روابط داخلية و%2$d روابط خارجية."
 
-#: admin/js/app.js:926
+#: admin/js/app.js:998
 msgid "Open in the editor"
 msgstr "افتح في المحرر"
 
-#: admin/js/app.js:927
+#: admin/js/app.js:999
 msgid "View"
 msgstr "عرض"
 
-#: admin/js/app.js:927
+#: admin/js/app.js:999
 msgid "Preview"
 msgstr "معاينة"
 
-#: admin/js/app.js:938
-#: admin/js/app.js:1002
+#: admin/js/app.js:1013
+#: admin/js/app.js:1077
 msgid "All articles"
 msgstr "كل المقالات"
 
-#: admin/js/app.js:941
-#: admin/js/app.js:969
+#: admin/js/app.js:1016
+#: admin/js/app.js:1044
 #, js-format
 msgid "Cost so far: %s"
 msgstr "التكلفة حتى الآن: %s"
 
-#: admin/js/app.js:942
+#: admin/js/app.js:1017
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: admin/js/app.js:1057
+#: admin/js/app.js:1088
+msgid "Making the image… this can take a minute"
+msgstr "جارٍ إنشاء الصورة… قد يستغرق ذلك دقيقة"
+
+#: admin/js/app.js:1093
+msgid "New featured image saved."
+msgstr "تم حفظ الصورة البارزة الجديدة."
+
+#: admin/js/app.js:1150
 msgid "Stop working on this article? Anything already saved stays."
 msgstr "إيقاف العمل على هذا المقال؟ ما حُفظ بالفعل سيبقى."

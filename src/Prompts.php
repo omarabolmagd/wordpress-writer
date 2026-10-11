@@ -226,6 +226,9 @@ TXT;
 		$prompt .= "- angle: one Arabic sentence on what the reader gets that other articles do not give.\n";
 		$prompt .= "- sections: the H2 sections in order (do not include the introduction, FAQ or conclusion; those are added automatically). For each: heading (Arabic), key_points (3 to 6 short notes in English for the writer), and an image plan.\n";
 		$prompt .= "  Image plan rules: plan an image for about every second section and never more than 5 images in total. Use source \"screenshot\" when the section reviews one specific website or app (put its official URL in url). Use \"ai\" for abstract ideas with no good stock photo (put an English prompt describing a clean editorial illustration in prompt; never ask for text, letters or logos in the image). Use \"pexels\" for real-world scenes (put a 2 to 4 word English search query in query). Use \"none\" for no image. Only use sources from the available list. alt is a short Arabic description of what the image will show. Leave unused fields as empty strings.\n";
+		$prompt .= "- cover: the featured image, shown on the home page, in category lists and when the post is shared. It is a realistic photo of a scene that shows the article's subject at a glance, never the title or any text.\n";
+		$prompt .= "  prompt: one or two English sentences describing that scene: who or what is in it, what they are doing, where. Pick something concrete that a reader recognises immediately. Examples: job hunting, a young Arab woman reviewing her CV at a laptop in a bright cafe; scholarships, students with suitcases in front of a European university building; learning English, a young man with headphones practising speaking with a tutor on a video call; AI tools, a student working with an AI assistant on a laptop at a desk with notebooks. Do not ask for readable text, logos, brand names or interface details.\n";
+		$prompt .= "  query: 2 to 4 English words to find a similar stock photo. alt: a short Arabic description of the scene.\n";
 		$prompt .= "- faq_questions: Arabic questions readers really ask, in the number the template needs.\n";
 		$prompt .= "- internal_link_ids: 3 to 5 ids of published posts that are genuinely related and will be linked in the text. Only ids from the list above.\n";
 		$prompt .= "- external_sources: 2 to 4 URLs from the sources list above that the article will cite: official sites first. Only URLs from that list.\n";
@@ -239,7 +242,7 @@ TXT;
 		return array(
 			'type'                 => 'object',
 			'additionalProperties' => false,
-			'required'             => array( 'title', 'seo_title', 'meta_description', 'focus_keyphrase', 'slug', 'post_type', 'category_existing_id', 'category_new_name', 'angle', 'sections', 'faq_questions', 'internal_link_ids', 'external_sources' ),
+			'required'             => array( 'title', 'seo_title', 'meta_description', 'focus_keyphrase', 'slug', 'post_type', 'category_existing_id', 'category_new_name', 'angle', 'sections', 'cover', 'faq_questions', 'internal_link_ids', 'external_sources' ),
 			'properties'           => array(
 				'title'                => array( 'type' => 'string' ),
 				'seo_title'            => array( 'type' => 'string' ),
@@ -274,6 +277,7 @@ TXT;
 						),
 					),
 				),
+				'cover'                => self::cover_schema(),
 				'faq_questions'        => array( 'type' => 'array', 'items' => array( 'type' => 'string' ) ),
 				'internal_link_ids'    => array( 'type' => 'array', 'items' => array( 'type' => 'integer' ) ),
 				'external_sources'     => array( 'type' => 'array', 'items' => array( 'type' => 'string' ) ),
@@ -498,6 +502,42 @@ TXT;
 	}
 
 	/* ------------------------------------------------------------------ images */
+
+	public static function cover_schema(): array {
+		return array(
+			'type'                 => 'object',
+			'additionalProperties' => false,
+			'required'             => array( 'prompt', 'query', 'alt' ),
+			'properties'           => array(
+				'prompt' => array( 'type' => 'string' ),
+				'query'  => array( 'type' => 'string' ),
+				'alt'    => array( 'type' => 'string' ),
+			),
+		);
+	}
+
+	/** Asks for a featured-image scene for an article planned before covers were planned in the outline. */
+	public static function cover_scene( string $title, string $keyphrase, string $angle, string $category ): array {
+		$system  = self::site_context() . "\nYou are the site's photo editor.";
+		$prompt  = "Describe the featured image for this article. It is a realistic photo of a scene that shows the article's subject at a glance, never the title or any text.\n\n";
+		$prompt .= "Title: {$title}\nKeyphrase: {$keyphrase}\n";
+		$prompt .= '' !== $angle ? "Angle: {$angle}\n" : '';
+		$prompt .= '' !== $category ? "Category: {$category}\n" : '';
+		$prompt .= "\nReturn:\n- prompt: one or two English sentences describing the scene: who or what is in it, what they are doing, where. Pick something concrete a reader recognises immediately (for job hunting, someone reviewing their CV or in an interview; for scholarships, students arriving at a university). No readable text, logos, brand names or interface details.\n";
+		$prompt .= "- query: 2 to 4 English words to find a similar stock photo.\n- alt: a short Arabic description of the scene.";
+		return array( $system, $prompt );
+	}
+
+	/** The full Gemini prompt for a featured image: a photo of the scene, with no text anywhere. */
+	public static function ai_cover( string $scene ): string {
+		return trim( $scene, " \t\n\r." ) . '. '
+			. 'Photorealistic editorial photograph for the cover of an article on an Arabic educational website. '
+			. 'Natural light, warm and hopeful mood, shallow depth of field, uncluttered background. '
+			. 'Keep the main subject near the centre so the picture still works when cropped to a square or a narrow thumbnail. '
+			. 'If people appear, they look Arab or Middle Eastern and are dressed modestly and professionally. '
+			. 'Absolutely no text, letters, numbers, words, captions, logos, brand names or watermarks anywhere in the image; '
+			. 'papers, screens, signs and clothing show only blurred, unreadable shapes. Landscape 16:9.';
+	}
 
 	public static function ai_image( string $prompt ): string {
 		$color = Settings::get( 'brand_color' );

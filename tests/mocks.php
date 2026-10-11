@@ -80,6 +80,10 @@ function aaw_test_claude_reply( array $body ): array {
 	}
 
 	$props = array_keys( $schema['properties'] ?? array() );
+	if ( array( 'prompt', 'query', 'alt' ) === $props ) {
+		$calls[] = 'cover_scene';
+		return array( 'content' => array( $json( array( 'prompt' => 'A young woman reviewing her CV on a laptop in a bright cafe', 'query' => 'woman cv laptop', 'alt' => 'شابة تراجع سيرتها الذاتية على حاسوبها' ) ) ), 'stop_reason' => 'end_turn', 'usage' => $usage );
+	}
 	if ( in_array( 'topics', $props, true ) ) {
 		$calls[] = 'topics_structure';
 		return array( 'content' => array( $json( array( 'topics' => array(
@@ -116,6 +120,11 @@ function aaw_test_claude_reply( array $body ): array {
 				$section( 'شهادات Google المهنية', 'none' ),
 				$section( 'كيف تختار الكورس المناسب لك؟', 'ai', array( 'prompt' => 'a student choosing between learning paths', 'alt' => 'طالب يختار بين مسارات تعلم' ) ),
 				$section( 'مقارنة سريعة بين الكورسات', 'pexels', array( 'query' => '', 'alt' => 'x' ) ),
+			),
+			'cover'                => array(
+				'prompt' => 'A young Arab student following an online AI course on a laptop at a tidy desk with notebooks',
+				'query'  => 'student laptop online course',
+				'alt'    => 'طالب يتابع كورس ذكاء اصطناعي على حاسوبه',
 			),
 			'faq_questions'        => array( 'هل الشهادات مجانية فعلًا؟', 'هل أحتاج خبرة سابقة؟', 'كم يستغرق الكورس؟', 'هل الشهادة معترف بها؟' ),
 			'internal_link_ids'    => array( $published[0], $published[1], $published[3], $published[10], 999999 ),
@@ -281,6 +290,12 @@ function aaw_test_install_mocks( string $claude = 'stream' ): void {
 		}
 		if ( str_starts_with( $url, 'https://images.pexels.com/' ) || str_starts_with( $url, 'https://api.screenshotone.com/take' ) ) {
 			return array( 'status' => 200, 'headers' => array(), 'body' => $jpeg() );
+		}
+		if ( str_contains( $url, 'generativelanguage.googleapis.com' ) ) {
+			$GLOBALS['aaw_test_gemini'][] = json_decode( (string) ( $args['body'] ?? '' ), true );
+			if ( ! empty( $GLOBALS['aaw_test_flags']['gemini_fail'] ) ) {
+				return array( 'status' => 503, 'headers' => array(), 'body' => '{"error":{"message":"The model is overloaded."}}' );
+			}
 		}
 		if ( str_contains( $url, '/v1beta/interactions' ) ) {
 			$body = json_decode( $args['body'], true );

@@ -4,7 +4,8 @@ namespace AnaAfdal\Writer;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Gets in-article images from Pexels, Gemini or a screenshot service and saves them to the Media Library.
+ * Gets the featured image and in-article images from Gemini, Pexels or a screenshot service
+ * and saves them to the Media Library.
  */
 final class Images {
 
@@ -43,6 +44,50 @@ final class Images {
 				return self::screenshot( (string) $plan['url'], $alt, $job_id, $slug );
 		}
 		throw new \InvalidArgumentException( 'Unknown image source: ' . $plan['source'] );
+	}
+
+	/** Featured-image styles, in the order each one tries its sources. */
+	public const COVER_ORDER = array(
+		'ai'      => array( 'ai', 'pexels', 'branded' ),
+		'pexels'  => array( 'pexels', 'ai', 'branded' ),
+		'branded' => array( 'branded' ),
+	);
+
+	/**
+	 * Makes the featured image: by default a Gemini photo of a scene about the topic, with no
+	 * text. Sources without a key are skipped; if every image service fails, the branded title
+	 * cover is drawn instead, so a post always gets a featured image.
+	 *
+	 * @param array{prompt?:string,query?:string,alt?:string} $plan
+	 * @param string[]|null $order Sources to try, in order; defaults to the "Featured image" setting.
+	 * @return array{id:int, source:string, errors:array<string,string>}
+	 */
+	public static function cover( array $plan, string $title, string $label, int $job_id, string $slug, ?array $order = null ): array {
+		$ready  = Settings::readiness();
+		$order  = $order ?? ( self::COVER_ORDER[ (string) Settings::get( 'cover_style' ) ] ?? self::COVER_ORDER['ai'] );
+		$alt    = '' !== trim( (string) ( $plan['alt'] ?? '' ) ) ? (string) $plan['alt'] : $title;
+		$scene  = trim( (string) ( $plan['prompt'] ?? '' ) );
+		$query  = trim( (string) ( $plan['query'] ?? '' ) );
+		$errors = array();
+		foreach ( $order as $source ) {
+			try {
+				if ( 'ai' === $source && $ready['gemini'] ) {
+					if ( '' === $scene ) {
+						$scene = 'A realistic everyday scene that shows the subject of an article titled "' . $title . '"';
+					}
+					return array( 'id' => self::ai( $scene, $alt, $job_id, $slug . '-cover', 'cover' ), 'source' => 'ai', 'errors' => $errors );
+				}
+				if ( 'pexels' === $source && $ready['pexels'] && '' !== $query ) {
+					return array( 'id' => self::pexels( $query, $alt, $slug . '-cover' ), 'source' => 'pexels', 'errors' => $errors );
+				}
+				if ( 'branded' === $source ) {
+					return array( 'id' => Cover::create( $title, $label, $slug, $alt ), 'source' => 'branded', 'errors' => $errors );
+				}
+			} catch ( \Throwable $e ) {
+				$errors[ $source ] = $e->getMessage();
+			}
+		}
+		throw new \RuntimeException( $errors ? implode( ' ', $errors ) : 'No image service is set up for the featured image.' );
 	}
 
 	public static function pexels( string $query, string $alt, string $slug ): int {
@@ -99,13 +144,17 @@ final class Images {
 		);
 	}
 
-	public static function ai( string $prompt, string $alt, int $job_id, string $slug ): int {
+	/**
+	 * @param string $kind "image" for an in-article illustration, "cover" for the featured photo.
+	 */
+	public static function ai( string $prompt, string $alt, int $job_id, string $slug, string $kind = 'image' ): int {
 		$key = Settings::key( 'gemini_key' );
 		if ( '' === $key || '' === trim( $prompt ) ) {
 			throw new \RuntimeException( 'AI images need a Gemini API key and a prompt.' );
 		}
+		$cover   = 'cover' === $kind;
 		$model   = (string) Settings::get( 'gemini_model' );
-		$full    = Prompts::ai_image( $prompt );
+		$full    = $cover ? Prompts::ai_cover( $prompt ) : Prompts::ai_image( $prompt );
 		$headers = array( 'x-goog-api-key' => $key );
 
 		$response = Http::post_json(
@@ -152,13 +201,13 @@ final class Images {
 			throw new \RuntimeException( 'Gemini did not return an image. The prompt may have been blocked; try a different description.' );
 		}
 
-		Costs::log( $job_id, 'gemini', 'ai_image', (float) Settings::get( 'price_gemini_image' ), array( 'model' => $model ) );
+		Costs::log( $job_id, 'gemini', $cover ? 'ai_cover' : 'ai_image', (float) Settings::get( 'price_gemini_image' ), array( 'model' => $model ) );
 
 		$bytes = base64_decode( $image, true );
 		if ( false === $bytes ) {
 			throw new \RuntimeException( 'Gemini returned image data that could not be decoded.' );
 		}
-		return Media::save_bytes( $bytes, $slug . '-ai-' . wp_generate_password( 4, false ), $alt, '', array( 'image_source' => 'ai', 'ai_prompt' => $prompt ) );
+		return Media::save_bytes( $bytes, $slug . '-ai-' . strtolower( wp_generate_password( 4, false ) ), $alt, '', array( 'image_source' => 'ai', 'image_role' => $cover ? 'cover' : 'section', 'ai_prompt' => $prompt ) );
 	}
 
 	/** A syntactically valid public http(s) URL. The screenshot service fetches it, not this server. */

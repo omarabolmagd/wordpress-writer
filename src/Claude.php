@@ -40,6 +40,7 @@ final class Claude {
 			'write'            => array( 'effort' => 'medium', 'think' => false, 'max_tokens' => 32000 ),
 			'quality'          => array( 'effort' => 'medium', 'think' => false, 'max_tokens' => 12000 ),
 			'backlinks'        => array( 'effort' => 'low', 'think' => false, 'max_tokens' => 8000 ),
+			'cover_scene'      => array( 'effort' => 'low', 'think' => false, 'max_tokens' => 4000 ),
 		);
 		$p = $fast[ $step ] ?? array( 'effort' => 'medium', 'think' => false, 'max_tokens' => 16000 );
 		if ( 'thorough' === Settings::get( 'speed' ) ) {

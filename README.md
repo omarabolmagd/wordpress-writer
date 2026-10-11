@@ -15,7 +15,7 @@ A WordPress plugin for [anaafdal.com](https://anaafdal.com) that researches, wri
    - the FAQ questions
    - the internal links and the sources to cite
 3. **Writes the post** in simple Modern Standard Arabic from the research notes only, then adds:
-   - a branded cover image, drawn by the plugin (Arabic title on the site's teal)
+   - a featured image: a Gemini photo of a scene about the topic, with no text on it (for example, someone reviewing their CV for a jobs article). The scene is planned in the outline, and you can change it before approving.
    - in-article images from Pexels, Gemini (Nano Banana 2.1) or website screenshots, saved to the Media Library with Arabic alt text
    - 3–5 internal links with descriptive anchors, plus up to 2 "اقرأ أيضًا" boxes
    - 2–4 external links. Each must come from the research and is checked live; broken or unknown links are removed.
@@ -30,7 +30,7 @@ It never publishes by itself.
 ## Requirements
 
 - WordPress 6.6 or later. Built and tested on 7.1.3, the version anaafdal.com runs.
-- PHP 8.1 or later, with GD and FreeType for the cover image.
+- PHP 8.1 or later, with GD and FreeType for the title cover, which is the last fallback for featured images.
 - PHP `max_execution_time` of 300 seconds is best, or a host that lets plugins raise it. **Settings → Test connections** shows whether yours does.
 - Yoast SEO, for the FAQ schema and SEO fields. The plugin still works without it.
 
@@ -68,7 +68,19 @@ Default prices come from the official pricing pages as of October 2026:
 - Web search: $0.01 per search.
 - Gemini Nano Banana 2.1: about $0.034 per image.
 
-They are all editable in Settings. A rough estimate, not yet measured on real articles, is $0.30–$0.60 per article for research, writing and checks, plus about $0.03 per AI image. The Costs page shows the real figures after your first few posts.
+They are all editable in Settings. A rough estimate, not yet measured on real articles, is $0.30–$0.60 per article for research, writing and checks, plus about $0.03 per AI image, including the featured photo. The Costs page shows the real figures after your first few posts.
+
+## Featured images
+
+**Settings → Featured image** has three styles:
+
+- **AI photo of the topic, made with Gemini** (the default). Claude describes a scene in the outline, such as a student following an online course or someone in a job interview. Gemini then makes a realistic photo of it, with no text, logos or readable screens, and with the subject near the centre so home-page crops still work.
+- **Stock photo of the topic, from Pexels.**
+- **Title written on the brand colour.** This is the style used before 1.3.0.
+
+If the chosen source fails, the other photo source is tried, then the title cover. When that happens, the quality checklist says so.
+
+On a finished article, **Featured image → Make a new featured image** replaces the image with a new Gemini photo. You can type a different scene first. For articles planned before 1.3.0, Claude describes a scene from the title. The old image stays in the Media Library.
 
 ## Saved research
 
@@ -169,6 +181,11 @@ All external APIs are mocked, so tests cost nothing and need no keys.
 Run `python3 bin/translations-ar.py`, then `wp i18n make-mo languages` and `wp i18n make-json languages --no-purge`.
 
 ## Changelog
+
+**1.3.0**
+- Featured images are now Gemini photos of a scene about the topic, with no text, instead of the title on a template. The scene is planned in the outline and can be edited before approving.
+- New **Featured image** setting: Gemini photo (default), Pexels photo, or the old title cover. If a source fails, the plugin falls back and flags it in the checklist.
+- New **Make a new featured image** button on finished articles, including ones written before this version.
 
 **1.2.0**
 - New **Saved research** library. Research notes and sources from every topic search and article are kept.

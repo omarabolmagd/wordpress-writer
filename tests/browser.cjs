@@ -78,6 +78,12 @@ fs.mkdirSync( out, { recursive: true } );
 		await page.waitForTimeout( 1500 );
 	}
 
+	// Make a new featured image from a typed scene.
+	await page.fill( '[data-form="cover"] [name="prompt"]', 'A young woman in a job interview, smiling across the table' );
+	await page.click( '[data-form="cover"] [type="submit"]' );
+	await page.waitForSelector( '.aaw-notice.notice-success', { timeout: 120000 } );
+	await shot( '4b-new-cover' );
+
 	// Open the draft in the block editor and look for invalid-block warnings.
 	const editHref = await page.getAttribute( '.aaw-result a.button-primary', 'href' );
 	const previewHref = await page.getAttribute( '.aaw-result a.button:not(.button-primary)', 'href' );

@@ -650,6 +650,34 @@
 			${ sourceField( section, i ) }
 		</li>`;
 
+	/** Which source the featured image will come from, given the setting and the keys. */
+	const coverSource = () => {
+		const avail = overview.image_sources || [];
+		const order = { ai: [ 'ai', 'pexels' ], pexels: [ 'pexels', 'ai' ], branded: [] }[ overview.cover_style || 'ai' ] || [ 'ai', 'pexels' ];
+		return order.find( ( s ) => avail.includes( s ) ) || 'branded';
+	};
+
+	const coverFieldsHtml = ( o ) => {
+		const c = o.cover || { prompt: '', query: '', alt: '' };
+		const source = coverSource();
+		if ( source === 'branded' ) {
+			return `<p class="description">${ esc( __( 'The title written on the brand colour. You can change this in Settings.', 'ana-afdal-writer' ) ) }</p>`;
+		}
+		return `
+			<div class="aaw-cover-plan">
+				${
+					source === 'ai'
+						? `<label>${ esc( __( 'Scene to show (English)', 'ana-afdal-writer' ) ) }
+							<textarea name="cover_prompt" rows="2" class="large-text" dir="ltr">${ esc( c.prompt ) }</textarea></label>
+							<p class="description">${ esc( __( 'A photo made with Gemini, with no text on it. Describe people, places and things, for example: a young woman reviewing her CV on a laptop in a bright cafe.', 'ana-afdal-writer' ) ) }</p>`
+						: `<label>${ esc( __( 'Stock photo search words (English)', 'ana-afdal-writer' ) ) }
+							<input type="text" name="cover_query" value="${ esc( c.query ) }" class="large-text" dir="ltr"></label>`
+				}
+				<label>${ esc( __( 'Alt text (Arabic)', 'ana-afdal-writer' ) ) }
+					<input type="text" name="cover_alt" value="${ esc( c.alt ) }" class="large-text" dir="auto"></label>
+			</div>`;
+	};
+
 	const outlineHtml = ( job ) => {
 		const o = job.outline;
 		const typeOptions = Object.entries( overview.templates )
@@ -686,6 +714,9 @@
 					</div>
 				</div>
 
+				<h3>${ esc( __( 'Featured image', 'ana-afdal-writer' ) ) }</h3>
+				${ coverFieldsHtml( o ) }
+
 				<h3>${ esc( __( 'Sections', 'ana-afdal-writer' ) ) }</h3>
 				<p class="description">${ esc( __( 'The introduction, FAQ, summary and Telegram invitation are added automatically.', 'ana-afdal-writer' ) ) }</p>
 				<ol class="aaw-sections">${ o.sections.map( sectionHtml ).join( '' ) }</ol>
@@ -716,6 +747,16 @@
 	const collectOutline = ( form, job ) => {
 		const val = ( name ) => ( form.querySelector( `[name="${ name }"]` ) || {} ).value || '';
 		const catValue = val( 'category' );
+		const field = ( name, fallback ) => {
+			const el = form.querySelector( `[name="${ name }"]` );
+			return el ? el.value.trim() : fallback || '';
+		};
+		const oldCover = job.outline.cover || {};
+		const cover = {
+			prompt: field( 'cover_prompt', oldCover.prompt ),
+			query: field( 'cover_query', oldCover.query ),
+			alt: field( 'cover_alt', oldCover.alt ),
+		};
 		const sections = [ ...form.querySelectorAll( '.aaw-section' ) ].map( ( li ) => {
 			const q = ( n ) => ( li.querySelector( `[name="${ n }"]` ) || {} ).value || '';
 			return {
@@ -736,6 +777,7 @@
 			category_existing_id: catValue && catValue !== '__new' ? Number( catValue ) : null,
 			category_new_name: catValue === '__new' ? val( 'category_new' ).trim() : null,
 			sections: sections.filter( ( s ) => s.heading ),
+			cover,
 			faq_questions: val( 'faq_questions' ).split( '\n' ).map( ( s ) => s.trim() ).filter( Boolean ),
 			internal_link_ids: [ ...form.querySelectorAll( '[name="internal"]:checked' ) ].map( ( c ) => Number( c.value ) ),
 			external_sources: [ ...form.querySelectorAll( '[name="external"]:checked' ) ].map( ( c ) => c.value ),
@@ -905,6 +947,36 @@
 				.join( '' ) }</ul>
 		</details>`;
 
+	const COVER_LABELS = () => ( {
+		ai: __( 'Photo made with Gemini', 'ana-afdal-writer' ),
+		pexels: __( 'Stock photo from Pexels', 'ana-afdal-writer' ),
+		branded: __( 'Title cover', 'ana-afdal-writer' ),
+	} );
+
+	/** The featured image of a finished article, with a way to make a new one. */
+	const coverCardHtml = ( job ) => {
+		const c = job.cover || {};
+		const canMake = ( overview.image_sources || [] ).includes( 'ai' ) && ! overview.cap_reached;
+		return `
+			<section class="aaw-card aaw-cover">
+				<h2>${ esc( __( 'Featured image', 'ana-afdal-writer' ) ) }</h2>
+				<div class="aaw-cover-row">
+					${ c.url ? `<img src="${ esc( c.url ) }" alt="" class="aaw-cover-img">` : `<p class="description">${ esc( __( 'No featured image yet.', 'ana-afdal-writer' ) ) }</p>` }
+					<form class="aaw-cover-form" data-form="cover">
+						${ c.source ? `<p><span class="aaw-pill">${ esc( COVER_LABELS()[ c.source ] || c.source ) }</span></p>` : '' }
+						${
+							canMake
+								? `<label>${ esc( __( 'Scene for a new photo (English)', 'ana-afdal-writer' ) ) }
+									<textarea name="prompt" rows="3" class="large-text" dir="ltr" placeholder="${ esc( __( 'Leave empty and Claude will describe a scene from the title.', 'ana-afdal-writer' ) ) }">${ esc( c.prompt || '' ) }</textarea></label>
+									<p><button type="submit" class="button">${ esc( __( 'Make a new featured image', 'ana-afdal-writer' ) ) }</button></p>
+									<p class="description">${ esc( __( 'The new photo replaces the current featured image. The old one stays in the Media Library.', 'ana-afdal-writer' ) ) }</p>`
+								: `<p class="description">${ esc( __( 'Add a Gemini API key in Settings to make a photo of the topic.', 'ana-afdal-writer' ) ) }</p>`
+						}
+					</form>
+				</div>
+			</section>`;
+	};
+
 	const renderJob = () => {
 		const job = currentJob;
 		const busy = isActive( job );
@@ -927,6 +999,9 @@
 						<a class="button" href="${ esc( job.post_status === 'publish' ? job.view_url : job.preview_url ) }" target="_blank" rel="noopener">${ esc( job.post_status === 'publish' ? __( 'View', 'ana-afdal-writer' ) : __( 'Preview', 'ana-afdal-writer' ) ) }</a>
 					</p>
 				</section>`;
+		}
+		if ( job.post_id && ! busy ) {
+			main += coverCardHtml( job );
 		}
 		if ( job.stage === 'awaiting_approval' && job.status === 'waiting' && job.outline ) {
 			main += outlineHtml( job );
@@ -1006,6 +1081,24 @@
 
 	root.addEventListener( 'submit', ( e ) => {
 		const form = e.target;
+		if ( form.dataset.form === 'cover' && currentJob ) {
+			e.preventDefault();
+			const button = form.querySelector( '[type="submit"]' );
+			button.disabled = true;
+			button.textContent = __( 'Making the image… this can take a minute', 'ana-afdal-writer' );
+			api( '/jobs/' + currentJob.id + '/cover', { method: 'POST', data: { prompt: form.prompt.value } } )
+				.then( ( job ) => {
+					currentJob = job;
+					renderJob();
+					flash( root, __( 'New featured image saved.', 'ana-afdal-writer' ), 'success' );
+				} )
+				.catch( ( err ) => {
+					button.disabled = false;
+					button.textContent = __( 'Make a new featured image', 'ana-afdal-writer' );
+					flash( root, errorText( err ) );
+				} );
+			return;
+		}
 		if ( form.dataset.form === 'topics' ) {
 			e.preventDefault();
 			const button = form.querySelector( '[type="submit"]' );

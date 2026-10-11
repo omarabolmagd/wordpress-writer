@@ -177,6 +177,7 @@ final class Article {
 			'angle'            => sanitize_text_field( (string) ( $o['angle'] ?? '' ) ),
 			'author_id'        => (int) ( $o['author_id'] ?? 0 ),
 			'sections'         => array(),
+			'cover'            => self::sanitize_cover( (array) ( $o['cover'] ?? array() ) ),
 			'faq_questions'    => array(),
 			'internal_link_ids' => array(),
 			'external_sources' => array(),
@@ -274,6 +275,15 @@ final class Article {
 		$out['external_sources'] = array_slice( array_values( array_unique( $out['external_sources'] ) ), 0, 6 );
 
 		return $out;
+	}
+
+	/** The featured-image plan: a scene for Gemini, words for a stock photo and Arabic alt text. */
+	public static function sanitize_cover( array $c ): array {
+		return array(
+			'prompt' => sanitize_textarea_field( (string) ( $c['prompt'] ?? '' ) ),
+			'query'  => sanitize_text_field( (string) ( $c['query'] ?? '' ) ),
+			'alt'    => sanitize_text_field( (string) ( $c['alt'] ?? '' ) ),
+		);
 	}
 
 	public static function english_slug( string $slug ): string {
@@ -422,15 +432,10 @@ final class Article {
 
 		if ( null === $done['cover'] ) {
 			Progress::phase( 'images', 'cover', array( 'current' => 1, 'total' => $total ) );
-			try {
-				$label         = self::category_label( $outline );
-				$done['cover'] = array( 'id' => Cover::create( $outline['title'], $label, $outline['slug'], $outline['title'] ) );
-				Jobs::log( $job_id, 'Cover image drawn.' );
-			} catch ( \Throwable $e ) {
-				$done['cover'] = array( 'id' => 0, 'error' => $e->getMessage() );
-				Jobs::log( $job_id, 'Cover failed: ' . $e->getMessage() );
-			}
+			Progress::hold( 240 );
+			$done['cover'] = self::make_cover( $job_id, $outline, (array) ( $outline['cover'] ?? array() ) );
 			$record( $done );
+			Progress::tick( true );
 		}
 
 		foreach ( $outline['sections'] as $i => $section ) {
@@ -458,6 +463,85 @@ final class Article {
 			Progress::tick( true );
 		}
 		return 'assemble';
+	}
+
+	/**
+	 * Makes the featured image for a job and logs how it went.
+	 *
+	 * @return array{id:int, source?:string, error?:string, prompt?:string}
+	 */
+	private static function make_cover( int $job_id, array $outline, array $plan, ?array $order = null ): array {
+		$names = array(
+			'ai'      => 'Gemini photo',
+			'pexels'  => 'Pexels photo',
+			'branded' => 'title cover',
+		);
+		try {
+			$cover = Images::cover( $plan, $outline['title'], self::category_label( $outline ), $job_id, $outline['slug'], $order );
+			$note  = '';
+			foreach ( $cover['errors'] as $source => $error ) {
+				$note .= sprintf( ' (%s failed: %s)', $names[ $source ] ?? $source, $error );
+			}
+			Jobs::log( $job_id, 'Featured image: ' . ( $names[ $cover['source'] ] ?? $cover['source'] ) . '.' . $note );
+			return array(
+				'id'     => $cover['id'],
+				'source' => $cover['source'],
+				'prompt' => 'ai' === $cover['source'] ? (string) ( $plan['prompt'] ?? '' ) : '',
+				'errors' => $cover['errors'],
+			);
+		} catch ( \Throwable $e ) {
+			Jobs::log( $job_id, 'Featured image failed: ' . $e->getMessage() );
+			return array( 'id' => 0, 'error' => $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Replaces the featured image of a finished article with a new one, from the scene the editor
+	 * typed, the outline's scene, or (for articles planned before scenes existed) one Claude describes.
+	 */
+	public static function new_cover( int $job_id, string $scene = '' ): array {
+		$state   = Jobs::get( $job_id );
+		$outline = $state['data']['outline'] ?? null;
+		$post_id = (int) ( $state['data']['post_id'] ?? 0 );
+		if ( ! $outline || ! $post_id || ! get_post( $post_id ) ) {
+			throw new \InvalidArgumentException( __( 'This article has no saved draft yet.', 'ana-afdal-writer' ) );
+		}
+		$plan  = (array) ( $outline['cover'] ?? array() );
+		$scene = trim( $scene );
+		if ( '' !== $scene ) {
+			$plan['prompt'] = sanitize_textarea_field( $scene );
+		} elseif ( '' === trim( (string) ( $plan['prompt'] ?? '' ) ) && Settings::has_key( 'anthropic_key' ) ) {
+			list( $system, $prompt ) = Prompts::cover_scene( $outline['title'], $outline['focus_keyphrase'], (string) ( $outline['angle'] ?? '' ), self::category_label( $outline ) );
+			$plan                    = self::sanitize_cover( Claude::json( $system, $prompt, Prompts::cover_schema(), $job_id, 'cover_scene' ) );
+		}
+
+		// Asked for by the editor: a Gemini photo or a clear error, never a quiet fallback.
+		$cover = self::make_cover( $job_id, $outline, $plan, array( 'ai' ) );
+		if ( empty( $cover['id'] ) ) {
+			throw new \RuntimeException( (string) ( $cover['error'] ?? 'The featured image could not be made.' ) );
+		}
+		set_post_thumbnail( $post_id, (int) $cover['id'] );
+		Media::attach_to_post( array( (int) $cover['id'] ), $post_id );
+
+		Jobs::update(
+			$job_id,
+			static function ( array $s ) use ( $cover, $plan ) {
+				$s['data']['images']['cover']   = $cover;
+				$s['data']['outline']['cover'] = array_merge( (array) ( $s['data']['outline']['cover'] ?? array() ), $plan );
+				foreach ( (array) ( $s['data']['checklist'] ?? array() ) as $i => $item ) {
+					if ( 'featured_image' === ( $item['key'] ?? '' ) ) {
+						$s['data']['checklist'][ $i ]['status'] = empty( $cover['errors'] ) ? 'pass' : 'warn';
+						$s['data']['checklist'][ $i ]['note']   = empty( $cover['errors'] ) ? '' : implode( ' ', (array) $cover['errors'] );
+					}
+				}
+				return $s;
+			}
+		);
+		$checklist = Jobs::get( $job_id )['data']['checklist'] ?? null;
+		if ( is_array( $checklist ) ) {
+			update_post_meta( $post_id, Quality::META, wp_slash( wp_json_encode( $checklist, JSON_UNESCAPED_UNICODE ) ) );
+		}
+		return $cover;
 	}
 
 	private static function category_label( array $outline ): string {
