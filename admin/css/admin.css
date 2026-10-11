@@ -1,0 +1,99 @@
+/* Ana Afdal Writer admin. Uses logical properties so it works in RTL (Arabic) and LTR. */
+.aaw-wrap { --aaw-brand: #00aead; --aaw-brand-dark: #007f7e; --aaw-border: #dcdcde; --aaw-muted: #646970; max-width: 1200px; }
+.aaw-card { background: #fff; border: 1px solid var(--aaw-border); border-radius: 8px; padding: 16px 20px; margin: 16px 0; box-shadow: 0 1px 1px rgba(0,0,0,.03); }
+.aaw-card h2 { margin-top: 0; font-size: 1.2em; }
+details.aaw-card > summary { cursor: pointer; }
+.aaw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 16px; }
+.aaw-grid > .aaw-card { margin: 0; }
+.aaw-loading { color: var(--aaw-muted); }
+.aaw-loading .spinner, .aaw-progress .spinner { float: none; margin: 0 4px; vertical-align: middle; }
+.aaw-progress { font-size: 14px; }
+
+.aaw-budget-figure { font-size: 15px; margin: 0 0 8px; }
+.aaw-budget-figure strong { font-size: 22px; margin-inline-end: 6px; }
+.aaw-meter { height: 8px; background: #f0f0f1; border-radius: 99px; overflow: hidden; max-width: 420px; }
+.aaw-meter span { display: block; height: 100%; background: var(--aaw-brand); border-radius: 99px; }
+.aaw-meter.full span { background: #d63638; }
+.aaw-warn { color: #8a5a00; margin: 8px 0 0; }
+
+.aaw-inline-form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.aaw-inline-form input { flex: 1 1 260px; }
+.aaw-form label, .aaw-fields label { display: block; font-weight: 600; }
+.aaw-form input, .aaw-form select, .aaw-form textarea, .aaw-fields input, .aaw-fields select, .aaw-fields textarea { font-weight: 400; margin-top: 4px; }
+.aaw-fields { display: grid; gap: 12px; }
+.aaw-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.aaw-row > label { flex: 1 1 180px; }
+.aaw-row select { width: 100%; }
+.aaw-new-category { margin-top: 6px; }
+
+.aaw-topics { display: grid; gap: 12px; }
+.aaw-topic { border: 1px solid var(--aaw-border); border-radius: 8px; padding: 12px 14px; }
+.aaw-topic h3 { margin: 0 0 6px; font-size: 15px; line-height: 1.5; }
+.aaw-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 0 0 6px; }
+.aaw-pill { display: inline-block; background: #f0f6f6; color: var(--aaw-brand-dark); border-radius: 99px; padding: 1px 10px; font-size: 12px; }
+.aaw-pill-new { background: #fcf0e3; color: #8a5a00; }
+.aaw-keyphrase { color: var(--aaw-muted); font-size: 12px; }
+.aaw-overlap { color: #8a5a00; }
+
+.aaw-badge { display: inline-block; border-radius: 99px; padding: 2px 10px; font-size: 12px; font-weight: 600; background: #f0f0f1; color: #3c434a; }
+.aaw-badge-good { background: #edfaef; color: #00660f; }
+.aaw-badge-bad { background: #fcf0f1; color: #a00; }
+.aaw-badge-busy { background: #f0f6fc; color: #135e96; }
+.aaw-badge-attention { background: #fcf0e3; color: #8a5a00; }
+.aaw-table td { vertical-align: middle; }
+
+.aaw-job-head h2 { font-size: 1.4em; margin: 8px 0 4px; line-height: 1.4; }
+.aaw-job-head p { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 0; }
+.aaw-cost { color: var(--aaw-muted); }
+.aaw-danger { color: #b32d2e !important; }
+
+.aaw-steps { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 16px 0; padding: 0; counter-reset: step; }
+.aaw-steps li { counter-increment: step; margin: 0; padding: 4px 12px; border-radius: 99px; background: #f0f0f1; color: var(--aaw-muted); font-size: 12px; }
+.aaw-steps li::before { content: counter(step) ". "; }
+.aaw-steps li.done { background: #e6f6f6; color: var(--aaw-brand-dark); }
+.aaw-steps li.current { background: var(--aaw-brand); color: #fff; font-weight: 600; }
+.aaw-steps li.failed { background: #d63638; color: #fff; }
+
+.aaw-outline h3 { margin-top: 24px; }
+.aaw-sections { list-style: none; margin: 0; padding: 0; }
+.aaw-section { border: 1px solid var(--aaw-border); border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fcfcfc; }
+.aaw-section-head { display: flex; gap: 8px; align-items: center; }
+.aaw-section-head input { flex: 1; font-weight: 600; }
+.aaw-section-num { display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 50%; background: var(--aaw-brand); color: #fff; font-weight: 700; flex: none; }
+.aaw-points { display: block; margin-top: 8px; color: var(--aaw-muted); }
+.aaw-points textarea { width: 100%; }
+.aaw-image-plan { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; align-items: flex-end; }
+.aaw-image-plan label { display: flex; flex-direction: column; gap: 2px; flex: 1 1 200px; color: var(--aaw-muted); }
+.aaw-image-plan label[hidden] { display: none; }
+.aaw-counter { font-weight: 400; color: var(--aaw-muted); }
+.aaw-counter.off { color: #b32d2e; }
+.aaw-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.aaw-checks { margin: 0; }
+.aaw-checks li { margin-bottom: 6px; }
+.aaw-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 24px; }
+
+.aaw-checklist { margin: 0; }
+.aaw-check { padding: 6px 0; border-bottom: 1px solid #f0f0f1; line-height: 1.6; }
+.aaw-check-icon { display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%; font-weight: 700; color: #fff; background: #00a32a; font-size: 12px; }
+.aaw-check-warn .aaw-check-icon { background: #dba617; }
+.aaw-check-info .aaw-check-icon { background: #2271b1; }
+
+.aaw-backlinks { margin: 0; }
+.aaw-backlink { border-top: 1px solid #f0f0f1; padding-top: 8px; }
+.aaw-backlink blockquote { margin: 6px 0; padding: 8px 12px; background: #f6f7f7; border-inline-start: 3px solid var(--aaw-brand); }
+.aaw-backlink mark { background: #fff2b3; }
+.aaw-log { margin: 8px 0 0; max-height: 280px; overflow: auto; }
+.aaw-log time { color: var(--aaw-muted); margin-inline-end: 6px; }
+.aaw-sources a { word-break: break-word; }
+
+.aaw-test-results { margin-inline-start: 8px; }
+.aaw-test { display: inline-block; margin: 4px 8px 0 0; padding: 2px 8px; border-radius: 4px; }
+.aaw-test.ok { background: #edfaef; color: #00660f; }
+.aaw-test.no { background: #fcf0f1; color: #a00; }
+.aaw-remove-key { margin-inline-start: 8px; }
+
+@media (max-width: 782px) {
+	.aaw-grid { grid-template-columns: 1fr; }
+	.aaw-section-head { flex-wrap: wrap; }
+}
+.aaw-wrap input.aaw-number { width: 8em; }

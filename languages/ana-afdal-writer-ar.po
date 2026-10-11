@@ -1,0 +1,1134 @@
+# Copyright (C) 2026 Omar Abouelmagd
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ana Afdal Writer 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wordpress-writer\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+"POT-Creation-Date: 2026-10-11T07:25:33+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ana-afdal-writer\n"
+
+#. Plugin Name of the plugin
+#: ana-afdal-writer.php
+#: src/Admin.php:23
+#: src/Admin.php:24
+#: src/Admin.php:89
+msgid "Ana Afdal Writer"
+msgstr "كاتب انا افضل"
+
+#. Plugin URI of the plugin
+#: ana-afdal-writer.php
+msgid "https://anaafdal.com/"
+msgstr "https://anaafdal.com/"
+
+#. Description of the plugin
+#: ana-afdal-writer.php
+msgid "Researches, writes, illustrates and links new Arabic posts with Claude, then saves them as drafts for review."
+msgstr "يبحث ويكتب ويضيف الصور والروابط لمقالات عربية جديدة باستخدام Claude، ثم يحفظها كمسودات للمراجعة."
+
+#. Author of the plugin
+#: ana-afdal-writer.php
+msgid "Omar Abouelmagd"
+msgstr "عمر أبو المجد"
+
+#: ana-afdal-writer.php:28
+msgid "Ana Afdal Writer needs PHP 8.1 or newer. Ask your host to upgrade PHP."
+msgstr "يحتاج كاتب انا افضل إلى PHP 8.1 أو أحدث. اطلب من شركة الاستضافة ترقية PHP."
+
+#: src/Admin.php:31
+msgid "New post"
+msgstr "مقال جديد"
+
+#: src/Admin.php:32
+#: src/Admin.php:108
+msgid "Costs"
+msgstr "التكاليف"
+
+#: src/Admin.php:33
+#: src/Admin.php:38
+#: admin/js/app.js:165
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: src/Admin.php:76
+msgid "Ana Afdal Writer needs a Claude API key before it can write."
+msgstr "يحتاج كاتب انا افضل إلى مفتاح Claude API قبل أن يبدأ الكتابة."
+
+#: src/Admin.php:78
+msgid "Add it in Settings"
+msgstr "أضفه من الإعدادات"
+
+#: src/Admin.php:85
+msgid "You do not have permission to use the writer."
+msgstr "ليست لديك صلاحية استخدام الكاتب."
+
+#: src/Admin.php:91
+msgid "Loading…"
+msgstr "جارٍ التحميل…"
+
+#: src/Admin.php:93
+msgid "This screen needs JavaScript."
+msgstr "تحتاج هذه الشاشة إلى تفعيل JavaScript."
+
+#: src/Admin.php:100
+msgid "You do not have permission to view costs."
+msgstr "ليست لديك صلاحية عرض التكاليف."
+
+#. translators: %s: monthly cap in dollars
+#: src/Admin.php:115
+#, php-format
+msgid "of %s this month"
+msgstr "من %s هذا الشهر"
+
+#: src/Admin.php:117
+msgid "this month (no cap set)"
+msgstr "هذا الشهر (بدون حد أقصى)"
+
+#: src/Admin.php:124
+msgid "Costs are estimates from token counts and the prices in Settings. Your Anthropic and Google consoles show the exact bill."
+msgstr "التكاليف تقديرية بناءً على عدد التوكنز والأسعار في الإعدادات. الفاتورة الدقيقة تجدها في لوحتي Anthropic وGoogle."
+
+#: src/Admin.php:127
+msgid "This month by job"
+msgstr "تكاليف هذا الشهر حسب المهمة"
+
+#: src/Admin.php:129
+msgid "Job"
+msgstr "المهمة"
+
+#: src/Admin.php:129
+#: src/Admin.php:151
+#: admin/js/app.js:286
+msgid "Cost"
+msgstr "التكلفة"
+
+#: src/Admin.php:129
+msgid "Last activity"
+msgstr "آخر نشاط"
+
+#: src/Admin.php:132
+msgid "Nothing spent yet this month."
+msgstr "لم يُصرف شيء هذا الشهر بعد."
+
+#: src/Admin.php:149
+msgid "Latest API calls"
+msgstr "أحدث طلبات API"
+
+#: src/Admin.php:151
+msgid "When"
+msgstr "الوقت"
+
+#: src/Admin.php:151
+msgid "Service"
+msgstr "الخدمة"
+
+#: src/Admin.php:151
+msgid "Step"
+msgstr "الخطوة"
+
+#: src/Admin.php:151
+msgid "Details"
+msgstr "التفاصيل"
+
+#: src/Article.php:19
+msgid "The topic needs a title."
+msgstr "الموضوع يحتاج إلى عنوان."
+
+#: src/Article.php:111
+msgid "The outline needs a title."
+msgstr "المخطط يحتاج إلى عنوان."
+
+#: src/Article.php:182
+msgid "The outline needs at least one section."
+msgstr "المخطط يحتاج إلى قسم واحد على الأقل."
+
+#: src/Article.php:219
+msgid "This outline is not waiting for approval."
+msgstr "هذا المخطط لا ينتظر الموافقة."
+
+#: src/Article.php:409
+msgid "not one of the researched sources"
+msgstr "ليس من المصادر التي تم بحثها"
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+#, php-format
+msgid "site blocks automated checks (HTTP %d)"
+msgstr "الموقع يرفض الفحص الآلي (HTTP %d)"
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+#, php-format
+msgid "broken link (HTTP %d)"
+msgstr "رابط معطل (HTTP %d)"
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+msgid "site did not respond"
+msgstr "الموقع لم يستجب"
+
+#: src/Article.php:430
+msgid "not a published post"
+msgstr "ليس مقالًا منشورًا"
+
+#: src/Article.php:444
+msgid "invalid link"
+msgstr "رابط غير صالح"
+
+#: src/Backlinks.php:165
+msgid "Suggestion not found."
+msgstr "لم يُعثر على الاقتراح."
+
+#: src/Backlinks.php:213
+msgid "The paragraph or phrase changed since the suggestion was made."
+msgstr "تغيّرت الفقرة أو العبارة بعد إنشاء الاقتراح."
+
+#: src/DraftMetaBox.php:19
+msgid "Ana Afdal Writer: review checklist"
+msgstr "كاتب انا افضل: قائمة المراجعة"
+
+#: src/DraftMetaBox.php:29
+msgid "The checklist appears here once the quality check has run."
+msgstr "تظهر قائمة المراجعة هنا بعد انتهاء فحص الجودة."
+
+#: src/DraftMetaBox.php:47
+msgid "Open this post in Ana Afdal Writer (sources, backlink suggestions, cost)"
+msgstr "افتح هذا المقال في كاتب انا افضل (المصادر، اقتراحات الروابط، التكلفة)"
+
+#: src/Quality.php:42
+msgid "Editorial review"
+msgstr "المراجعة التحريرية"
+
+#: src/Quality.php:43
+msgid "The automatic review could not run. Read the draft carefully."
+msgstr "تعذّر تشغيل المراجعة التلقائية. اقرأ المسودة بعناية."
+
+#: src/Quality.php:68
+msgid "Outdated facts"
+msgstr "معلومات قديمة"
+
+#: src/Quality.php:69
+msgid "Claims not backed by research"
+msgstr "معلومات غير مدعومة بالبحث"
+
+#: src/Quality.php:70
+msgid "Dialect instead of MSA"
+msgstr "عامية بدل الفصحى"
+
+#: src/Quality.php:71
+msgid "Keyword stuffing"
+msgstr "حشو الكلمة المفتاحية"
+
+#: src/Quality.php:72
+msgid "Off-topic links"
+msgstr "روابط خارج السياق"
+
+#: src/Quality.php:73
+msgid "Title matches content"
+msgstr "تطابق العنوان مع المحتوى"
+
+#: src/Quality.php:74
+msgid "Repetition or padding"
+msgstr "تكرار أو حشو"
+
+#: src/Quality.php:75
+msgid "Formatting"
+msgstr "التنسيق"
+
+#: src/Quality.php:151
+msgid "Length fits the template"
+msgstr "الطول مناسب للقالب"
+
+#. translators: 1: word count, 2: minimum, 3: maximum
+#: src/Quality.php:153
+#, php-format
+msgid "About %1$d words (target %2$d–%3$d)."
+msgstr "نحو %1$d كلمة (المطلوب %2$d–%3$d)."
+
+#: src/Quality.php:160
+#: admin/js/app.js:464
+msgid "Internal links"
+msgstr "الروابط الداخلية"
+
+#. translators: %d: number of links
+#: src/Quality.php:162
+#, php-format
+msgid "%d links to other posts (target 3–5)."
+msgstr "%d روابط لمقالات أخرى (المطلوب 3–5)."
+
+#: src/Quality.php:169
+msgid "External sources"
+msgstr "المصادر الخارجية"
+
+#. translators: %d: number of links
+#: src/Quality.php:171
+#, php-format
+msgid "%d links to sources, each checked live (target 2–4)."
+msgstr "%d روابط لمصادر، فُحص كل منها مباشرة (المطلوب 2–4)."
+
+#: src/Quality.php:178
+msgid "Links removed during checks"
+msgstr "روابط حُذفت أثناء الفحص"
+
+#: src/Quality.php:179
+msgid "None."
+msgstr "لا يوجد."
+
+#: src/Quality.php:187
+msgid "Sources to open yourself"
+msgstr "مصادر افتحها بنفسك"
+
+#: src/Quality.php:188
+msgid "These sites refuse automated checks, so open them once to confirm they work:"
+msgstr "هذه المواقع ترفض الفحص الآلي، فافتحها مرة للتأكد من أنها تعمل:"
+
+#: src/Quality.php:208
+msgid "Planned images added"
+msgstr "الصور المخطط لها"
+
+#: src/Quality.php:209
+msgid "All planned images are in the post with Arabic alt text."
+msgstr "كل الصور المخطط لها موجودة في المقال مع نص بديل عربي."
+
+#. translators: %d: number of images
+#: src/Quality.php:213
+msgid "Image alt text"
+msgstr "النص البديل للصور"
+
+#. translators: %d: number of images
+#: src/Quality.php:213
+#, php-format
+msgid "%d image(s) have no alt text."
+msgstr "%d صورة بدون نص بديل."
+
+#: src/Quality.php:219
+msgid "Featured image"
+msgstr "الصورة البارزة"
+
+#: src/Quality.php:227
+msgid "Meta description length"
+msgstr "طول الوصف التعريفي"
+
+#. translators: %d: number of characters
+#: src/Quality.php:229
+#, php-format
+msgid "%d characters (target 120–155)."
+msgstr "%d حرفًا (المطلوب 120–155)."
+
+#: src/Quality.php:236
+msgid "title"
+msgstr "العنوان"
+
+#: src/Quality.php:239
+msgid "first paragraph"
+msgstr "الفقرة الأولى"
+
+#: src/Quality.php:242
+msgid "meta description"
+msgstr "الوصف التعريفي"
+
+#: src/Quality.php:247
+msgid "Focus keyphrase placement"
+msgstr "مواضع الكلمة المفتاحية"
+
+#: src/Quality.php:248
+msgid "Exact keyphrase not found in:"
+msgstr "لم تُذكر الكلمة المفتاحية بنصها في:"
+
+#: src/Quality.php:255
+msgid "English URL slug"
+msgstr "رابط المقال بالإنجليزية"
+
+#: src/Quality.php:263
+msgid "FAQ with schema"
+msgstr "الأسئلة الشائعة مع Schema"
+
+#. translators: %d: number of questions
+#: src/Quality.php:265
+#, php-format
+msgid "%d questions in the Yoast FAQ block."
+msgstr "%d أسئلة في كتلة الأسئلة الشائعة من Yoast."
+
+#: src/Quality.php:272
+msgid "New category created"
+msgstr "تم إنشاء تصنيف جديد"
+
+#: src/Rest.php:80
+msgid "Add your Claude API key in Settings first."
+msgstr "أضف مفتاح Claude API من الإعدادات أولًا."
+
+#: src/Rest.php:83
+msgid "This month's spending cap is reached. Raise it in Settings or wait until next month."
+msgstr "تم بلوغ حد الإنفاق لهذا الشهر. ارفعه من الإعدادات أو انتظر حتى الشهر القادم."
+
+#: src/Rest.php:115
+#: src/Rest.php:168
+msgid "Not found."
+msgstr "غير موجود."
+
+#: src/Rest.php:140
+msgid "This step stopped without finishing. The server probably hit its time limit; ask your host to raise PHP max_execution_time to 300 seconds, then try again."
+msgstr "توقفت هذه الخطوة قبل أن تكتمل. على الأرجح وصل الخادم إلى حده الزمني؛ اطلب من شركة الاستضافة رفع max_execution_time في PHP إلى 300 ثانية، ثم حاول مرة أخرى."
+
+#: src/Rest.php:141
+msgid "This step never started. Background tasks may be blocked on this server; try again, and if it repeats, check that WP-Cron is running."
+msgstr "لم تبدأ هذه الخطوة. قد تكون المهام الخلفية محجوبة على هذا الخادم؛ حاول مرة أخرى، وإذا تكرر ذلك فتأكد من أن WP-Cron يعمل."
+
+#: src/Rest.php:158
+msgid "Only a failed step can be retried."
+msgstr "يمكن إعادة المحاولة فقط للخطوة التي فشلت."
+
+#: src/Rest.php:269
+msgid "No key"
+msgstr "لا يوجد مفتاح"
+
+#: src/Rest.php:284
+msgid "No key (AI images off)"
+msgstr "لا يوجد مفتاح (صور الذكاء الاصطناعي متوقفة)"
+
+#: src/Rest.php:299
+msgid "No key (stock photos off)"
+msgstr "لا يوجد مفتاح (الصور الجاهزة متوقفة)"
+
+#: src/Rest.php:303
+msgid "Key saved (tested on first use)"
+msgstr "المفتاح محفوظ (يُختبر عند أول استخدام)"
+
+#: src/Rest.php:304
+msgid "No key (screenshots off)"
+msgstr "لا يوجد مفتاح (لقطات الشاشة متوقفة)"
+
+#: src/Rest.php:307
+msgid "Server can draw covers"
+msgstr "الخادم يستطيع رسم صور الغلاف"
+
+#: src/Rest.php:308
+msgid "PHP GD with FreeType is missing"
+msgstr "مكتبة PHP GD مع FreeType غير متوفرة"
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+#, php-format
+msgid "Time limit OK (%1$ds, can raise: %2$s)"
+msgstr "الحد الزمني مناسب (%1$d ث، يمكن رفعه: %2$s)"
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+msgid "yes"
+msgstr "نعم"
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+msgid "no"
+msgstr "لا"
+
+#. translators: %d: seconds
+#: src/Rest.php:320
+#, php-format
+msgid "PHP time limit is %ds and cannot be raised. Ask your host for 300s."
+msgstr "الحد الزمني لـ PHP هو %d ث ولا يمكن رفعه. اطلب من الاستضافة 300 ث."
+
+#: src/Rest.php:332
+msgid "Connected"
+msgstr "متصل"
+
+#: src/Rest.php:335
+msgid "Key rejected"
+msgstr "المفتاح مرفوض"
+
+#: src/Rest.php:338
+msgid "Model or endpoint not found — check the model name"
+msgstr "النموذج أو العنوان غير موجود — تحقق من اسم النموذج"
+
+#. translators: %s: HTTP status or error
+#: src/Rest.php:341
+#, php-format
+msgid "Failed (%s)"
+msgstr "فشل (%s)"
+
+#: src/Settings.php:163
+msgid "You do not have permission to change these settings."
+msgstr "ليست لديك صلاحية تغيير هذه الإعدادات."
+
+#: src/Settings.php:168
+msgid "Ana Afdal Writer settings"
+msgstr "إعدادات كاتب انا افضل"
+
+#: src/Settings.php:172
+msgid "API keys"
+msgstr "مفاتيح API"
+
+#: src/Settings.php:173
+msgid "Keys are stored in the database and never sent to the browser. To keep them out of the database entirely, define them in wp-config.php instead (AAW_ANTHROPIC_API_KEY, AAW_GEMINI_API_KEY, AAW_PEXELS_API_KEY, AAW_SCREENSHOT_API_KEY)."
+msgstr "تُحفظ المفاتيح في قاعدة البيانات ولا تُرسل إلى المتصفح أبدًا. لإبقائها خارج قاعدة البيانات تمامًا، عرّفها في wp-config.php بدلًا من ذلك (AAW_ANTHROPIC_API_KEY وAAW_GEMINI_API_KEY وAAW_PEXELS_API_KEY وAAW_SCREENSHOT_API_KEY)."
+
+#: src/Settings.php:176
+msgid "Claude (Anthropic) API key"
+msgstr "مفتاح Claude API (Anthropic)"
+
+#: src/Settings.php:176
+msgid "Required. Writes the posts and searches the web. Create one at platform.claude.com."
+msgstr "مطلوب. يكتب المقالات ويبحث في الويب. أنشئه من platform.claude.com."
+
+#: src/Settings.php:177
+msgid "Google Gemini API key"
+msgstr "مفتاح Google Gemini API"
+
+#: src/Settings.php:177
+msgid "Optional. Needed for AI images. Create one at aistudio.google.com."
+msgstr "اختياري. مطلوب لصور الذكاء الاصطناعي. أنشئه من aistudio.google.com."
+
+#: src/Settings.php:178
+msgid "Pexels API key"
+msgstr "مفتاح Pexels API"
+
+#: src/Settings.php:178
+msgid "Optional. Needed for stock photos. Free at pexels.com/api."
+msgstr "اختياري. مطلوب للصور الجاهزة. مجاني من pexels.com/api."
+
+#: src/Settings.php:179
+msgid "Screenshot service key"
+msgstr "مفتاح خدمة لقطات الشاشة"
+
+#: src/Settings.php:179
+msgid "Optional. Needed for website screenshots. The default service is ScreenshotOne (free plan available at screenshotone.com)."
+msgstr "اختياري. مطلوب للقطات شاشة المواقع. الخدمة الافتراضية ScreenshotOne (تتوفر خطة مجانية على screenshotone.com)."
+
+#: src/Settings.php:183
+msgid "Test connections"
+msgstr "اختبار الاتصال"
+
+#: src/Settings.php:187
+msgid "Budget"
+msgstr "الميزانية"
+
+#: src/Settings.php:190
+msgid "Monthly spending cap (USD)"
+msgstr "الحد الشهري للإنفاق (بالدولار)"
+
+#: src/Settings.php:193
+msgid "New topic suggestions and new posts stop once this month's spending reaches the cap. Posts already in progress can finish. Set 0 for no cap."
+msgstr "تتوقف اقتراحات المواضيع والمقالات الجديدة عندما يبلغ إنفاق الشهر الحد. المقالات الجارية تكتمل. ضع 0 لإلغاء الحد."
+
+#: src/Settings.php:198
+#: admin/js/app.js:58
+msgid "Writing"
+msgstr "الكتابة"
+
+#: src/Settings.php:201
+msgid "Claude model"
+msgstr "نموذج Claude"
+
+#: src/Settings.php:201
+msgid "Default: claude-sonnet-5-5. If you switch models, update the Claude prices below too."
+msgstr "الافتراضي: claude-sonnet-5-5. إذا غيّرت النموذج فحدّث أسعار Claude أدناه أيضًا."
+
+#: src/Settings.php:202
+msgid "Web searches per research step"
+msgstr "عدد عمليات البحث في كل خطوة بحث"
+
+#: src/Settings.php:202
+msgid "Each search costs about $0.01."
+msgstr "كل عملية بحث تكلف نحو 0.01 دولار."
+
+#: src/Settings.php:203
+msgid "Telegram channel link"
+msgstr "رابط قناة تيليجرام"
+
+#: src/Settings.php:203
+msgid "Every post ends with an invitation to this channel."
+msgstr "ينتهي كل مقال بدعوة للانضمام إلى هذه القناة."
+
+#: src/Settings.php:204
+msgid "Telegram invitation text"
+msgstr "نص دعوة تيليجرام"
+
+#: src/Settings.php:208
+#: admin/js/app.js:59
+msgid "Images"
+msgstr "الصور"
+
+#: src/Settings.php:211
+msgid "Cover background colour"
+msgstr "لون خلفية الغلاف"
+
+#: src/Settings.php:211
+msgid "Used for the branded featured image."
+msgstr "يُستخدم في الصورة البارزة التي تحمل هوية الموقع."
+
+#: src/Settings.php:212
+msgid "Cover logo (attachment ID)"
+msgstr "شعار الغلاف (رقم المرفق)"
+
+#: src/Settings.php:212
+msgid "Optional. A PNG logo from the Media Library to place on covers. Leave 0 to use the site's logo if it has one."
+msgstr "اختياري. شعار PNG من مكتبة الوسائط يوضع على صور الغلاف. اتركه 0 لاستخدام شعار الموقع إن وُجد."
+
+#: src/Settings.php:213
+msgid "Gemini image model"
+msgstr "نموذج صور Gemini"
+
+#: src/Settings.php:213
+msgid "Default: gemini-nano-banana-2.1."
+msgstr "الافتراضي: gemini-nano-banana-2.1."
+
+#: src/Settings.php:214
+msgid "Screenshot request URL"
+msgstr "رابط طلب لقطة الشاشة"
+
+#: src/Settings.php:214
+msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
+msgstr "إعداد متقدم. يُستبدل {key} و{url} تلقائيًا. غيّره فقط إذا أردت تغيير خدمة لقطات الشاشة."
+
+#: src/Settings.php:218
+msgid "Prices used for cost tracking (USD)"
+msgstr "الأسعار المستخدمة لحساب التكلفة (بالدولار)"
+
+#: src/Settings.php:221
+msgid "Claude input, per million tokens"
+msgstr "مدخلات Claude لكل مليون توكن"
+
+#: src/Settings.php:222
+msgid "Claude output, per million tokens"
+msgstr "مخرجات Claude لكل مليون توكن"
+
+#: src/Settings.php:223
+msgid "Claude cache write, per million tokens"
+msgstr "كتابة ذاكرة Claude المؤقتة لكل مليون توكن"
+
+#: src/Settings.php:224
+msgid "Claude cache read, per million tokens"
+msgstr "قراءة ذاكرة Claude المؤقتة لكل مليون توكن"
+
+#: src/Settings.php:225
+msgid "Claude web search, per search"
+msgstr "بحث Claude في الويب، لكل عملية"
+
+#: src/Settings.php:226
+msgid "Gemini image, per image"
+msgstr "صورة Gemini، لكل صورة"
+
+#: src/Settings.php:227
+msgid "Screenshot, per capture"
+msgstr "لقطة شاشة، لكل لقطة"
+
+#: src/Settings.php:227
+msgid "0 while you are on a free plan."
+msgstr "0 ما دمت على الخطة المجانية."
+
+#: src/Settings.php:245
+msgid "Set in wp-config.php"
+msgstr "محدد في wp-config.php"
+
+#: src/Settings.php:249
+#: admin/js/app.js:411
+msgid "Remove"
+msgstr "إزالة"
+
+#: admin/js/app.js:39
+msgid "Something went wrong. Try again."
+msgstr "حدث خطأ. حاول مرة أخرى."
+
+#: admin/js/app.js:42
+msgid "News update"
+msgstr "تحديث إخباري"
+
+#: admin/js/app.js:43
+msgid "Best-of list"
+msgstr "قائمة أفضل الخيارات"
+
+#: admin/js/app.js:44
+msgid "Full guide"
+msgstr "دليل شامل"
+
+#: admin/js/app.js:48
+msgid "Pexels photo"
+msgstr "صورة من Pexels"
+
+#: admin/js/app.js:49
+msgid "AI image (Gemini)"
+msgstr "صورة بالذكاء الاصطناعي (Gemini)"
+
+#: admin/js/app.js:50
+msgid "Website screenshot"
+msgstr "لقطة شاشة لموقع"
+
+#: admin/js/app.js:51
+msgid "No image"
+msgstr "بدون صورة"
+
+#: admin/js/app.js:55
+msgid "Research"
+msgstr "البحث"
+
+#: admin/js/app.js:56
+msgid "Outline"
+msgstr "المخطط"
+
+#: admin/js/app.js:57
+msgid "Your approval"
+msgstr "موافقتك"
+
+#: admin/js/app.js:60
+msgid "Links & draft"
+msgstr "الروابط والمسودة"
+
+#: admin/js/app.js:61
+msgid "Quality check"
+msgstr "فحص الجودة"
+
+#: admin/js/app.js:62
+msgid "Backlinks"
+msgstr "روابط من المقالات القديمة"
+
+#: admin/js/app.js:63
+msgid "Done"
+msgstr "تم"
+
+#: admin/js/app.js:68
+msgid "Failed"
+msgstr "فشل"
+
+#: admin/js/app.js:71
+msgid "Cancelled"
+msgstr "أُلغي"
+
+#: admin/js/app.js:74
+msgid "Waiting for your approval"
+msgstr "بانتظار موافقتك"
+
+#: admin/js/app.js:77
+msgid "Published"
+msgstr "منشور"
+
+#: admin/js/app.js:77
+msgid "Draft ready"
+msgstr "المسودة جاهزة"
+
+#: admin/js/app.js:80
+msgid "Queued"
+msgstr "في الانتظار"
+
+#: admin/js/app.js:110
+msgid "Testing…"
+msgstr "جارٍ الاختبار…"
+
+#: admin/js/app.js:113
+msgid "Screenshots"
+msgstr "لقطات الشاشة"
+
+#: admin/js/app.js:113
+msgid "Covers"
+msgstr "صور الغلاف"
+
+#: admin/js/app.js:113
+msgid "Server time limit"
+msgstr "الحد الزمني للخادم"
+
+#: admin/js/app.js:165
+#, js-format
+msgid "Add your Claude API key in %s to start writing."
+msgstr "أضف مفتاح Claude API في %s لتبدأ الكتابة."
+
+#: admin/js/app.js:166
+msgid "An administrator needs to add the Claude API key before you can write."
+msgstr "يجب أن يضيف المدير مفتاح Claude API قبل أن تتمكن من الكتابة."
+
+#: admin/js/app.js:171
+msgid "stock photos"
+msgstr "الصور الجاهزة"
+
+#: admin/js/app.js:174
+msgid "AI images"
+msgstr "صور الذكاء الاصطناعي"
+
+#: admin/js/app.js:177
+msgid "screenshots"
+msgstr "لقطات الشاشة"
+
+#: admin/js/app.js:180
+#, js-format
+msgid "Off until their keys are added: %s."
+msgstr "متوقفة حتى تُضاف مفاتيحها: %s."
+
+#: admin/js/app.js:186
+#, js-format
+msgid "of %s spent this month"
+msgstr "من %s صُرفت هذا الشهر"
+
+#: admin/js/app.js:186
+msgid "spent this month (no cap)"
+msgstr "صُرفت هذا الشهر (بدون حد)"
+
+#: admin/js/app.js:188
+msgid "The monthly cap is reached, so new posts are paused. Posts already in progress can finish."
+msgstr "تم بلوغ الحد الشهري، لذلك توقفت المقالات الجديدة. المقالات الجارية ستكتمل."
+
+#: admin/js/app.js:195
+#, js-format
+msgid "New category: %s"
+msgstr "تصنيف جديد: %s"
+
+#: admin/js/app.js:205
+msgid "Searching the web for what readers want right now. This takes about a minute."
+msgstr "يجري البحث في الويب عمّا يريده القراء الآن. يستغرق ذلك نحو دقيقة."
+
+#: admin/js/app.js:209
+#, js-format
+msgid "Suggested %s"
+msgstr "اقتُرحت %s"
+
+#: admin/js/app.js:218
+msgid "Keyphrase:"
+msgstr "الكلمة المفتاحية:"
+
+#: admin/js/app.js:222
+#: admin/js/app.js:357
+msgid "Write this"
+msgstr "اكتب هذا المقال"
+
+#: admin/js/app.js:230
+msgid "1. Get topic ideas"
+msgstr "1. احصل على أفكار للمواضيع"
+
+#: admin/js/app.js:232
+msgid "Focus (optional)"
+msgstr "التركيز (اختياري)"
+
+#: admin/js/app.js:233
+msgid "Optional focus, e.g. scholarships in Europe or AI tools for students"
+msgstr "تركيز اختياري، مثل: منح في أوروبا أو أدوات ذكاء اصطناعي للطلاب"
+
+#: admin/js/app.js:234
+msgid "Suggest topics"
+msgstr "اقترح مواضيع"
+
+#: admin/js/app.js:246
+msgid "Let the writer choose"
+msgstr "دع الكاتب يختار"
+
+#: admin/js/app.js:248
+msgid "New category…"
+msgstr "تصنيف جديد…"
+
+#: admin/js/app.js:250
+msgid "New category name"
+msgstr "اسم التصنيف الجديد"
+
+#: admin/js/app.js:255
+msgid "2. Or write about your own topic"
+msgstr "2. أو اكتب عن موضوع تختاره"
+
+#: admin/js/app.js:257
+msgid "Working title"
+msgstr "العنوان المبدئي"
+
+#: admin/js/app.js:258
+msgid "Focus keyphrase (what readers search)"
+msgstr "الكلمة المفتاحية (ما يبحث عنه القراء)"
+
+#: admin/js/app.js:260
+#: admin/js/app.js:448
+msgid "Post type"
+msgstr "نوع المقال"
+
+#: admin/js/app.js:263
+#: admin/js/app.js:449
+msgid "Category"
+msgstr "التصنيف"
+
+#: admin/js/app.js:265
+msgid "Notes for the writer (optional)"
+msgstr "ملاحظات للكاتب (اختياري)"
+
+#: admin/js/app.js:266
+msgid "Start research"
+msgstr "ابدأ البحث"
+
+#: admin/js/app.js:275
+#: admin/js/app.js:702
+msgid "(untitled)"
+msgstr "(بدون عنوان)"
+
+#: admin/js/app.js:284
+msgid "Articles"
+msgstr "المقالات"
+
+#: admin/js/app.js:286
+msgid "Title"
+msgstr "العنوان"
+
+#: admin/js/app.js:286
+msgid "Status"
+msgstr "الحالة"
+
+#: admin/js/app.js:286
+msgid "Updated"
+msgstr "آخر تحديث"
+
+#: admin/js/app.js:287
+msgid "No articles yet. Pick a topic above to start."
+msgstr "لا توجد مقالات بعد. اختر موضوعًا بالأعلى لتبدأ."
+
+#: admin/js/app.js:348
+#: admin/js/app.js:575
+msgid "Starting…"
+msgstr "جارٍ البدء…"
+
+#: admin/js/app.js:390
+msgid "Image"
+msgstr "الصورة"
+
+#: admin/js/app.js:393
+msgid "Search words (English)"
+msgstr "كلمات البحث (بالإنجليزية)"
+
+#: admin/js/app.js:395
+msgid "What to draw (English)"
+msgstr "ما الذي يُرسم (بالإنجليزية)"
+
+#: admin/js/app.js:397
+msgid "Page to capture"
+msgstr "الصفحة المراد تصويرها"
+
+#: admin/js/app.js:399
+msgid "Alt text (Arabic)"
+msgstr "النص البديل (بالعربية)"
+
+#: admin/js/app.js:408
+msgid "Section heading"
+msgstr "عنوان القسم"
+
+#: admin/js/app.js:409
+msgid "Move up"
+msgstr "نقل للأعلى"
+
+#: admin/js/app.js:410
+msgid "Move down"
+msgstr "نقل للأسفل"
+
+#: admin/js/app.js:413
+msgid "Notes for the writer, one per line"
+msgstr "ملاحظات للكاتب، ملاحظة في كل سطر"
+
+#: admin/js/app.js:427
+msgid "cited"
+msgstr "مُستشهد به"
+
+#: admin/js/app.js:437
+msgid "Review the outline"
+msgstr "راجع المخطط"
+
+#: admin/js/app.js:438
+msgid "Change anything you like. Nothing is written or paid for beyond this point until you approve."
+msgstr "غيّر ما تشاء. لن يُكتب شيء ولن تُدفع أي تكلفة إضافية حتى توافق."
+
+#: admin/js/app.js:441
+msgid "Title (H1)"
+msgstr "العنوان (H1)"
+
+#: admin/js/app.js:442
+msgid "SEO title"
+msgstr "عنوان السيو"
+
+#: admin/js/app.js:443
+msgid "Meta description"
+msgstr "الوصف التعريفي"
+
+#: admin/js/app.js:445
+msgid "Focus keyphrase"
+msgstr "الكلمة المفتاحية"
+
+#: admin/js/app.js:446
+msgid "URL slug (English)"
+msgstr "رابط المقال (بالإنجليزية)"
+
+#: admin/js/app.js:450
+msgid "Author"
+msgstr "الكاتب"
+
+#: admin/js/app.js:454
+msgid "Sections"
+msgstr "الأقسام"
+
+#: admin/js/app.js:455
+msgid "The introduction, FAQ, summary and Telegram invitation are added automatically."
+msgstr "تُضاف المقدمة والأسئلة الشائعة والخلاصة ودعوة تيليجرام تلقائيًا."
+
+#: admin/js/app.js:457
+msgid "Add section"
+msgstr "إضافة قسم"
+
+#: admin/js/app.js:459
+msgid "FAQ questions"
+msgstr "الأسئلة الشائعة"
+
+#: admin/js/app.js:465
+msgid "None suggested."
+msgstr "لا توجد اقتراحات."
+
+#: admin/js/app.js:468
+msgid "Sources to cite"
+msgstr "مصادر للاستشهاد"
+
+#: admin/js/app.js:469
+msgid "Ticked sources are offered to the writer; each link is checked live before the draft is saved."
+msgstr "تُعرض المصادر المحددة على الكاتب، ويُفحص كل رابط مباشرة قبل حفظ المسودة."
+
+#: admin/js/app.js:470
+msgid "No sources found."
+msgstr "لم يُعثر على مصادر."
+
+#: admin/js/app.js:475
+#: admin/js/app.js:584
+msgid "Approve and write"
+msgstr "وافق وابدأ الكتابة"
+
+#: admin/js/app.js:476
+msgid "Writing, images and checks take about 3–6 minutes. You can leave this page."
+msgstr "تستغرق الكتابة والصور والفحوص نحو 3–6 دقائق. يمكنك مغادرة هذه الصفحة."
+
+#: admin/js/app.js:566
+msgid "Add at least one section."
+msgstr "أضف قسمًا واحدًا على الأقل."
+
+#: admin/js/app.js:570
+msgid "Name the new category, or pick an existing one."
+msgstr "اكتب اسم التصنيف الجديد أو اختر تصنيفًا موجودًا."
+
+#: admin/js/app.js:599
+msgid "Review checklist"
+msgstr "قائمة المراجعة"
+
+#: admin/js/app.js:600
+#, js-format
+msgid "%d item(s) need a look before you publish."
+msgstr "%d بند يحتاج إلى مراجعة قبل النشر."
+
+#: admin/js/app.js:600
+msgid "Everything passed. Give it a final read and publish."
+msgstr "اجتاز كل شيء الفحص. اقرأه قراءة أخيرة ثم انشره."
+
+#: admin/js/app.js:617
+msgid "Approve"
+msgstr "موافقة"
+
+#: admin/js/app.js:618
+msgid "Dismiss"
+msgstr "تجاهل"
+
+#: admin/js/app.js:621
+msgid "Approved"
+msgstr "تمت الموافقة"
+
+#: admin/js/app.js:621
+msgid "Approved — added when you publish"
+msgstr "تمت الموافقة — يُضاف عند النشر"
+
+#: admin/js/app.js:622
+msgid "Link added"
+msgstr "أُضيف الرابط"
+
+#: admin/js/app.js:623
+msgid "Dismissed"
+msgstr "تم التجاهل"
+
+#: admin/js/app.js:624
+msgid "Could not add"
+msgstr "تعذّرت الإضافة"
+
+#: admin/js/app.js:639
+msgid "Links from older posts"
+msgstr "روابط من المقالات القديمة"
+
+#: admin/js/app.js:640
+msgid "Approved links are added to the older posts once this post is published, so no reader lands on a draft."
+msgstr "تُضاف الروابط الموافق عليها إلى المقالات القديمة بعد نشر هذا المقال، حتى لا يصل أي قارئ إلى مسودة."
+
+#: admin/js/app.js:641
+msgid "No good spots found in older posts this time."
+msgstr "لم نجد مواضع مناسبة في المقالات القديمة هذه المرة."
+
+#: admin/js/app.js:652
+#, js-format
+msgid "Research sources (%d)"
+msgstr "مصادر البحث (%d)"
+
+#: admin/js/app.js:654
+msgid "linked in post"
+msgstr "مرتبط في المقال"
+
+#: admin/js/app.js:661
+msgid "Activity"
+msgstr "سجل النشاط"
+
+#: admin/js/app.js:675
+msgid "This step failed:"
+msgstr "فشلت هذه الخطوة:"
+
+#: admin/js/app.js:676
+msgid "Try this step again"
+msgstr "أعد محاولة هذه الخطوة"
+
+#: admin/js/app.js:679
+msgid "Researching and planning. The outline is usually ready in 1–3 minutes."
+msgstr "يجري البحث والتخطيط. يجهز المخطط عادة خلال 1–3 دقائق."
+
+#: admin/js/app.js:679
+msgid "Working on your draft. You can leave this page and come back."
+msgstr "يجري العمل على المسودة. يمكنك مغادرة الصفحة والعودة لاحقًا."
+
+#: admin/js/app.js:685
+msgid "Published post"
+msgstr "المقال المنشور"
+
+#: admin/js/app.js:685
+msgid "Your draft"
+msgstr "مسودتك"
+
+#: admin/js/app.js:686
+#, js-format
+msgid "About %d words."
+msgstr "نحو %d كلمة."
+
+#: admin/js/app.js:686
+#, js-format
+msgid "%1$d internal and %2$d external links."
+msgstr "%1$d روابط داخلية و%2$d روابط خارجية."
+
+#: admin/js/app.js:688
+msgid "Open in the editor"
+msgstr "افتح في المحرر"
+
+#: admin/js/app.js:689
+msgid "View"
+msgstr "عرض"
+
+#: admin/js/app.js:689
+msgid "Preview"
+msgstr "معاينة"
+
+#: admin/js/app.js:700
+#: admin/js/app.js:748
+msgid "All articles"
+msgstr "كل المقالات"
+
+#: admin/js/app.js:703
+#, js-format
+msgid "Cost so far: %s"
+msgstr "التكلفة حتى الآن: %s"
+
+#: admin/js/app.js:704
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: admin/js/app.js:802
+msgid "Stop working on this article? Anything already saved stays."
+msgstr "إيقاف العمل على هذا المقال؟ ما حُفظ بالفعل سيبقى."

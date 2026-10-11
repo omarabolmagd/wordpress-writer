@@ -1,0 +1,1133 @@
+# Copyright (C) 2026 Omar Abouelmagd
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Ana Afdal Writer 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wordpress-writer\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-11T07:25:33+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: ana-afdal-writer\n"
+
+#. Plugin Name of the plugin
+#: ana-afdal-writer.php
+#: src/Admin.php:23
+#: src/Admin.php:24
+#: src/Admin.php:89
+msgid "Ana Afdal Writer"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: ana-afdal-writer.php
+msgid "https://anaafdal.com/"
+msgstr ""
+
+#. Description of the plugin
+#: ana-afdal-writer.php
+msgid "Researches, writes, illustrates and links new Arabic posts with Claude, then saves them as drafts for review."
+msgstr ""
+
+#. Author of the plugin
+#: ana-afdal-writer.php
+msgid "Omar Abouelmagd"
+msgstr ""
+
+#: ana-afdal-writer.php:28
+msgid "Ana Afdal Writer needs PHP 8.1 or newer. Ask your host to upgrade PHP."
+msgstr ""
+
+#: src/Admin.php:31
+msgid "New post"
+msgstr ""
+
+#: src/Admin.php:32
+#: src/Admin.php:108
+msgid "Costs"
+msgstr ""
+
+#: src/Admin.php:33
+#: src/Admin.php:38
+#: admin/js/app.js:165
+msgid "Settings"
+msgstr ""
+
+#: src/Admin.php:76
+msgid "Ana Afdal Writer needs a Claude API key before it can write."
+msgstr ""
+
+#: src/Admin.php:78
+msgid "Add it in Settings"
+msgstr ""
+
+#: src/Admin.php:85
+msgid "You do not have permission to use the writer."
+msgstr ""
+
+#: src/Admin.php:91
+msgid "Loading…"
+msgstr ""
+
+#: src/Admin.php:93
+msgid "This screen needs JavaScript."
+msgstr ""
+
+#: src/Admin.php:100
+msgid "You do not have permission to view costs."
+msgstr ""
+
+#. translators: %s: monthly cap in dollars
+#: src/Admin.php:115
+#, php-format
+msgid "of %s this month"
+msgstr ""
+
+#: src/Admin.php:117
+msgid "this month (no cap set)"
+msgstr ""
+
+#: src/Admin.php:124
+msgid "Costs are estimates from token counts and the prices in Settings. Your Anthropic and Google consoles show the exact bill."
+msgstr ""
+
+#: src/Admin.php:127
+msgid "This month by job"
+msgstr ""
+
+#: src/Admin.php:129
+msgid "Job"
+msgstr ""
+
+#: src/Admin.php:129
+#: src/Admin.php:151
+#: admin/js/app.js:286
+msgid "Cost"
+msgstr ""
+
+#: src/Admin.php:129
+msgid "Last activity"
+msgstr ""
+
+#: src/Admin.php:132
+msgid "Nothing spent yet this month."
+msgstr ""
+
+#: src/Admin.php:149
+msgid "Latest API calls"
+msgstr ""
+
+#: src/Admin.php:151
+msgid "When"
+msgstr ""
+
+#: src/Admin.php:151
+msgid "Service"
+msgstr ""
+
+#: src/Admin.php:151
+msgid "Step"
+msgstr ""
+
+#: src/Admin.php:151
+msgid "Details"
+msgstr ""
+
+#: src/Article.php:19
+msgid "The topic needs a title."
+msgstr ""
+
+#: src/Article.php:111
+msgid "The outline needs a title."
+msgstr ""
+
+#: src/Article.php:182
+msgid "The outline needs at least one section."
+msgstr ""
+
+#: src/Article.php:219
+msgid "This outline is not waiting for approval."
+msgstr ""
+
+#: src/Article.php:409
+msgid "not one of the researched sources"
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+#, php-format
+msgid "site blocks automated checks (HTTP %d)"
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+#, php-format
+msgid "broken link (HTTP %d)"
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: src/Article.php:417
+msgid "site did not respond"
+msgstr ""
+
+#: src/Article.php:430
+msgid "not a published post"
+msgstr ""
+
+#: src/Article.php:444
+msgid "invalid link"
+msgstr ""
+
+#: src/Backlinks.php:165
+msgid "Suggestion not found."
+msgstr ""
+
+#: src/Backlinks.php:213
+msgid "The paragraph or phrase changed since the suggestion was made."
+msgstr ""
+
+#: src/DraftMetaBox.php:19
+msgid "Ana Afdal Writer: review checklist"
+msgstr ""
+
+#: src/DraftMetaBox.php:29
+msgid "The checklist appears here once the quality check has run."
+msgstr ""
+
+#: src/DraftMetaBox.php:47
+msgid "Open this post in Ana Afdal Writer (sources, backlink suggestions, cost)"
+msgstr ""
+
+#: src/Quality.php:42
+msgid "Editorial review"
+msgstr ""
+
+#: src/Quality.php:43
+msgid "The automatic review could not run. Read the draft carefully."
+msgstr ""
+
+#: src/Quality.php:68
+msgid "Outdated facts"
+msgstr ""
+
+#: src/Quality.php:69
+msgid "Claims not backed by research"
+msgstr ""
+
+#: src/Quality.php:70
+msgid "Dialect instead of MSA"
+msgstr ""
+
+#: src/Quality.php:71
+msgid "Keyword stuffing"
+msgstr ""
+
+#: src/Quality.php:72
+msgid "Off-topic links"
+msgstr ""
+
+#: src/Quality.php:73
+msgid "Title matches content"
+msgstr ""
+
+#: src/Quality.php:74
+msgid "Repetition or padding"
+msgstr ""
+
+#: src/Quality.php:75
+msgid "Formatting"
+msgstr ""
+
+#: src/Quality.php:151
+msgid "Length fits the template"
+msgstr ""
+
+#. translators: 1: word count, 2: minimum, 3: maximum
+#: src/Quality.php:153
+#, php-format
+msgid "About %1$d words (target %2$d–%3$d)."
+msgstr ""
+
+#: src/Quality.php:160
+#: admin/js/app.js:464
+msgid "Internal links"
+msgstr ""
+
+#. translators: %d: number of links
+#: src/Quality.php:162
+#, php-format
+msgid "%d links to other posts (target 3–5)."
+msgstr ""
+
+#: src/Quality.php:169
+msgid "External sources"
+msgstr ""
+
+#. translators: %d: number of links
+#: src/Quality.php:171
+#, php-format
+msgid "%d links to sources, each checked live (target 2–4)."
+msgstr ""
+
+#: src/Quality.php:178
+msgid "Links removed during checks"
+msgstr ""
+
+#: src/Quality.php:179
+msgid "None."
+msgstr ""
+
+#: src/Quality.php:187
+msgid "Sources to open yourself"
+msgstr ""
+
+#: src/Quality.php:188
+msgid "These sites refuse automated checks, so open them once to confirm they work:"
+msgstr ""
+
+#: src/Quality.php:208
+msgid "Planned images added"
+msgstr ""
+
+#: src/Quality.php:209
+msgid "All planned images are in the post with Arabic alt text."
+msgstr ""
+
+#. translators: %d: number of images
+#: src/Quality.php:213
+msgid "Image alt text"
+msgstr ""
+
+#. translators: %d: number of images
+#: src/Quality.php:213
+#, php-format
+msgid "%d image(s) have no alt text."
+msgstr ""
+
+#: src/Quality.php:219
+msgid "Featured image"
+msgstr ""
+
+#: src/Quality.php:227
+msgid "Meta description length"
+msgstr ""
+
+#. translators: %d: number of characters
+#: src/Quality.php:229
+#, php-format
+msgid "%d characters (target 120–155)."
+msgstr ""
+
+#: src/Quality.php:236
+msgid "title"
+msgstr ""
+
+#: src/Quality.php:239
+msgid "first paragraph"
+msgstr ""
+
+#: src/Quality.php:242
+msgid "meta description"
+msgstr ""
+
+#: src/Quality.php:247
+msgid "Focus keyphrase placement"
+msgstr ""
+
+#: src/Quality.php:248
+msgid "Exact keyphrase not found in:"
+msgstr ""
+
+#: src/Quality.php:255
+msgid "English URL slug"
+msgstr ""
+
+#: src/Quality.php:263
+msgid "FAQ with schema"
+msgstr ""
+
+#. translators: %d: number of questions
+#: src/Quality.php:265
+#, php-format
+msgid "%d questions in the Yoast FAQ block."
+msgstr ""
+
+#: src/Quality.php:272
+msgid "New category created"
+msgstr ""
+
+#: src/Rest.php:80
+msgid "Add your Claude API key in Settings first."
+msgstr ""
+
+#: src/Rest.php:83
+msgid "This month's spending cap is reached. Raise it in Settings or wait until next month."
+msgstr ""
+
+#: src/Rest.php:115
+#: src/Rest.php:168
+msgid "Not found."
+msgstr ""
+
+#: src/Rest.php:140
+msgid "This step stopped without finishing. The server probably hit its time limit; ask your host to raise PHP max_execution_time to 300 seconds, then try again."
+msgstr ""
+
+#: src/Rest.php:141
+msgid "This step never started. Background tasks may be blocked on this server; try again, and if it repeats, check that WP-Cron is running."
+msgstr ""
+
+#: src/Rest.php:158
+msgid "Only a failed step can be retried."
+msgstr ""
+
+#: src/Rest.php:269
+msgid "No key"
+msgstr ""
+
+#: src/Rest.php:284
+msgid "No key (AI images off)"
+msgstr ""
+
+#: src/Rest.php:299
+msgid "No key (stock photos off)"
+msgstr ""
+
+#: src/Rest.php:303
+msgid "Key saved (tested on first use)"
+msgstr ""
+
+#: src/Rest.php:304
+msgid "No key (screenshots off)"
+msgstr ""
+
+#: src/Rest.php:307
+msgid "Server can draw covers"
+msgstr ""
+
+#: src/Rest.php:308
+msgid "PHP GD with FreeType is missing"
+msgstr ""
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+#, php-format
+msgid "Time limit OK (%1$ds, can raise: %2$s)"
+msgstr ""
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+msgid "yes"
+msgstr ""
+
+#. translators: 1: seconds, 2: yes or no
+#: src/Rest.php:317
+msgid "no"
+msgstr ""
+
+#. translators: %d: seconds
+#: src/Rest.php:320
+#, php-format
+msgid "PHP time limit is %ds and cannot be raised. Ask your host for 300s."
+msgstr ""
+
+#: src/Rest.php:332
+msgid "Connected"
+msgstr ""
+
+#: src/Rest.php:335
+msgid "Key rejected"
+msgstr ""
+
+#: src/Rest.php:338
+msgid "Model or endpoint not found — check the model name"
+msgstr ""
+
+#. translators: %s: HTTP status or error
+#: src/Rest.php:341
+#, php-format
+msgid "Failed (%s)"
+msgstr ""
+
+#: src/Settings.php:163
+msgid "You do not have permission to change these settings."
+msgstr ""
+
+#: src/Settings.php:168
+msgid "Ana Afdal Writer settings"
+msgstr ""
+
+#: src/Settings.php:172
+msgid "API keys"
+msgstr ""
+
+#: src/Settings.php:173
+msgid "Keys are stored in the database and never sent to the browser. To keep them out of the database entirely, define them in wp-config.php instead (AAW_ANTHROPIC_API_KEY, AAW_GEMINI_API_KEY, AAW_PEXELS_API_KEY, AAW_SCREENSHOT_API_KEY)."
+msgstr ""
+
+#: src/Settings.php:176
+msgid "Claude (Anthropic) API key"
+msgstr ""
+
+#: src/Settings.php:176
+msgid "Required. Writes the posts and searches the web. Create one at platform.claude.com."
+msgstr ""
+
+#: src/Settings.php:177
+msgid "Google Gemini API key"
+msgstr ""
+
+#: src/Settings.php:177
+msgid "Optional. Needed for AI images. Create one at aistudio.google.com."
+msgstr ""
+
+#: src/Settings.php:178
+msgid "Pexels API key"
+msgstr ""
+
+#: src/Settings.php:178
+msgid "Optional. Needed for stock photos. Free at pexels.com/api."
+msgstr ""
+
+#: src/Settings.php:179
+msgid "Screenshot service key"
+msgstr ""
+
+#: src/Settings.php:179
+msgid "Optional. Needed for website screenshots. The default service is ScreenshotOne (free plan available at screenshotone.com)."
+msgstr ""
+
+#: src/Settings.php:183
+msgid "Test connections"
+msgstr ""
+
+#: src/Settings.php:187
+msgid "Budget"
+msgstr ""
+
+#: src/Settings.php:190
+msgid "Monthly spending cap (USD)"
+msgstr ""
+
+#: src/Settings.php:193
+msgid "New topic suggestions and new posts stop once this month's spending reaches the cap. Posts already in progress can finish. Set 0 for no cap."
+msgstr ""
+
+#: src/Settings.php:198
+#: admin/js/app.js:58
+msgid "Writing"
+msgstr ""
+
+#: src/Settings.php:201
+msgid "Claude model"
+msgstr ""
+
+#: src/Settings.php:201
+msgid "Default: claude-sonnet-5-5. If you switch models, update the Claude prices below too."
+msgstr ""
+
+#: src/Settings.php:202
+msgid "Web searches per research step"
+msgstr ""
+
+#: src/Settings.php:202
+msgid "Each search costs about $0.01."
+msgstr ""
+
+#: src/Settings.php:203
+msgid "Telegram channel link"
+msgstr ""
+
+#: src/Settings.php:203
+msgid "Every post ends with an invitation to this channel."
+msgstr ""
+
+#: src/Settings.php:204
+msgid "Telegram invitation text"
+msgstr ""
+
+#: src/Settings.php:208
+#: admin/js/app.js:59
+msgid "Images"
+msgstr ""
+
+#: src/Settings.php:211
+msgid "Cover background colour"
+msgstr ""
+
+#: src/Settings.php:211
+msgid "Used for the branded featured image."
+msgstr ""
+
+#: src/Settings.php:212
+msgid "Cover logo (attachment ID)"
+msgstr ""
+
+#: src/Settings.php:212
+msgid "Optional. A PNG logo from the Media Library to place on covers. Leave 0 to use the site's logo if it has one."
+msgstr ""
+
+#: src/Settings.php:213
+msgid "Gemini image model"
+msgstr ""
+
+#: src/Settings.php:213
+msgid "Default: gemini-nano-banana-2.1."
+msgstr ""
+
+#: src/Settings.php:214
+msgid "Screenshot request URL"
+msgstr ""
+
+#: src/Settings.php:214
+msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
+msgstr ""
+
+#: src/Settings.php:218
+msgid "Prices used for cost tracking (USD)"
+msgstr ""
+
+#: src/Settings.php:221
+msgid "Claude input, per million tokens"
+msgstr ""
+
+#: src/Settings.php:222
+msgid "Claude output, per million tokens"
+msgstr ""
+
+#: src/Settings.php:223
+msgid "Claude cache write, per million tokens"
+msgstr ""
+
+#: src/Settings.php:224
+msgid "Claude cache read, per million tokens"
+msgstr ""
+
+#: src/Settings.php:225
+msgid "Claude web search, per search"
+msgstr ""
+
+#: src/Settings.php:226
+msgid "Gemini image, per image"
+msgstr ""
+
+#: src/Settings.php:227
+msgid "Screenshot, per capture"
+msgstr ""
+
+#: src/Settings.php:227
+msgid "0 while you are on a free plan."
+msgstr ""
+
+#: src/Settings.php:245
+msgid "Set in wp-config.php"
+msgstr ""
+
+#: src/Settings.php:249
+#: admin/js/app.js:411
+msgid "Remove"
+msgstr ""
+
+#: admin/js/app.js:39
+msgid "Something went wrong. Try again."
+msgstr ""
+
+#: admin/js/app.js:42
+msgid "News update"
+msgstr ""
+
+#: admin/js/app.js:43
+msgid "Best-of list"
+msgstr ""
+
+#: admin/js/app.js:44
+msgid "Full guide"
+msgstr ""
+
+#: admin/js/app.js:48
+msgid "Pexels photo"
+msgstr ""
+
+#: admin/js/app.js:49
+msgid "AI image (Gemini)"
+msgstr ""
+
+#: admin/js/app.js:50
+msgid "Website screenshot"
+msgstr ""
+
+#: admin/js/app.js:51
+msgid "No image"
+msgstr ""
+
+#: admin/js/app.js:55
+msgid "Research"
+msgstr ""
+
+#: admin/js/app.js:56
+msgid "Outline"
+msgstr ""
+
+#: admin/js/app.js:57
+msgid "Your approval"
+msgstr ""
+
+#: admin/js/app.js:60
+msgid "Links & draft"
+msgstr ""
+
+#: admin/js/app.js:61
+msgid "Quality check"
+msgstr ""
+
+#: admin/js/app.js:62
+msgid "Backlinks"
+msgstr ""
+
+#: admin/js/app.js:63
+msgid "Done"
+msgstr ""
+
+#: admin/js/app.js:68
+msgid "Failed"
+msgstr ""
+
+#: admin/js/app.js:71
+msgid "Cancelled"
+msgstr ""
+
+#: admin/js/app.js:74
+msgid "Waiting for your approval"
+msgstr ""
+
+#: admin/js/app.js:77
+msgid "Published"
+msgstr ""
+
+#: admin/js/app.js:77
+msgid "Draft ready"
+msgstr ""
+
+#: admin/js/app.js:80
+msgid "Queued"
+msgstr ""
+
+#: admin/js/app.js:110
+msgid "Testing…"
+msgstr ""
+
+#: admin/js/app.js:113
+msgid "Screenshots"
+msgstr ""
+
+#: admin/js/app.js:113
+msgid "Covers"
+msgstr ""
+
+#: admin/js/app.js:113
+msgid "Server time limit"
+msgstr ""
+
+#: admin/js/app.js:165
+#, js-format
+msgid "Add your Claude API key in %s to start writing."
+msgstr ""
+
+#: admin/js/app.js:166
+msgid "An administrator needs to add the Claude API key before you can write."
+msgstr ""
+
+#: admin/js/app.js:171
+msgid "stock photos"
+msgstr ""
+
+#: admin/js/app.js:174
+msgid "AI images"
+msgstr ""
+
+#: admin/js/app.js:177
+msgid "screenshots"
+msgstr ""
+
+#: admin/js/app.js:180
+#, js-format
+msgid "Off until their keys are added: %s."
+msgstr ""
+
+#: admin/js/app.js:186
+#, js-format
+msgid "of %s spent this month"
+msgstr ""
+
+#: admin/js/app.js:186
+msgid "spent this month (no cap)"
+msgstr ""
+
+#: admin/js/app.js:188
+msgid "The monthly cap is reached, so new posts are paused. Posts already in progress can finish."
+msgstr ""
+
+#: admin/js/app.js:195
+#, js-format
+msgid "New category: %s"
+msgstr ""
+
+#: admin/js/app.js:205
+msgid "Searching the web for what readers want right now. This takes about a minute."
+msgstr ""
+
+#: admin/js/app.js:209
+#, js-format
+msgid "Suggested %s"
+msgstr ""
+
+#: admin/js/app.js:218
+msgid "Keyphrase:"
+msgstr ""
+
+#: admin/js/app.js:222
+#: admin/js/app.js:357
+msgid "Write this"
+msgstr ""
+
+#: admin/js/app.js:230
+msgid "1. Get topic ideas"
+msgstr ""
+
+#: admin/js/app.js:232
+msgid "Focus (optional)"
+msgstr ""
+
+#: admin/js/app.js:233
+msgid "Optional focus, e.g. scholarships in Europe or AI tools for students"
+msgstr ""
+
+#: admin/js/app.js:234
+msgid "Suggest topics"
+msgstr ""
+
+#: admin/js/app.js:246
+msgid "Let the writer choose"
+msgstr ""
+
+#: admin/js/app.js:248
+msgid "New category…"
+msgstr ""
+
+#: admin/js/app.js:250
+msgid "New category name"
+msgstr ""
+
+#: admin/js/app.js:255
+msgid "2. Or write about your own topic"
+msgstr ""
+
+#: admin/js/app.js:257
+msgid "Working title"
+msgstr ""
+
+#: admin/js/app.js:258
+msgid "Focus keyphrase (what readers search)"
+msgstr ""
+
+#: admin/js/app.js:260
+#: admin/js/app.js:448
+msgid "Post type"
+msgstr ""
+
+#: admin/js/app.js:263
+#: admin/js/app.js:449
+msgid "Category"
+msgstr ""
+
+#: admin/js/app.js:265
+msgid "Notes for the writer (optional)"
+msgstr ""
+
+#: admin/js/app.js:266
+msgid "Start research"
+msgstr ""
+
+#: admin/js/app.js:275
+#: admin/js/app.js:702
+msgid "(untitled)"
+msgstr ""
+
+#: admin/js/app.js:284
+msgid "Articles"
+msgstr ""
+
+#: admin/js/app.js:286
+msgid "Title"
+msgstr ""
+
+#: admin/js/app.js:286
+msgid "Status"
+msgstr ""
+
+#: admin/js/app.js:286
+msgid "Updated"
+msgstr ""
+
+#: admin/js/app.js:287
+msgid "No articles yet. Pick a topic above to start."
+msgstr ""
+
+#: admin/js/app.js:348
+#: admin/js/app.js:575
+msgid "Starting…"
+msgstr ""
+
+#: admin/js/app.js:390
+msgid "Image"
+msgstr ""
+
+#: admin/js/app.js:393
+msgid "Search words (English)"
+msgstr ""
+
+#: admin/js/app.js:395
+msgid "What to draw (English)"
+msgstr ""
+
+#: admin/js/app.js:397
+msgid "Page to capture"
+msgstr ""
+
+#: admin/js/app.js:399
+msgid "Alt text (Arabic)"
+msgstr ""
+
+#: admin/js/app.js:408
+msgid "Section heading"
+msgstr ""
+
+#: admin/js/app.js:409
+msgid "Move up"
+msgstr ""
+
+#: admin/js/app.js:410
+msgid "Move down"
+msgstr ""
+
+#: admin/js/app.js:413
+msgid "Notes for the writer, one per line"
+msgstr ""
+
+#: admin/js/app.js:427
+msgid "cited"
+msgstr ""
+
+#: admin/js/app.js:437
+msgid "Review the outline"
+msgstr ""
+
+#: admin/js/app.js:438
+msgid "Change anything you like. Nothing is written or paid for beyond this point until you approve."
+msgstr ""
+
+#: admin/js/app.js:441
+msgid "Title (H1)"
+msgstr ""
+
+#: admin/js/app.js:442
+msgid "SEO title"
+msgstr ""
+
+#: admin/js/app.js:443
+msgid "Meta description"
+msgstr ""
+
+#: admin/js/app.js:445
+msgid "Focus keyphrase"
+msgstr ""
+
+#: admin/js/app.js:446
+msgid "URL slug (English)"
+msgstr ""
+
+#: admin/js/app.js:450
+msgid "Author"
+msgstr ""
+
+#: admin/js/app.js:454
+msgid "Sections"
+msgstr ""
+
+#: admin/js/app.js:455
+msgid "The introduction, FAQ, summary and Telegram invitation are added automatically."
+msgstr ""
+
+#: admin/js/app.js:457
+msgid "Add section"
+msgstr ""
+
+#: admin/js/app.js:459
+msgid "FAQ questions"
+msgstr ""
+
+#: admin/js/app.js:465
+msgid "None suggested."
+msgstr ""
+
+#: admin/js/app.js:468
+msgid "Sources to cite"
+msgstr ""
+
+#: admin/js/app.js:469
+msgid "Ticked sources are offered to the writer; each link is checked live before the draft is saved."
+msgstr ""
+
+#: admin/js/app.js:470
+msgid "No sources found."
+msgstr ""
+
+#: admin/js/app.js:475
+#: admin/js/app.js:584
+msgid "Approve and write"
+msgstr ""
+
+#: admin/js/app.js:476
+msgid "Writing, images and checks take about 3–6 minutes. You can leave this page."
+msgstr ""
+
+#: admin/js/app.js:566
+msgid "Add at least one section."
+msgstr ""
+
+#: admin/js/app.js:570
+msgid "Name the new category, or pick an existing one."
+msgstr ""
+
+#: admin/js/app.js:599
+msgid "Review checklist"
+msgstr ""
+
+#: admin/js/app.js:600
+#, js-format
+msgid "%d item(s) need a look before you publish."
+msgstr ""
+
+#: admin/js/app.js:600
+msgid "Everything passed. Give it a final read and publish."
+msgstr ""
+
+#: admin/js/app.js:617
+msgid "Approve"
+msgstr ""
+
+#: admin/js/app.js:618
+msgid "Dismiss"
+msgstr ""
+
+#: admin/js/app.js:621
+msgid "Approved"
+msgstr ""
+
+#: admin/js/app.js:621
+msgid "Approved — added when you publish"
+msgstr ""
+
+#: admin/js/app.js:622
+msgid "Link added"
+msgstr ""
+
+#: admin/js/app.js:623
+msgid "Dismissed"
+msgstr ""
+
+#: admin/js/app.js:624
+msgid "Could not add"
+msgstr ""
+
+#: admin/js/app.js:639
+msgid "Links from older posts"
+msgstr ""
+
+#: admin/js/app.js:640
+msgid "Approved links are added to the older posts once this post is published, so no reader lands on a draft."
+msgstr ""
+
+#: admin/js/app.js:641
+msgid "No good spots found in older posts this time."
+msgstr ""
+
+#: admin/js/app.js:652
+#, js-format
+msgid "Research sources (%d)"
+msgstr ""
+
+#: admin/js/app.js:654
+msgid "linked in post"
+msgstr ""
+
+#: admin/js/app.js:661
+msgid "Activity"
+msgstr ""
+
+#: admin/js/app.js:675
+msgid "This step failed:"
+msgstr ""
+
+#: admin/js/app.js:676
+msgid "Try this step again"
+msgstr ""
+
+#: admin/js/app.js:679
+msgid "Researching and planning. The outline is usually ready in 1–3 minutes."
+msgstr ""
+
+#: admin/js/app.js:679
+msgid "Working on your draft. You can leave this page and come back."
+msgstr ""
+
+#: admin/js/app.js:685
+msgid "Published post"
+msgstr ""
+
+#: admin/js/app.js:685
+msgid "Your draft"
+msgstr ""
+
+#: admin/js/app.js:686
+#, js-format
+msgid "About %d words."
+msgstr ""
+
+#: admin/js/app.js:686
+#, js-format
+msgid "%1$d internal and %2$d external links."
+msgstr ""
+
+#: admin/js/app.js:688
+msgid "Open in the editor"
+msgstr ""
+
+#: admin/js/app.js:689
+msgid "View"
+msgstr ""
+
+#: admin/js/app.js:689
+msgid "Preview"
+msgstr ""
+
+#: admin/js/app.js:700
+#: admin/js/app.js:748
+msgid "All articles"
+msgstr ""
+
+#: admin/js/app.js:703
+#, js-format
+msgid "Cost so far: %s"
+msgstr ""
+
+#: admin/js/app.js:704
+msgid "Cancel"
+msgstr ""
+
+#: admin/js/app.js:802
+msgid "Stop working on this article? Anything already saved stays."
+msgstr ""

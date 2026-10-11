@@ -1,0 +1,5 @@
+dist/
+node_modules/
+tests/output-content.html
+screens/
+.DS_Store
