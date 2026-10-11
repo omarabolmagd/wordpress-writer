@@ -41,11 +41,16 @@ fs.mkdirSync( out, { recursive: true } );
 		page.waitForResponse( ( r ) => r.url().includes( '/aaw/v1/topics' ) && r.request().method() === 'POST' ),
 		page.click( '[data-form="topics"] [type="submit"]' ),
 	] );
+	await page.waitForSelector( '[data-region="topics"] .aaw-live-events li', { timeout: 60000 } );
+	await shot( '2a-topics-live' );
 	await page.waitForSelector( '[data-region="topics"] .aaw-topic', { timeout: 120000 } );
 	await shot( '2-topics' );
 
 	// Start an article from the first topic and wait for the outline.
 	await page.click( '[data-action="write-topic"][data-index="0"]' );
+	await page.waitForFunction( () => document.querySelectorAll( '.aaw-live-events li' ).length >= 1, null, { timeout: 60000 } );
+	await page.waitForTimeout( 2500 );
+	await shot( '3a-research-live' );
 	await page.waitForSelector( '[data-form="outline"]', { timeout: 180000 } );
 	await shot( '3-outline' );
 
@@ -54,6 +59,9 @@ fs.mkdirSync( out, { recursive: true } );
 	await page.click( '[data-action="add-section"]' );
 	await page.fill( '.aaw-section:last-child [name="heading"]', 'نصائح للحصول على الشهادة مجانًا' );
 	await page.click( '[data-form="outline"] [type="submit"]' );
+	await page.waitForSelector( '.aaw-live-bar', { timeout: 60000 } );
+	await page.waitForTimeout( 3000 );
+	await shot( '4a-writing-live' );
 	await page.waitForSelector( '.aaw-checklist', { timeout: 300000 } );
 	await page.waitForSelector( '.aaw-backlinks, .aaw-result', { timeout: 60000 } );
 	await shot( '4-done' );

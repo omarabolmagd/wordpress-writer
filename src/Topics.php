@@ -40,7 +40,7 @@ final class Topics {
 		$existing   = Site::existing_titles();
 
 		list( $system, $prompt ) = Prompts::topics_structure( (string) $state['data']['notes'], $categories, $existing );
-		$data = Claude::json( $system, $prompt, Prompts::topics_schema(), $job_id, 'topics_structure', 4000 );
+		$data = Claude::json( $system, $prompt, Prompts::topics_schema(), $job_id, 'topics_structure' );
 
 		$topics = array();
 		foreach ( (array) ( $data['topics'] ?? array() ) as $t ) {

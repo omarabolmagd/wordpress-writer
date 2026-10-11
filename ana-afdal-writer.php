@@ -3,7 +3,7 @@
  * Plugin Name:       Ana Afdal Writer
  * Plugin URI:        https://anaafdal.com/
  * Description:       Researches, writes, illustrates and links new Arabic posts with Claude, then saves them as drafts for review.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author:            Omar Abouelmagd
@@ -15,11 +15,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AAW_VERSION', '1.0.0' );
+define( 'AAW_VERSION', '1.1.0' );
 define( 'AAW_FILE', __FILE__ );
 define( 'AAW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAW_URL', plugin_dir_url( __FILE__ ) );
-define( 'AAW_GROUP', 'ana-afdal-writer' );
 
 if ( version_compare( PHP_VERSION, '8.1', '<' ) ) {
 	add_action(
@@ -30,9 +29,6 @@ if ( version_compare( PHP_VERSION, '8.1', '<' ) ) {
 	);
 	return;
 }
-
-// Action Scheduler must be loaded while plugins load, before plugins_loaded fires.
-require_once AAW_DIR . 'lib/action-scheduler/action-scheduler.php';
 
 spl_autoload_register(
 	static function ( string $class ): void {

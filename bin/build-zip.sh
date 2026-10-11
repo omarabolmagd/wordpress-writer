@@ -8,7 +8,7 @@ STAGE="$OUT/ana-afdal-writer"
 
 rm -rf "$OUT"
 mkdir -p "$STAGE"
-cp -r "$ROOT/ana-afdal-writer.php" "$ROOT/uninstall.php" "$ROOT/src" "$ROOT/admin" "$ROOT/assets" "$ROOT/languages" "$ROOT/lib" "$STAGE/"
+cp -r "$ROOT/ana-afdal-writer.php" "$ROOT/uninstall.php" "$ROOT/src" "$ROOT/admin" "$ROOT/assets" "$ROOT/languages" "$STAGE/"
 cp "$ROOT/README.md" "$STAGE/README.md"
 
 (cd "$OUT" && zip -qr ana-afdal-writer.zip ana-afdal-writer)

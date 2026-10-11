@@ -31,7 +31,7 @@ It never publishes by itself.
 
 - WordPress 6.6 or later. Built and tested on 7.1.3, the version anaafdal.com runs.
 - PHP 8.1 or later, with GD and FreeType for the cover image.
-- PHP `max_execution_time` of at least 240 seconds, or a host that lets plugins raise it. **Settings → Test connections** shows whether yours does.
+- PHP `max_execution_time` of 300 seconds is best, or a host that lets plugins raise it. **Settings → Test connections** shows whether yours does.
 - Yoast SEO, for the FAQ schema and SEO fields. The plugin still works without it.
 
 ## Install
@@ -74,9 +74,51 @@ They are all editable in Settings. A rough estimate, not yet measured on real ar
 
 Posts on anaafdal.com get random slugs such as `8313-vytuja`. The plugin keeps its English slug even if another plugin rewrites slugs on publish. It only overrides slugs that look machine-made. If an editor types a different slug on purpose, that slug is kept.
 
+## Speed
+
+**Settings → Speed** has two modes:
+
+- **Fast** (the default). Claude answers without thinking silently first, at a lower effort level, so each step is several times quicker.
+- **Thorough.** Claude thinks before research, planning and the quality check. It's slower and costs more.
+
+Each step has its own output limit, sized for what it writes. If an answer still runs out of room, the plugin retries once with double the space.
+
+## Live progress
+
+Claude's answers are streamed, so the article screen shows what is happening as it happens:
+
+- the searches Claude runs, with the number of results and the sites found
+- a running word count and the current section while it writes
+- which image is being made, the link checks and the save
+- a note when Claude was busy and the plugin retried, or when the server stopped a step and it was restarted
+
+**Cancel** stops the current call to Claude straight away, so nothing more is spent.
+
 ## How it runs
 
-Each step runs in the background through [Action Scheduler](https://actionscheduler.org/), which is bundled. A non-blocking request starts the next step immediately, and WP-Cron is the fallback. A step that dies, for example because the host killed it, is shown as failed after 15 minutes with a **Try again** button.
+The plugin runs its own small queue. No other plugin is needed.
+
+- **While the article page is open,** the page asks the server to run each step and waits for it. This is the fastest way, and it works on any host.
+- **After you close the page,** steps continue in the background through a request the site sends to itself, with WP-Cron every minute as a fallback.
+- **Every running step sends a heartbeat.** If the server kills a step, for example at its time limit, the step is restarted after about 2½ minutes. After 3 failed attempts the job stops and shows what to do.
+- **Only one copy of a step runs at a time,** even when the page, the background request and WP-Cron all try to start it.
+
+### LiteSpeed hosting
+
+LiteSpeed stops PHP as soon as the request that started it disconnects, so background steps die when you close the page. **Test connections** reports this. On LiteSpeed, **Settings → Background work** shows these lines to add at the very top of `.htaccess`, in the WordPress folder:
+
+```apache
+# BEGIN Ana Afdal Writer
+<IfModule Litespeed>
+RewriteEngine On
+RewriteRule ^wp-cron\.php$ - [E=noabort:1,E=noconntimeout:1]
+RewriteCond %{QUERY_STRING} action=aaw_(worker|ping)
+RewriteRule admin-ajax\.php$ - [E=noabort:1,E=noconntimeout:1]
+</IfModule>
+# END Ana Afdal Writer
+```
+
+Without them, everything still works while the article page stays open.
 
 ## Development
 
@@ -85,8 +127,7 @@ src/            PHP classes (namespace AnaAfdal\Writer)
 admin/          admin screen JavaScript and CSS (no build step)
 assets/fonts/   Tajawal Bold (SIL OFL) for covers
 languages/      Arabic translation (.po/.mo/.json)
-lib/            Action Scheduler 4.2.0 (GPL)
-tests/          end-to-end, block-validation and browser tests
+tests/          end-to-end, block-validation and browser tests, and the mocks they use
 bin/            build and translation scripts
 ```
 
@@ -94,13 +135,34 @@ bin/            build and translation scripts
 
 All external APIs are mocked, so tests cost nothing and need no keys.
 
-- **`tests/run.sh <wordpress-dir> <wp-cli.phar>`** rebuilds a local WordPress on SQLite, seeds it like anaafdal.com, and runs `tests/e2e.php`. That test covers the full pipeline, link validation, the slug guard, backlinks, the budget cap, permissions and failure recovery.
+- **`tests/run.sh <wordpress-dir> <wp-cli.phar>`** rebuilds a local WordPress on SQLite, seeds it like anaafdal.com, and runs `tests/e2e.php`. That test covers:
+  - the full pipeline, link validation, the slug guard, backlinks, the budget cap and permissions
+  - the request sent to Claude for each step (effort, thinking, output limits)
+  - streaming, live progress and word counts
+  - retries when Claude is busy, an answer runs out of room or thinking settings are rejected
+  - restarting a step the server killed, stopping after 3 attempts, and cancelling mid-stream
 - **`node tests/validate-blocks.cjs <wordpress-dir> tests/output-content.html`** loads WordPress's own block-editor scripts and checks that every generated block is valid and matches what the editor would save. It needs `jsdom`.
-- **`node tests/browser.cjs http://localhost:8080 screens [rtl]`** clicks through the whole flow in Chromium with Playwright and saves screenshots. Serve WordPress with `PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 -t <wordpress-dir> tests/router.php`, and enable `tests/mu-test-mocks.php` with the `aaw_test_mocks` option.
+- **`node tests/browser.cjs http://localhost:8080 screens [rtl]`** clicks through the whole flow in Chromium with Playwright and saves screenshots, including the live progress screens. To set it up:
+  1. Copy `tests/mu-test-mocks.php` into `wp-content/mu-plugins/`.
+  2. Set the `aaw_test_mocks` option to `1`. Also set `aaw_test_claude` to `server` to use the streaming mock, and `aaw_test_rtl` to `1` for Arabic.
+  3. Run `tests/serve.sh <wordpress-dir>`. It starts WordPress on port 8080 and `tests/mock-anthropic-server.php` on port 8081. The mock streams answers slowly, the way the real API does; `AAW_MOCK_SEARCH_MS` and `AAW_MOCK_DELAY_MS` set how slowly.
 
 ### Translations
 
 Run `python3 bin/translations-ar.py`, then `wp i18n make-mo languages` and `wp i18n make-json languages --no-purge`.
+
+## Changelog
+
+**1.1.0**
+- Steps are several times faster. Claude no longer thinks silently before every answer, and each step uses the effort it needs. The old behaviour is available as **Speed → Thorough**.
+- Fixed "Claude ran out of output space" in planning. Output limits are larger, thinking no longer uses them up, and a cut-off answer is retried once with more room.
+- Live progress on every step: searches, word count, sections, images and link checks.
+- Steps run from the open page, with heartbeats and automatic restarts, instead of Action Scheduler. Background work on LiteSpeed is detected, with the `.htaccess` fix shown in Settings.
+- Cancel stops the current call to Claude straight away.
+- Source links are checked in parallel.
+
+**1.0.0**
+- First release.
 
 ## License
 

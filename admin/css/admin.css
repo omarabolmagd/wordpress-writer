@@ -97,3 +97,20 @@ details.aaw-card > summary { cursor: pointer; }
 	.aaw-section-head { flex-wrap: wrap; }
 }
 .aaw-wrap input.aaw-number { width: 8em; }
+
+/* Live progress */
+.aaw-live { border-color: color-mix(in srgb, var(--aaw-brand) 45%, var(--aaw-border)); background: color-mix(in srgb, var(--aaw-brand) 4%, #fff); }
+.aaw-live-compact { margin: 0; padding: 12px 14px; }
+.aaw-live-head { display: flex; align-items: center; gap: 8px; }
+.aaw-live-head .spinner { float: none; margin: 0; }
+.aaw-live-head strong { font-size: 14px; }
+.aaw-live-time { margin-inline-start: auto; font-variant-numeric: tabular-nums; color: var(--aaw-muted); font-size: 13px; direction: ltr; }
+.aaw-live-now { margin: 8px 0 6px; font-size: 14px; }
+.aaw-live-bar { max-width: none; margin: 4px 0 8px; }
+.aaw-live-events { margin: 6px 0 0; padding: 0; list-style: none; }
+.aaw-live-events li { margin: 0 0 4px; color: #3c434a; }
+.aaw-live-icon { width: 18px; height: 18px; font-size: 18px; vertical-align: text-bottom; color: var(--aaw-brand-dark); }
+.aaw-live-hosts { color: var(--aaw-muted); }
+.aaw-live-pending { color: var(--aaw-muted); }
+.aaw-live-bad { color: #b32d2e; }
+.aaw-live-note { margin: 8px 0 0; color: #8a5a00; }

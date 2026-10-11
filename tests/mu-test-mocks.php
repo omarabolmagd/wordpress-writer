@@ -4,14 +4,21 @@
  * and can switch the admin to Arabic/RTL. Never install this on a real site.
  */
 
+// "server": Claude requests go over real HTTP to tests/mock-anthropic-server.php on port 8081.
+if ( 'server' === get_option( 'aaw_test_claude' ) && ! defined( 'AAW_ANTHROPIC_ENDPOINT' ) ) {
+	define( 'AAW_ANTHROPIC_ENDPOINT', 'http://localhost:8081/v1/messages' );
+}
+
 if ( get_option( 'aaw_test_mocks' ) ) {
 	add_action(
 		'plugins_loaded',
 		static function () {
-			$mocks = WP_PLUGIN_DIR . '/ana-afdal-writer/tests/mocks.php';
-			// When testing the built zip (which has no tests folder), use a copy next to this file.
-			require_once is_readable( $mocks ) ? $mocks : __DIR__ . '/aaw-mocks.php';
-			aaw_test_install_mocks();
+			if ( ! function_exists( 'aaw_test_install_mocks' ) ) {
+				$mocks = WP_PLUGIN_DIR . '/ana-afdal-writer/tests/mocks.php';
+				// When testing the built zip (which has no tests folder), use a copy next to this file.
+				require_once is_readable( $mocks ) ? $mocks : __DIR__ . '/aaw-mocks.php';
+			}
+			aaw_test_install_mocks( 'server' === get_option( 'aaw_test_claude' ) ? 'none' : 'stream' );
 		},
 		20
 	);

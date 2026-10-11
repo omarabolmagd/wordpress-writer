@@ -43,13 +43,14 @@ aaw_test_install_mocks();
 $calls = &$GLOBALS['aaw_test_calls'];
 $published = get_posts( array( 'post_type' => 'post', 'post_status' => 'publish', 'numberposts' => -1, 'fields' => 'ids', 'orderby' => 'ID', 'order' => 'ASC' ) );
 
+add_filter( 'aaw_retry_wait', '__return_zero' );
+// Only this process runs steps, so the results are deterministic.
+add_filter( 'aaw_background_kick', '__return_false' );
 $run_queue = static function () {
-	for ( $i = 0; $i < 20; $i++ ) {
-		delete_transient( 'aaw_worker_running' );
-		if ( ! Worker::process_queue() ) {
-			break;
-		}
-	}
+	Worker::run_pending( 600 );
+};
+$bodies_for = static function ( string $marker ): array {
+	return array_values( array_filter( $GLOBALS['aaw_test_bodies'], static fn( $b ) => str_contains( wp_json_encode( $b, JSON_UNESCAPED_UNICODE ), $marker ) ) );
 };
 
 // ------------------------------------------------------------------ topics
@@ -63,16 +64,28 @@ $check( 'ذكاء اصطناعي' === $t['data']['topics'][0]['category_new_name
 $check( null === $t['data']['topics'][1]['category_existing_id'], 'invalid category id dropped' );
 $check( str_contains( $t['data']['topics'][1]['overlap_note'], 'أخطاء يجب تجنبها' ), 'duplicate of a published title is flagged' );
 $check( 'guide' === $t['data']['topics'][2]['post_type'], 'unknown post type falls back to guide' );
+$tb = $GLOBALS['aaw_test_bodies'][0];
+$check( ! empty( $tb['stream'] ), 'requests are streamed' );
+$check( array( 'type' => 'between_tools' ) === ( $tb['thinking'] ?? null ), 'Sonnet 5.5: up-front thinking turned off' );
+$check( 'low' === ( $tb['output_config']['effort'] ?? '' ), 'topic research runs at low effort' );
+$check( 12000 === $tb['max_tokens'], 'topic research has room to answer: ' . $tb['max_tokens'] );
 $check( null === $t['data']['topics'][2]['category_new_name'] && $t['data']['topics'][2]['category_existing_id'], '"new" category that already exists is reused' );
 
 // ---------------------------------------------------------- research+outline
 echo "Article: research and outline\n";
 $job_id = Article::start( 1, $t['data']['topics'][0] );
+Worker::run_pending( 600, null, 1 );
+$research_progress = AnaAfdal\Writer\Progress::get( $job_id );
+$check( is_array( $research_progress ) && 'research' === $research_progress['stage'] && 'finished' === $research_progress['phase'], 'progress saved for the research step' );
+$check( 'queued' === Jobs::get( $job_id )['status'] && 'outline' === Jobs::get( $job_id )['stage'], 'next step queued after research' );
 $run_queue();
 $a = Jobs::get( $job_id );
 $check( 'waiting' === $a['status'] && 'awaiting_approval' === $a['stage'], 'outline waits for approval (' . $a['status'] . '/' . $a['stage'] . ' ' . $a['error'] . ')' );
 $check( in_array( 'research_paused', $calls, true ) && in_array( 'research_resumed', $calls, true ), 'paused research turn was resumed' );
 $check( 5 === count( $a['data']['research']['sources'] ), 'research sources collected' );
+$check( in_array( 'resent_input_is_object:yes', $calls, true ), 'paused turn sent back with its tool input intact' );
+$ob = $bodies_for( 'slug' );
+$check( $ob && 16000 === $ob[0]['max_tokens'] && 'medium' === ( $ob[0]['output_config']['effort'] ?? '' ), 'outline: 16000 tokens of room, medium effort' );
 $o = $a['data']['outline'];
 $check( 'free-ai-courses-with-certificates-2026' === $o['slug'], 'slug cleaned to English: ' . $o['slug'] );
 $check( 'none' === $o['sections'][4]['image']['source'], 'Pexels slot without a query was dropped' );
@@ -89,6 +102,8 @@ $run_queue();
 $a = Jobs::get( $job_id );
 $check( 'done' === $a['status'], 'article finished (' . $a['status'] . '/' . $a['stage'] . ' ' . $a['error'] . ')' );
 
+$wb = $bodies_for( '"intro"' );
+$check( $wb && 32000 === $wb[0]['max_tokens'] && array( 'type' => 'between_tools' ) === ( $wb[0]['thinking'] ?? null ), 'write: 32000 tokens of room, no up-front thinking' );
 $post_id = (int) ( $a['data']['post_id'] ?? 0 );
 $post    = get_post( $post_id );
 $check( $post && 'draft' === $post->post_status, 'saved as a draft, not published' );
@@ -218,14 +233,19 @@ $check( 200 === $res->get_status() && $res->get_data()['post_id'] === $post_id, 
 
 // ----------------------------------------------------------- failure path
 echo "Failure and retry\n";
-$fail_once        = true;
-$original         = Claude::$transport;
-Claude::$transport = static function ( array $body ) use ( &$fail_once, $original ) {
-	if ( $fail_once && ! empty( $body['tools'] ) ) {
-		$fail_once = false;
-		throw new AnaAfdal\Writer\ApiError( 'Claude API error 529: Overloaded', 529 );
+$fail_mode = 'auth';
+$original  = Claude::$sse_transport;
+Claude::$sse_transport = static function ( array $body, callable $write ) use ( &$fail_mode, $original ) {
+	if ( ! empty( $body['tools'] ) && 'auth' === $fail_mode ) {
+		$fail_mode = '';
+		throw new AnaAfdal\Writer\ApiError( 'Claude API error 401: invalid x-api-key', 401 );
 	}
-	return $original( $body );
+	if ( ! empty( $body['tools'] ) && 'overloaded' === $fail_mode ) {
+		$fail_mode = '';
+		$write( "event: error\ndata: {\"type\":\"error\",\"error\":{\"type\":\"overloaded_error\",\"message\":\"Overloaded\"}}\n\n" );
+		return;
+	}
+	call_user_func( $original, $body, $write );
 };
 $job2 = Article::start( 1, array( 'title' => 'موضوع تجريبي', 'focus_keyphrase' => 'موضوع', 'post_type' => 'news' ) );
 $run_queue();
@@ -236,15 +256,115 @@ $run_queue();
 $j2 = Jobs::get( $job2 );
 $check( 'awaiting_approval' === $j2['stage'], 'retry resumes from the failed step' );
 
-// ------------------------------------------------------- stalled step
-echo "Stalled step recovery\n";
-$stalled            = Jobs::get( $job2 );
-$stalled['status']  = 'running';
-$stalled['stage']   = 'write';
-$stalled['updated'] = time() - 3600;
+$fail_mode = 'overloaded';
+$job3      = Article::start( 1, array( 'title' => 'موضوع ثالث', 'focus_keyphrase' => 'موضوع', 'post_type' => 'news' ) );
+$run_queue();
+$j3 = Jobs::get( $job3 );
+$check( 'awaiting_approval' === $j3['stage'] && '' === $fail_mode, 'an overloaded error mid-stream is retried automatically' );
+
+echo "Output limit\n";
+$GLOBALS['aaw_test_flags']['truncate_outline_once'] = true;
+$job4 = Article::start( 1, array( 'title' => 'موضوع رابع', 'focus_keyphrase' => 'موضوع', 'post_type' => 'guide' ) );
+$run_queue();
+$j4 = Jobs::get( $job4 );
+$check( in_array( 'outline_truncated', $calls, true ), 'outline hit the output limit once' );
+$check( 'awaiting_approval' === $j4['stage'] && ! empty( $j4['data']['outline']['sections'] ), 'outline retried with more room and finished' );
+$retry_body = array_values( array_filter( $bodies_for( 'slug' ), static fn( $b ) => 32000 === $b['max_tokens'] ) );
+$check( $retry_body && 'low' === ( $retry_body[0]['output_config']['effort'] ?? '' ), 'retry used double the room at low effort' );
+
+echo "Model settings it does not support\n";
+$GLOBALS['aaw_test_flags']['reject_thinking'] = true;
+$job5 = Topics::start( 1, '' );
+$run_queue();
+$j5 = Jobs::get( $job5 );
+$check( in_array( 'rejected_thinking', $calls, true ) && 'done' === $j5['status'], 'a rejected thinking setting is dropped and the request retried' );
+$GLOBALS['aaw_test_flags']['reject_thinking'] = false;
+
+echo "Whole replies (servers without curl)\n";
+aaw_test_install_mocks( 'plain' );
+$job6 = Topics::start( 1, '' );
+$run_queue();
+$check( 'done' === Jobs::get( $job6 )['status'], 'non-streamed replies still work' );
+aaw_test_install_mocks( 'stream' );
+
+echo "Claims\n";
+$t1 = Worker::claim( $job6 );
+$t2 = Worker::claim( $job6 );
+$check( $t1 && null === $t2, 'a job can be claimed by one runner at a time' );
+global $wpdb;
+$wpdb->update( $wpdb->options, array( 'option_value' => $t1 . '|' . ( time() - 600 ) ), array( 'option_name' => 'aaw_claim_' . $job6 ) );
+$t3 = Worker::claim( $job6 );
+$check( $t3 && $t3 !== $t1, 'a claim with a dead heartbeat can be taken over' );
+Worker::release( $job6, $t1 );
+$check( Worker::claim_alive( $job6 ), 'the old holder cannot release the new claim' );
+Worker::release( $job6, $t3 );
+$check( null === Worker::claim_age( $job6 ), 'the holder releases its claim' );
+
+echo "Step stopped by the server\n";
+$stalled             = Jobs::get( $job2 );
+$stalled['status']   = 'running';
+$stalled['stage']    = 'outline';
+$stalled['attempts'] = 1;
 update_post_meta( $job2, '_aaw_state', wp_slash( wp_json_encode( $stalled, JSON_UNESCAPED_UNICODE ) ) );
+update_post_meta( $job2, '_aaw_status', 'running' );
 $res = rest_do_request( new WP_REST_Request( 'GET', '/aaw/v1/jobs/' . $job2 ) );
-$check( 'failed' === $res->get_data()['status'] && $res->get_data()['can_retry'], 'a step killed by the server is marked failed and retryable' );
+$check( true === $res->get_data()['runnable'], 'a running step without a heartbeat can be picked up' );
+$run_queue();
+$j2 = Jobs::get( $job2 );
+$check( 'awaiting_approval' === $j2['stage'] && str_contains( wp_json_encode( $j2['log'], JSON_UNESCAPED_UNICODE ), 'Starting it again' ), 'it is restarted automatically' );
+
+$stalled             = Jobs::get( $job2 );
+$stalled['status']   = 'running';
+$stalled['stage']    = 'outline';
+$stalled['attempts'] = AnaAfdal\Writer\Pipeline::MAX_ATTEMPTS;
+update_post_meta( $job2, '_aaw_state', wp_slash( wp_json_encode( $stalled, JSON_UNESCAPED_UNICODE ) ) );
+update_post_meta( $job2, '_aaw_status', 'running' );
+$run_queue();
+$j2 = Jobs::get( $job2 );
+$check( 'failed' === $j2['status'] && str_contains( $j2['error'], 'several times' ), 'after repeated stops it fails with advice' );
+
+echo "Cancel while Claude is writing\n";
+$job7     = Topics::start( 1, '' );
+$original = Claude::$sse_transport;
+Claude::$sse_transport = static function ( array $body, callable $write ) use ( $job7, $original ) {
+	$events = aaw_test_sse_events( aaw_test_claude_reply( $body ) );
+	foreach ( $events as $i => $event ) {
+		if ( 3 === $i ) {
+			// Another request presses Cancel, then time passes before the next chunk arrives.
+			Jobs::update( $job7, static function ( array $s ) { $s['status'] = 'cancelled'; return $s; } );
+			sleep( 4 );
+		}
+		$write( $event );
+	}
+};
+$run_queue();
+$j7 = Jobs::get( $job7 );
+$check( 'cancelled' === $j7['status'] && 'topics_research' === $j7['stage'], 'cancel stops the running step' );
+$check( str_contains( wp_json_encode( $j7['log'] ), 'Stopped' ) && empty( $j7['data']['notes'] ), 'nothing after the cancel was saved' );
+Claude::$sse_transport = $original;
+
+echo "Live progress\n";
+$events = $research_progress['events'] ?? array();
+$check( $events && 'search' === $events[0]['type'] && 'test' === $events[0]['text'] && 5 === ( $events[0]['results'] ?? 0 ), 'searches and their result counts are reported live' );
+$wp = AnaAfdal\Writer\Progress::count_words( '{"intro":["إذا كنت تبحث عن كورسات","الذكاء الاصطناعي"],"sections":[{"heading":"x"}]}' );
+$check( 7 === $wp, 'word estimate ignores JSON keys: ' . $wp );
+
+echo "Upgrade from 1.0\n";
+$old_running = Jobs::create( Jobs::TYPE_ARTICLE, 1, 'Old running job', array() );
+Jobs::update( $old_running, static fn( $s ) => array_merge( $s, array( 'status' => 'running', 'stage' => 'write' ) ) );
+$old_waiting = Jobs::create( Jobs::TYPE_ARTICLE, 1, 'Old waiting job', array() );
+Jobs::update( $old_waiting, static fn( $s ) => array_merge( $s, array( 'status' => 'waiting', 'stage' => 'approve' ) ) );
+delete_post_meta( $old_running, Jobs::STATUS_META );
+delete_post_meta( $old_waiting, Jobs::STATUS_META );
+update_option( 'aaw_db_version', '1' );
+AnaAfdal\Writer\Installer::maybe_upgrade();
+$j = Jobs::get( $old_running );
+$check( 'failed' === $j['status'] && 'write' === $j['failed_stage'] && 'failed' === Jobs::status_fresh( $old_running ), 'a step that was running during the update stops and can be retried' );
+$check( 'waiting' === Jobs::status_fresh( $old_waiting ), 'other jobs keep their status' );
+$check( ! in_array( $old_running, Worker::pending_ids(), true ), 'old jobs are not restarted in the background' );
+$check( (bool) wp_next_scheduled( Worker::CRON_HOOK ) && '2' === get_option( 'aaw_db_version' ), 'the minute check is scheduled after updating' );
+wp_delete_post( $old_running, true );
+wp_delete_post( $old_waiting, true );
 
 echo "\nOutput draft content saved to tests/output-content.html\n";
 file_put_contents( dirname( __FILE__ ) . '/output-content.html', get_post_field( 'post_content', $post_id ) );

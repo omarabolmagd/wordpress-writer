@@ -29,6 +29,7 @@ final class Settings {
 			'pexels_key'               => '',
 			'screenshot_key'           => '',
 			'claude_model'             => 'claude-sonnet-5-5',
+			'speed'                    => 'fast',
 			'max_searches'             => 6,
 			'monthly_cap'              => 20,
 			'telegram_url'             => 'https://t.me/fyb2020',
@@ -133,6 +134,8 @@ final class Settings {
 		$gemini_model        = sanitize_text_field( $input['gemini_model'] ?? $current['gemini_model'] );
 		$out['gemini_model'] = preg_match( '/^[a-z0-9\-\.]+$/', $gemini_model ) ? $gemini_model : $current['gemini_model'];
 
+		$out['speed'] = in_array( $input['speed'] ?? '', array( 'fast', 'thorough' ), true ) ? $input['speed'] : $current['speed'];
+
 		$out['max_searches'] = max( 1, min( 20, (int) ( $input['max_searches'] ?? $current['max_searches'] ) ) );
 		$out['monthly_cap']  = max( 0, round( (float) ( $input['monthly_cap'] ?? $current['monthly_cap'] ), 2 ) );
 
@@ -184,6 +187,13 @@ final class Settings {
 					<span id="aaw-test-results" class="aaw-test-results" aria-live="polite"></span>
 				</p>
 
+				<h2><?php esc_html_e( 'Background work', 'ana-afdal-writer' ); ?></h2>
+				<p><?php esc_html_e( 'While an article page is open, the page runs each step itself, so nothing waits. When you close the page, the work continues in the background only if your server allows it. Test connections checks this.', 'ana-afdal-writer' ); ?></p>
+				<?php if ( Worker::is_litespeed() ) : ?>
+					<p><?php esc_html_e( 'Your site runs on LiteSpeed, which stops background work as soon as the request that started it disconnects. To let steps finish after you close the page, add these lines at the very top of the .htaccess file in your WordPress folder (for example with your host\'s File Manager):', 'ana-afdal-writer' ); ?></p>
+					<textarea class="large-text code" rows="8" readonly dir="ltr" onclick="this.select()"><?php echo esc_textarea( Worker::litespeed_rule() ); ?></textarea>
+				<?php endif; ?>
+
 				<h2><?php esc_html_e( 'Budget', 'ana-afdal-writer' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
@@ -199,6 +209,18 @@ final class Settings {
 				<table class="form-table" role="presentation">
 					<?php
 					self::text_row( 'claude_model', __( 'Claude model', 'ana-afdal-writer' ), $s['claude_model'], __( 'Default: claude-sonnet-5-5. If you switch models, update the Claude prices below too.', 'ana-afdal-writer' ) );
+					?>
+					<tr>
+						<th scope="row"><label for="aaw-speed"><?php esc_html_e( 'Speed', 'ana-afdal-writer' ); ?></label></th>
+						<td>
+							<select id="aaw-speed" name="<?php echo esc_attr( self::OPTION ); ?>[speed]">
+								<option value="fast" <?php selected( $s['speed'], 'fast' ); ?>><?php esc_html_e( 'Fast (recommended)', 'ana-afdal-writer' ); ?></option>
+								<option value="thorough" <?php selected( $s['speed'], 'thorough' ); ?>><?php esc_html_e( 'Thorough', 'ana-afdal-writer' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'Fast: Claude answers without thinking silently first, which makes each step several times quicker. Thorough: Claude thinks before research, planning and the quality check; slower and costs more.', 'ana-afdal-writer' ); ?></p>
+						</td>
+					</tr>
+					<?php
 					self::number_row( 'max_searches', __( 'Web searches per research step', 'ana-afdal-writer' ), $s['max_searches'], __( 'Each search costs about $0.01.', 'ana-afdal-writer' ), '1' );
 					self::text_row( 'telegram_url', __( 'Telegram channel link', 'ana-afdal-writer' ), $s['telegram_url'], __( 'Every post ends with an invitation to this channel.', 'ana-afdal-writer' ), 'url' );
 					self::text_row( 'telegram_text', __( 'Telegram invitation text', 'ana-afdal-writer' ), $s['telegram_text'], '' );

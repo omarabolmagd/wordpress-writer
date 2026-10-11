@@ -21,7 +21,7 @@ final class Quality {
 
 		try {
 			list( $system, $prompt ) = Prompts::quality( self::plain_article( $outline, $draft ), $outline, (string) $state['data']['research']['notes'] );
-			$review                  = Claude::json( $system, $prompt, Prompts::quality_schema(), $job_id, 'quality', 3000 );
+			$review                  = Claude::json( $system, $prompt, Prompts::quality_schema(), $job_id, 'quality' );
 			$labels                  = self::review_labels();
 			foreach ( (array) ( $review['items'] ?? array() ) as $r ) {
 				$check = (string) ( $r['check'] ?? '' );

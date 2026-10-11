@@ -114,33 +114,11 @@ final class Rest {
 		if ( ! $job ) {
 			return self::error( __( 'Not found.', 'ana-afdal-writer' ), 404 );
 		}
-		// Polling doubles as a nudge: if steps are waiting and nothing is running, start the worker.
-		if ( in_array( $job['status'], array( 'queued', 'running' ), true ) && ! Worker::is_running() && Worker::has_pending() ) {
-			Worker::kick();
+		// The page is watching: it drives this job, so background runners leave it alone.
+		if ( in_array( $job['status'], array( 'queued', 'running' ), true ) ) {
+			Worker::seen( (int) $job['id'] );
 		}
-		$job = self::recover_stalled( $job );
 		return rest_ensure_response( self::present( $job ) );
-	}
-
-	/**
-	 * A step whose PHP process was killed (usually the host's time limit) never reports back.
-	 * After 15 minutes without progress, mark it failed so it can be retried.
-	 */
-	private static function recover_stalled( array $job ): array {
-		$stalled_running = 'running' === $job['status'] && time() - (int) $job['updated'] > 15 * MINUTE_IN_SECONDS;
-		$stalled_queued  = 'queued' === $job['status'] && time() - (int) $job['updated'] > 30 * MINUTE_IN_SECONDS
-			&& ! as_has_scheduled_action( Worker::ACTION, array( (int) $job['id'], (string) $job['stage'] ), AAW_GROUP );
-		if ( ! $stalled_running && ! $stalled_queued ) {
-			return $job;
-		}
-		Jobs::fail(
-			(int) $job['id'],
-			(string) $job['stage'],
-			$stalled_running
-				? __( 'This step stopped without finishing. The server probably hit its time limit; ask your host to raise PHP max_execution_time to 300 seconds, then try again.', 'ana-afdal-writer' )
-				: __( 'This step never started. Background tasks may be blocked on this server; try again, and if it repeats, check that WP-Cron is running.', 'ana-afdal-writer' )
-		);
-		return Jobs::get( (int) $job['id'] );
 	}
 
 	public static function approve( \WP_REST_Request $request ) {
@@ -167,7 +145,6 @@ final class Rest {
 		if ( ! $job ) {
 			return self::error( __( 'Not found.', 'ana-afdal-writer' ), 404 );
 		}
-		as_unschedule_all_actions( Worker::ACTION, array( $job_id, (string) $job['stage'] ), AAW_GROUP );
 		Jobs::update(
 			$job_id,
 			static function ( array $s ) {
@@ -244,7 +221,16 @@ final class Rest {
 			$out['preview_url'] = get_preview_post_link( $out['post_id'] );
 			$out['view_url']    = get_permalink( $out['post_id'] );
 		}
-		$out['pending_worker'] = in_array( $job['status'], array( 'queued', 'running' ), true );
+		$active = in_array( $job['status'], array( 'queued', 'running' ), true );
+		$out['active']    = $active;
+		$out['now']       = time();
+		$out['queued_at'] = (int) ( $job['queued_at'] ?? $job['updated'] );
+		$out['attempts']  = (int) ( $job['attempts'] ?? 0 );
+		$out['runnable']  = $active && Worker::runnable( $job );
+		$out['progress']  = $active ? Progress::get( (int) $job['id'] ) : null;
+		if ( $out['progress'] && ( $out['progress']['stage'] ?? '' ) !== $job['stage'] ) {
+			$out['progress'] = null;
+		}
 		return $out;
 	}
 
@@ -306,6 +292,8 @@ final class Rest {
 		$results['cover'] = Cover::available()
 			? array( 'ok' => true, 'message' => __( 'Server can draw covers', 'ana-afdal-writer' ) )
 			: array( 'ok' => false, 'message' => __( 'PHP GD with FreeType is missing', 'ana-afdal-writer' ) );
+
+		$results['background'] = Worker::test_background();
 
 		// Long steps (research, writing) can take a few minutes, so the server must allow it.
 		$disabled  = array_map( 'trim', explode( ',', (string) ini_get( 'disable_functions' ) ) );

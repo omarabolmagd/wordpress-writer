@@ -101,6 +101,94 @@ final class Links {
 	}
 
 	/**
+	 * Checks several URLs live at once.
+	 *
+	 * @return array<string,array{ok:bool,blocked:bool,status:int}>
+	 */
+	public static function check_many( array $urls ): array {
+		$urls = array_values( array_unique( $urls ) );
+		$out  = array();
+		if ( ! $urls ) {
+			return $out;
+		}
+		if ( self::$checker ) {
+			foreach ( $urls as $url ) {
+				$out[ $url ] = call_user_func( self::$checker, $url );
+			}
+			return $out;
+		}
+		$valid = array();
+		foreach ( $urls as $url ) {
+			if ( wp_http_validate_url( $url ) ) {
+				$valid[] = $url;
+			} else {
+				$out[ $url ] = array( 'ok' => false, 'blocked' => false, 'status' => 0 );
+			}
+		}
+		if ( ! $valid ) {
+			return $out;
+		}
+		$status = self::statuses( $valid, 'HEAD' );
+		// Many sites reject HEAD; confirm those with a small GET.
+		$retry = array_values( array_filter( $valid, static fn( $u ) => 0 === $status[ $u ] || $status[ $u ] >= 400 ) );
+		if ( $retry ) {
+			$status = array_merge( $status, self::statuses( $retry, 'GET' ) );
+		}
+		foreach ( $valid as $url ) {
+			$code        = (int) $status[ $url ];
+			$out[ $url ] = array(
+				'ok'      => $code >= 200 && $code < 400,
+				'blocked' => in_array( $code, array( 401, 403, 429, 999 ), true ),
+				'status'  => $code,
+			);
+		}
+		return $out;
+	}
+
+	/** HTTP status for each URL, fetched in parallel. 0 means no response. */
+	private static function statuses( array $urls, string $method ): array {
+		$class = class_exists( '\WpOrg\Requests\Requests' ) ? '\WpOrg\Requests\Requests' : ( class_exists( '\Requests' ) ? '\Requests' : '' );
+		$out   = array_fill_keys( $urls, 0 );
+		if ( ! $class ) {
+			foreach ( $urls as $url ) {
+				$out[ $url ] = self::check( $url )['status'];
+			}
+			return $out;
+		}
+		$requests = array();
+		foreach ( $urls as $i => $url ) {
+			$requests[ $i ] = array(
+				'url'     => $url,
+				'type'    => $method,
+				'headers' => array(
+					'User-Agent'      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
+					'Accept-Language' => 'ar,en;q=0.8',
+				),
+			);
+		}
+		$options = array(
+			'timeout'          => 12,
+			'connect_timeout'  => 8,
+			'follow_redirects' => true,
+			'redirects'        => 5,
+			'verify'           => ABSPATH . WPINC . '/certificates/ca-bundle.crt',
+		);
+		if ( 'GET' === $method ) {
+			$options['max_bytes'] = 65536;
+		}
+		try {
+			$responses = $class::request_multiple( $requests, $options );
+		} catch ( \Throwable $e ) {
+			return $out;
+		}
+		foreach ( $urls as $i => $url ) {
+			$response    = $responses[ $i ] ?? null;
+			$out[ $url ] = is_object( $response ) && isset( $response->status_code ) ? (int) $response->status_code : 0;
+		}
+		return $out;
+	}
+
+	/**
 	 * Checks a URL live. Returns ok (link works), blocked (site refuses automated checks but exists) and status.
 	 *
 	 * @return array{ok:bool,blocked:bool,status:int}

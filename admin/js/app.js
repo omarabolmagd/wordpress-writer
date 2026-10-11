@@ -100,6 +100,45 @@
 
 	const isActive = ( job ) => job && ( job.status === 'queued' || job.status === 'running' );
 
+	const STAGE_LABELS = () => ( {
+		topics_research: __( 'Searching for topic ideas', 'ana-afdal-writer' ),
+		topics_structure: __( 'Choosing the best topics', 'ana-afdal-writer' ),
+		research: __( 'Researching the topic', 'ana-afdal-writer' ),
+		outline: __( 'Planning the outline', 'ana-afdal-writer' ),
+		write: __( 'Writing the article', 'ana-afdal-writer' ),
+		images: __( 'Adding images', 'ana-afdal-writer' ),
+		assemble: __( 'Checking links and saving the draft', 'ana-afdal-writer' ),
+		quality: __( 'Reviewing the draft', 'ana-afdal-writer' ),
+		backlinks: __( 'Finding links from older posts', 'ana-afdal-writer' ),
+	} );
+
+	const num = ( n ) => {
+		try {
+			return Number( n ).toLocaleString( ( cfg.locale || 'en' ).replace( '_', '-' ) );
+		} catch ( e ) {
+			return String( n );
+		}
+	};
+
+	/* Server time minus browser time, so elapsed timers are right even if clocks differ. */
+	let clockOffset = 0;
+	const serverNow = () => Date.now() / 1000 + clockOffset;
+	const syncClock = ( job ) => {
+		if ( job && job.now ) {
+			clockOffset = job.now - Date.now() / 1000;
+		}
+	};
+	const elapsed = ( since ) => {
+		const s = Math.max( 0, Math.floor( serverNow() - since ) );
+		const m = Math.floor( s / 60 );
+		return m + ':' + String( s % 60 ).padStart( 2, '0' );
+	};
+	setInterval( () => {
+		document.querySelectorAll( '[data-since]' ).forEach( ( el ) => {
+			el.textContent = elapsed( Number( el.dataset.since ) );
+		} );
+	}, 1000 );
+
 	/* ----------------------------------------------------- settings page */
 
 	const testButton = document.getElementById( 'aaw-test-connections' );
@@ -110,7 +149,7 @@
 			out.textContent = __( 'Testing…', 'ana-afdal-writer' );
 			api( '/test-connections', { method: 'POST' } )
 				.then( ( res ) => {
-					const names = { claude: 'Claude', gemini: 'Gemini', pexels: 'Pexels', screenshot: __( 'Screenshots', 'ana-afdal-writer' ), cover: __( 'Covers', 'ana-afdal-writer' ), time: __( 'Server time limit', 'ana-afdal-writer' ) };
+					const names = { claude: 'Claude', gemini: 'Gemini', pexels: 'Pexels', screenshot: __( 'Screenshots', 'ana-afdal-writer' ), cover: __( 'Covers', 'ana-afdal-writer' ), time: __( 'Server time limit', 'ana-afdal-writer' ), background: __( 'Background work', 'ana-afdal-writer' ) };
 					out.innerHTML = Object.keys( res )
 						.map( ( k ) => `<span class="aaw-test ${ res[ k ].ok ? 'ok' : 'no' }">${ esc( names[ k ] || k ) }: ${ esc( res[ k ].message ) }</span>` )
 						.join( ' ' );
@@ -152,6 +191,149 @@
 				n.remove();
 			}
 		}, 8000 );
+	};
+
+	/* ------------------------------------------------------ live progress */
+
+	const phaseText = ( job, p ) => {
+		if ( ! p || job.status === 'queued' ) {
+			return runner.inFlight && runner.job === job.id ? __( 'Starting…', 'ana-afdal-writer' ) : __( 'Waiting to start…', 'ana-afdal-writer' );
+		}
+		const words = Number( p.words ) || 0;
+		switch ( p.phase ) {
+			case 'starting':
+				return __( 'Starting…', 'ana-afdal-writer' );
+			case 'finished':
+				return __( 'Finishing…', 'ana-afdal-writer' );
+			case 'thinking':
+				return __( 'Thinking…', 'ana-afdal-writer' );
+			case 'searching':
+				return __( 'Searching the web…', 'ana-afdal-writer' );
+			case 'reading':
+				return __( 'Reading the search results…', 'ana-afdal-writer' );
+			case 'waiting':
+				return __( 'Claude is busy right now. Trying again in a few seconds…', 'ana-afdal-writer' );
+			case 'waiting_reply':
+				return __( 'Waiting for Claude\'s answer…', 'ana-afdal-writer' );
+			case 'images':
+				return sprintf( __( 'Image %1$d of %2$d…', 'ana-afdal-writer' ), p.current || 1, p.total || 1 ) + ( p.detail && p.detail !== 'cover' ? ' (' + ( SOURCE_LABELS()[ p.detail ] || p.detail ) + ')' : ' (' + __( 'cover', 'ana-afdal-writer' ) + ')' );
+			case 'links':
+				return sprintf( __( 'Checking %d source links…', 'ana-afdal-writer' ), p.total || 0 );
+			case 'saving':
+				return __( 'Saving the draft…', 'ana-afdal-writer' );
+			case 'writing':
+				switch ( job.stage ) {
+					case 'topics_research':
+					case 'research':
+						return sprintf( __( 'Writing research notes… about %s words', 'ana-afdal-writer' ), num( words ) );
+					case 'topics_structure':
+						return __( 'Choosing the best topics…', 'ana-afdal-writer' );
+					case 'outline':
+						return __( 'Planning the sections…', 'ana-afdal-writer' );
+					case 'write':
+						return sprintf( __( 'Writing… about %s words so far', 'ana-afdal-writer' ), num( words ) ) +
+							( p.sections_total ? ' · ' + sprintf( __( 'section %1$d of %2$d', 'ana-afdal-writer' ), Math.min( Math.max( 1, p.sections_done ), p.sections_total ), p.sections_total ) : '' );
+					case 'quality':
+						return __( 'Reviewing the draft…', 'ana-afdal-writer' );
+					case 'backlinks':
+						return __( 'Looking for places in older posts…', 'ana-afdal-writer' );
+				}
+				return __( 'Writing…', 'ana-afdal-writer' );
+		}
+		return __( 'Working…', 'ana-afdal-writer' );
+	};
+
+	const liveHtml = ( job, compact ) => {
+		if ( ! isActive( job ) ) {
+			return '';
+		}
+		syncClock( job );
+		const p = job.progress;
+		const since = p && job.status === 'running' ? p.started : job.queued_at;
+		const label = STAGE_LABELS()[ job.stage ] || job.stage;
+
+		let bar = '';
+		if ( p && job.stage === 'write' && p.target && p.phase === 'writing' ) {
+			const goal = ( Number( p.target[ 0 ] ) + Number( p.target[ 1 ] ) ) / 2;
+			const pct = Math.min( 97, Math.round( ( ( Number( p.words ) || 0 ) / goal ) * 100 ) );
+			bar = `<div class="aaw-meter aaw-live-bar"><span style="width:${ pct }%"></span></div>`;
+		} else if ( p && p.phase === 'images' && p.total ) {
+			const pct = Math.round( ( ( ( p.current || 1 ) - 1 ) / p.total ) * 100 );
+			bar = `<div class="aaw-meter aaw-live-bar"><span style="width:${ pct }%"></span></div>`;
+		}
+
+		const searches = p && p.events ? p.events.filter( ( e ) => e.type === 'search' ) : [];
+		const items = searches
+			.slice( compact ? -3 : -8 )
+			.map( ( e ) => {
+				let status = `<span class="aaw-live-pending">…</span>`;
+				if ( e.error ) {
+					status = `<span class="aaw-live-bad">${ esc( __( 'search failed', 'ana-afdal-writer' ) ) }</span>`;
+				} else if ( e.results !== undefined ) {
+					status = esc( sprintf( __( '%d results', 'ana-afdal-writer' ), e.results ) ) + ( e.hosts && e.hosts.length && ! compact ? ' · <span class="aaw-live-hosts" dir="ltr">' + esc( e.hosts.join( ', ' ) ) + '</span>' : '' );
+				}
+				return `<li><span class="aaw-live-icon dashicons ${ e.error ? 'dashicons-warning' : e.results !== undefined ? 'dashicons-yes' : 'dashicons-search' }" aria-hidden="true"></span> <bdi dir="auto">«${ esc( e.text ) }»</bdi> — ${ status }</li>`;
+			} )
+			.join( '' );
+		const retry = p && p.events ? p.events.filter( ( e ) => e.type === 'retry' ).pop() : null;
+		const retryNote = retry && serverNow() - retry.t < 90
+			? `<p class="aaw-live-note">${ esc( retry.text === 'max_tokens' ? __( 'The answer was longer than the space Claude had, so it is trying again with more room.', 'ana-afdal-writer' ) : __( 'Claude was busy for a moment; the plugin retried automatically.', 'ana-afdal-writer' ) ) }</p>`
+			: '';
+		const restarted = job.attempts > 1
+			? `<p class="aaw-live-note">${ esc( sprintf( __( 'The server stopped this step before it finished, so it started again (attempt %d).', 'ana-afdal-writer' ), job.attempts ) ) }</p>`
+			: '';
+
+		return `
+			<section class="aaw-card aaw-live ${ compact ? 'aaw-live-compact' : '' }" aria-live="polite">
+				<div class="aaw-live-head">
+					<span class="spinner is-active"></span>
+					<strong>${ esc( label ) }</strong>
+					<span class="aaw-live-time" data-since="${ Number( since ) || Math.floor( serverNow() ) }">${ esc( elapsed( since ) ) }</span>
+				</div>
+				<p class="aaw-live-now">${ esc( phaseText( job, p ) ) }</p>
+				${ bar }
+				${ items ? `<ul class="aaw-live-events">${ items }</ul>` : '' }
+				${ retryNote }${ restarted }
+				${ compact ? '' : `<p class="description">${ esc( __( 'Keep this page open: it runs each step itself, which is the fastest way. If you leave, the work continues in the background only when your server allows it.', 'ana-afdal-writer' ) ) }</p>` }
+			</section>`;
+	};
+
+	/* ------------------------------------------------------------ runner */
+
+	// While a page shows a job, the page asks the server to run the job's next step and waits
+	// for it. Nothing waits for cron, and hosts like LiteSpeed don't stop work mid-step.
+	const runner = { job: 0, inFlight: false, failures: 0, notBefore: 0 };
+
+	const runStep = ( jobId, onDone ) => {
+		runner.inFlight = true;
+		runner.job = jobId;
+		const body = new URLSearchParams( { action: 'aaw_run', job: String( jobId ), _ajax_nonce: cfg.runNonce || '' } );
+		fetch( cfg.ajaxUrl, { method: 'POST', credentials: 'same-origin', body } )
+			.then( ( r ) => r.text().then( ( text ) => ( { ok: r.ok, text } ) ) )
+			.then( ( { ok, text } ) => {
+				const data = JSON.parse( text );
+				if ( ! ok || ! data || ! data.job ) {
+					throw new Error( 'run failed' );
+				}
+				runner.failures = 0;
+				runner.inFlight = false;
+				onDone( data.job );
+			} )
+			.catch( () => {
+				runner.failures++;
+				runner.notBefore = Date.now() + Math.min( 30000, 4000 * runner.failures );
+				runner.inFlight = false;
+				onDone( null );
+			} );
+	};
+
+	/** Starts the next step from this page if the job is waiting for a runner. */
+	const maybeRun = ( job, onDone ) => {
+		if ( job && job.runnable && ! runner.inFlight && Date.now() >= runner.notBefore ) {
+			runStep( job.id, onDone );
+			return true;
+		}
+		return false;
 	};
 
 	/* --------------------------------------------------------- home view */
@@ -202,7 +384,7 @@
 		const job = topicsJob;
 		let body = '';
 		if ( isActive( job ) ) {
-			body = `<p class="aaw-progress"><span class="spinner is-active"></span> ${ esc( __( 'Searching the web for what readers want right now. This takes about a minute.', 'ana-afdal-writer' ) ) }</p>`;
+			body = liveHtml( job, true );
 		} else if ( job && job.status === 'failed' ) {
 			body = notice( job.error );
 		} else if ( job && job.topics && job.topics.length ) {
@@ -294,26 +476,35 @@
 		bindCategorySelects( root );
 	};
 
-	const pollTopics = () => {
+	const showTopics = ( job ) => {
+		topicsJob = job;
+		if ( currentRoute().job ) {
+			return;
+		}
+		if ( isActive( job ) ) {
+			const region = root.querySelector( '[data-region="topics"]' );
+			if ( region ) {
+				region.innerHTML = liveHtml( job, true );
+			}
+			pollTopics();
+		} else {
+			loadHome();
+		}
+	};
+
+	const pollTopics = ( delay = 2500 ) => {
 		stopPolling();
 		if ( ! isActive( topicsJob ) ) {
 			return;
 		}
+		if ( maybeRun( topicsJob, ( job ) => ( job ? showTopics( job ) : pollTopics( 0 ) ) ) ) {
+			delay = 1500;
+		}
 		pollTimer = setTimeout( () => {
 			api( '/jobs/' + topicsJob.id )
-				.then( ( job ) => {
-					topicsJob = job;
-					if ( ! currentRoute().job ) {
-						const region = root.querySelector( '[data-region="topics"]' );
-						if ( isActive( job ) ) {
-							pollTopics();
-						} else if ( region ) {
-							loadHome();
-						}
-					}
-				} )
+				.then( showTopics )
 				.catch( () => pollTopics() );
-		}, 5000 );
+		}, delay );
 	};
 
 	const loadHome = () => {
@@ -473,7 +664,7 @@
 
 				<p class="aaw-actions">
 					<button type="submit" class="button button-primary button-hero">${ esc( __( 'Approve and write', 'ana-afdal-writer' ) ) }</button>
-					<span class="description">${ esc( __( 'Writing, images and checks take about 3–6 minutes. You can leave this page.', 'ana-afdal-writer' ) ) }</span>
+					<span class="description">${ esc( __( 'Writing, images and checks usually take 2–4 minutes. Keep this page open for the fastest result.', 'ana-afdal-writer' ) ) }</span>
 				</p>
 			</form>`;
 	};
@@ -676,8 +867,7 @@
 				${ job.can_retry ? `<p><button type="button" class="button button-primary" data-job-action="retry">${ esc( __( 'Try this step again', 'ana-afdal-writer' ) ) }</button></p>` : '' }</div>`;
 		}
 		if ( busy ) {
-			const hint = job.stage === 'research' || job.stage === 'outline' ? __( 'Researching and planning. The outline is usually ready in 1–3 minutes.', 'ana-afdal-writer' ) : __( 'Working on your draft. You can leave this page and come back.', 'ana-afdal-writer' );
-			main += `<p class="aaw-progress"><span class="spinner is-active"></span> ${ esc( hint ) }</p>`;
+			main += `<div data-region="live">${ liveHtml( job, false ) }</div>`;
 		}
 		if ( job.post_id ) {
 			main += `
@@ -700,7 +890,7 @@
 			<p><a href="#" data-nav="home">${ cfg.isRtl ? '→' : '←' } ${ esc( __( 'All articles', 'ana-afdal-writer' ) ) }</a></p>
 			<header class="aaw-job-head">
 				<h2 dir="auto">${ esc( job.title || __( '(untitled)', 'ana-afdal-writer' ) ) }</h2>
-				<p>${ badge( job ) } <span class="aaw-cost">${ esc( sprintf( __( 'Cost so far: %s', 'ana-afdal-writer' ), money( job.cost ) ) ) }</span>
+				<p>${ badge( job ) } <span class="aaw-cost" data-region="cost">${ esc( sprintf( __( 'Cost so far: %s', 'ana-afdal-writer' ), money( job.cost ) ) ) }</span>
 				${ canCancel ? `<button type="button" class="button-link aaw-danger" data-job-action="cancel">${ esc( __( 'Cancel', 'ana-afdal-writer' ) ) }</button>` : '' }</p>
 			</header>
 			${ stepsHtml( job ) }
@@ -712,27 +902,43 @@
 		}
 	};
 
-	const pollJob = () => {
+	/** Shows a fresh copy of the job: a full redraw when the step changed, otherwise just the live parts. */
+	const showJob = ( job ) => {
+		if ( ! job || currentRoute().job !== job.id ) {
+			return;
+		}
+		const changed = ! currentJob || job.stage !== currentJob.stage || job.status !== currentJob.status || job.log.length !== currentJob.log.length;
+		currentJob = job;
+		if ( changed ) {
+			renderJob();
+		} else {
+			const live = root.querySelector( '[data-region="live"]' );
+			if ( live ) {
+				live.innerHTML = liveHtml( job, false );
+			}
+			const cost = root.querySelector( '[data-region="cost"]' );
+			if ( cost ) {
+				cost.textContent = sprintf( __( 'Cost so far: %s', 'ana-afdal-writer' ), money( job.cost ) );
+			}
+		}
+		pollJob();
+	};
+
+	const pollJob = ( delay = 2500 ) => {
 		stopPolling();
 		if ( ! isActive( currentJob ) ) {
 			return;
 		}
+		const id = currentJob.id;
+		if ( maybeRun( currentJob, ( job ) => ( job ? showJob( job ) : pollJob( 0 ) ) ) ) {
+			// The step's progress is still fetched while it runs.
+			delay = 1500;
+		}
 		pollTimer = setTimeout( () => {
-			const id = currentJob.id;
 			api( '/jobs/' + id )
-				.then( ( job ) => {
-					if ( currentRoute().job !== id ) {
-						return;
-					}
-					const changed = job.stage !== currentJob.stage || job.status !== currentJob.status || job.log.length !== currentJob.log.length;
-					currentJob = job;
-					if ( changed ) {
-						renderJob();
-					}
-					pollJob();
-				} )
+				.then( showJob )
 				.catch( () => pollJob() );
-		}, 4000 );
+		}, delay );
 	};
 
 	const loadJob = ( id ) => {

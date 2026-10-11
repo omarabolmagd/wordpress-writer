@@ -10,10 +10,15 @@ WP_CLI="${2:?path to wp-cli.phar}"
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 wp() { php "$WP_CLI" --allow-root --path="$WP_DIR" "$@"; }
 
+# Test servers would pick up queued steps too; stop them.
+pkill -f '^php -S localhost:808[01]' 2>/dev/null || true
+rm -f "$WP_DIR/wp-content/mu-plugins/mu-test-mocks.php" "$WP_DIR/wp-content/mu-plugins/aaw-mocks.php"
 rm -rf "$WP_DIR/wp-content/database" "$WP_DIR/wp-content/uploads"
 mkdir -p "$WP_DIR/wp-content/database"
 : > "$WP_DIR/wp-content/debug.log"
 wp core install --url=http://localhost:8080 --title="انا افضل" --admin_user=admin --admin_password=admin --admin_email=test@example.com --skip-email >/dev/null
+wp option update siteurl http://localhost:8080 >/dev/null
+wp option update home http://localhost:8080 >/dev/null
 mkdir -p "$WP_DIR/wp-content/mu-plugins"
 cp "$PLUGIN_DIR/tests/mu-random-slugs.php" "$WP_DIR/wp-content/mu-plugins/"
 ln -sfn "$PLUGIN_DIR" "$WP_DIR/wp-content/plugins/ana-afdal-writer"

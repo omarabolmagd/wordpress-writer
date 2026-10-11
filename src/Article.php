@@ -37,7 +37,7 @@ final class Article {
 		list( $system, $prompt ) = Prompts::article_research( $state['input']['topic'] );
 
 		Jobs::log( $job_id, 'Researching the topic on the web…' );
-		$result = Claude::research( $system, $prompt, $job_id, 'research', 8000 );
+		$result = Claude::research( $system, $prompt, $job_id, 'research' );
 		if ( '' === $result['text'] ) {
 			throw new \RuntimeException( 'Research came back empty. Try again.' );
 		}
@@ -66,7 +66,7 @@ final class Article {
 		$index      = Site::published_posts( 200 );
 
 		list( $system, $prompt ) = Prompts::outline( $topic, $research['notes'], $research['sources'], $categories, $index, Images::available_sources() );
-		$outline = Claude::json( $system, $prompt, Prompts::outline_schema(), $job_id, 'outline', 6000 );
+		$outline = Claude::json( $system, $prompt, Prompts::outline_schema(), $job_id, 'outline' );
 
 		$outline['author_id'] = (int) $state['user_id'];
 		$outline              = self::sanitize_outline( $outline, $research['sources'] );
@@ -258,7 +258,14 @@ final class Article {
 
 		list( $system, $prompt ) = Prompts::draft( $outline, $research['notes'], $link_posts, $external );
 		Jobs::log( $job_id, 'Writing the article…' );
-		$draft = Claude::json( $system, $prompt, Prompts::draft_schema(), $job_id, 'write', 16000 );
+		$template = Prompts::templates()[ $outline['post_type'] ] ?? Prompts::templates()['guide'];
+		Progress::set(
+			array(
+				'target'         => $template['words'],
+				'sections_total' => count( $outline['sections'] ),
+			)
+		);
+		$draft = Claude::json( $system, $prompt, Prompts::draft_schema(), $job_id, 'write' );
 
 		// Keep the approved headings and order even if the reply drifted.
 		$sections = array();
@@ -336,7 +343,11 @@ final class Article {
 			);
 		};
 
+		$planned = array_keys( array_filter( $outline['sections'], static fn( $s ) => 'none' !== $s['image']['source'] ) );
+		$total   = count( $planned ) + 1;
+
 		if ( null === $done['cover'] ) {
+			Progress::phase( 'images', 'cover', array( 'current' => 1, 'total' => $total ) );
 			try {
 				$label         = self::category_label( $outline );
 				$done['cover'] = array( 'id' => Cover::create( $outline['title'], $label, $outline['slug'], $outline['title'] ) );
@@ -357,6 +368,10 @@ final class Article {
 				// Continue in a fresh request so a slow image never hits the host's time limit.
 				return 'images';
 			}
+			$position = (int) array_search( $i, $planned, true ) + 2;
+			Progress::phase( 'images', $plan['source'], array( 'current' => $position, 'total' => $total ) );
+			// Image services can take a while and don't report progress: reserve time so no other runner takes over.
+			Progress::hold( 240 );
 			try {
 				$id                     = Images::fetch( $plan, $job_id, $outline['slug'] );
 				$done['sections'][ $i ] = array( 'id' => $id, 'source' => $plan['source'] );
@@ -366,6 +381,7 @@ final class Article {
 				Jobs::log( $job_id, sprintf( 'Image %d (%s) failed: %s', $i + 1, $plan['source'], $e->getMessage() ) );
 			}
 			$record( $done );
+			Progress::tick( true );
 		}
 		return 'assemble';
 	}
@@ -403,13 +419,18 @@ final class Article {
 				}
 			}
 		}
-		$checked = array();
+		$checked  = array();
+		$to_check = array();
 		foreach ( array_keys( $external ) as $url ) {
-			if ( ! Links::is_allowed( $url, $allowed ) ) {
+			if ( Links::is_allowed( $url, $allowed ) ) {
+				$to_check[] = $url;
+			} else {
 				$checked[ $url ] = array( 'ok' => false, 'reason' => __( 'not one of the researched sources', 'ana-afdal-writer' ) );
-				continue;
 			}
-			$result          = Links::check( $url );
+		}
+		Progress::phase( 'links', '', array( 'total' => count( $to_check ) ) );
+		Progress::hold( 120 );
+		foreach ( Links::check_many( $to_check ) as $url => $result ) {
 			$checked[ $url ] = array(
 				'ok'      => $result['ok'] || $result['blocked'],
 				'blocked' => $result['blocked'],
@@ -418,6 +439,7 @@ final class Article {
 			);
 		}
 		Jobs::log( $job_id, sprintf( 'Checked %d external links.', count( $checked ) ) );
+		Progress::phase( 'saving' );
 
 		// 2. Resolver used while rendering: decides what stays a link.
 		$resolve = static function ( string $target ) use ( &$report, $published, $checked ) {

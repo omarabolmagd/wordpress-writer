@@ -31,7 +31,7 @@ final class Backlinks {
 				'summary'   => $outline['meta_description'],
 			);
 			list( $system, $prompt ) = Prompts::backlinks( $new_post, $candidates );
-			$data                    = Claude::json( $system, $prompt, Prompts::backlinks_schema(), $job_id, 'backlinks', 2000 );
+			$data                    = Claude::json( $system, $prompt, Prompts::backlinks_schema(), $job_id, 'backlinks' );
 
 			$by_id = array();
 			foreach ( $candidates as $c ) {

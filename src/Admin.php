@@ -56,6 +56,8 @@ final class Admin {
 			'window.aawConfig = ' . wp_json_encode(
 				array(
 					'ns'       => Rest::NS,
+					'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
+					'runNonce' => wp_create_nonce( Worker::AJAX_RUN ),
 					'appUrl'   => admin_url( 'admin.php?page=' . self::PAGE_APP ),
 					'locale'   => get_user_locale(),
 					'isRtl'    => is_rtl(),

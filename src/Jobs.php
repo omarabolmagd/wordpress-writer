@@ -10,7 +10,8 @@ defined( 'ABSPATH' ) || exit;
 final class Jobs {
 
 	public const POST_TYPE = 'aaw_job';
-	private const META     = '_aaw_state';
+	private const META        = '_aaw_state';
+	public const STATUS_META  = '_aaw_status';
 
 	public const TYPE_TOPICS  = 'topics';
 	public const TYPE_ARTICLE = 'article';
@@ -72,15 +73,24 @@ final class Jobs {
 		if ( ! $post || self::POST_TYPE !== $post->post_type ) {
 			return null;
 		}
+		// Another request (a runner, or Cancel) may have changed the job since this request cached it.
+		wp_cache_delete( $id, 'post_meta' );
 		$raw   = get_post_meta( $id, self::META, true );
 		$state = is_string( $raw ) ? json_decode( $raw, true ) : null;
 		return is_array( $state ) ? $state : null;
+	}
+
+	/** The job's status straight from the database, for checks inside a long-running step. */
+	public static function status_fresh( int $id ): string {
+		global $wpdb;
+		return (string) $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $id, self::STATUS_META ) );
 	}
 
 	public static function save( int $id, array $state ): void {
 		$state['updated'] = time();
 		// wp_slash keeps backslashes in the JSON intact through update_post_meta's unslashing.
 		update_post_meta( $id, self::META, wp_slash( wp_json_encode( $state, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) ) );
+		update_post_meta( $id, self::STATUS_META, (string) $state['status'] );
 		if ( ! empty( $state['title'] ) ) {
 			$post = get_post( $id );
 			if ( $post && $post->post_title !== $state['title'] ) {
@@ -95,7 +105,12 @@ final class Jobs {
 		if ( ! $state ) {
 			throw new \RuntimeException( 'Job not found: ' . $id );
 		}
-		$state = $change( $state );
+		$was_cancelled = 'cancelled' === $state['status'];
+		$state         = $change( $state );
+		if ( $was_cancelled ) {
+			// Once cancelled, a job stays cancelled whatever a still-running step tries to write.
+			$state['status'] = 'cancelled';
+		}
 		self::save( $id, $state );
 		return $state;
 	}
@@ -111,19 +126,25 @@ final class Jobs {
 		);
 	}
 
-	/** Queues a stage to run in the background and nudges the worker. */
-	public static function schedule( int $id, string $stage, int $delay = 0 ): void {
-		self::update(
+	/** Queues a stage. The open admin page runs it; otherwise a background runner does. */
+	public static function schedule( int $id, string $stage ): void {
+		$state = self::update(
 			$id,
 			static function ( array $s ) use ( $stage ) {
-				$s['status'] = 'queued';
-				$s['stage']  = $stage;
-				$s['error']  = '';
+				if ( 'cancelled' === $s['status'] ) {
+					return $s;
+				}
+				$s['status']    = 'queued';
+				$s['stage']     = $stage;
+				$s['error']     = '';
+				$s['attempts']  = 0;
+				$s['queued_at'] = time();
 				return $s;
 			}
 		);
-		as_schedule_single_action( time() + $delay, Worker::ACTION, array( $id, $stage ), AAW_GROUP );
-		Worker::kick();
+		if ( 'queued' === $state['status'] ) {
+			Worker::nudge( $id );
+		}
 	}
 
 	public static function fail( int $id, string $stage, string $message ): void {
