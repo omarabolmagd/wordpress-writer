@@ -111,6 +111,8 @@ fs.mkdirSync( out, { recursive: true } );
 	await page.goto( base + '/wp-admin/admin.php?page=aaw-settings' );
 	await page.click( '#aaw-test-connections' );
 	await page.waitForSelector( '.aaw-test', { timeout: 60000 } );
+	await page.click( '#aaw-test-image' );
+	await page.waitForSelector( '#aaw-test-image-result img, #aaw-test-image-result .notice', { timeout: 120000 } );
 	await shot( '7-settings' );
 	await page.goto( base + '/wp-admin/admin.php?page=aaw-costs' );
 	await shot( '8-costs' );

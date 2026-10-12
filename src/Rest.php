@@ -29,6 +29,7 @@ final class Rest {
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/cover', array( 'methods' => 'POST', 'callback' => array( self::class, 'new_cover' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/jobs/(?P<id>\d+)/backlinks/(?P<index>\d+)', array( 'methods' => 'POST', 'callback' => array( self::class, 'backlink' ), 'permission_callback' => $use, 'args' => $id ) );
 		register_rest_route( self::NS, '/test-connections', array( 'methods' => 'POST', 'callback' => array( self::class, 'test_connections' ), 'permission_callback' => $manage ) );
+		register_rest_route( self::NS, '/test-image', array( 'methods' => 'POST', 'callback' => array( self::class, 'test_image' ), 'permission_callback' => $manage ) );
 	}
 
 	private static function error( string $message, int $status = 400 ): \WP_Error {
@@ -242,6 +243,15 @@ final class Rest {
 			'url'    => $cover_id ? (string) wp_get_attachment_image_url( $cover_id, 'medium_large' ) : '',
 			'source' => (string) ( $job['data']['images']['cover']['source'] ?? ( $cover_id ? 'branded' : '' ) ),
 			'prompt' => (string) ( $job['data']['outline']['cover']['prompt'] ?? '' ),
+			// Why the first choice didn't work, when another image (or none) was used.
+			'errors' => array_values(
+				array_filter(
+					array_merge(
+						array_values( (array) ( $job['data']['images']['cover']['errors'] ?? array() ) ),
+						array( (string) ( $job['data']['images']['cover']['error'] ?? '' ) )
+					)
+				)
+			),
 		);
 		$out['reused']        = $job['data']['research']['reused'] ?? array();
 		$out['reused_ideas']  = $job['data']['reused_ideas'] ?? null;
@@ -308,6 +318,10 @@ final class Rest {
 			);
 			$code              = is_wp_error( $r ) ? 0 : (int) wp_remote_retrieve_response_code( $r );
 			$results['gemini'] = self::verdict( $code, is_wp_error( $r ) ? $r->get_error_message() : '' );
+			if ( 200 === $code ) {
+				// A free-tier key passes this check but can't make images, so say what this does and doesn't test.
+				$results['gemini']['message'] = __( 'Key works. To check that it can make photos, use "Make a test photo" under Images.', 'ana-afdal-writer' );
+			}
 		} else {
 			$results['gemini'] = array( 'ok' => false, 'message' => __( 'No key (AI images off)', 'ana-afdal-writer' ) );
 		}
@@ -355,6 +369,32 @@ final class Rest {
 		);
 
 		return rest_ensure_response( $results );
+	}
+
+	/**
+	 * Makes one real photo with the saved Gemini key and model, so the whole chain is checked:
+	 * billing, model name and the server's connection. Costs one image when it works.
+	 */
+	public static function test_image(): \WP_REST_Response {
+		if ( ! Settings::has_key( 'gemini_key' ) ) {
+			return rest_ensure_response( array( 'ok' => false, 'message' => __( 'Add a Gemini API key first.', 'ana-afdal-writer' ) ) );
+		}
+		if ( function_exists( 'set_time_limit' ) ) {
+			@set_time_limit( 300 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		}
+		try {
+			$bytes = Images::gemini_bytes( Prompts::ai_cover( 'A young woman reviewing her CV on a laptop at a table in a bright cafe' ), 0, 'ai_test' );
+		} catch ( \Throwable $e ) {
+			return rest_ensure_response( array( 'ok' => false, 'message' => $e->getMessage() ) );
+		}
+		$info = @getimagesizefromstring( $bytes ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+		return rest_ensure_response(
+			array(
+				'ok'      => true,
+				'message' => __( 'Gemini made this test photo. New articles will get photos like it.', 'ana-afdal-writer' ),
+				'image'   => 'data:' . ( $info['mime'] ?? 'image/jpeg' ) . ';base64,' . base64_encode( $bytes ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			)
+		);
 	}
 
 	private static function verdict( int $code, string $error ): array {

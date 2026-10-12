@@ -381,6 +381,18 @@ AR = {
     "Add a Gemini API key in Settings to make a photo of the topic.": "أضف مفتاح Gemini API من الإعدادات لإنشاء صورة للموضوع.",
     "Making the image… this can take a minute": "جارٍ إنشاء الصورة… قد يستغرق ذلك دقيقة",
     "New featured image saved.": "تم حفظ الصورة البارزة الجديدة.",
+    # v1.3.1: Gemini errors and the test photo.
+    "Gemini image generation is not available on this API key. Google offers its image models only on the paid tier: in Google AI Studio, set up billing for the project this key belongs to, then try again.": "إنشاء الصور عبر Gemini غير متاح بمفتاح API هذا. تتيح Google نماذج الصور في الخطة المدفوعة فقط: من Google AI Studio فعّل الفوترة للمشروع الذي يتبع له هذا المفتاح، ثم حاول مرة أخرى.",
+    "Gemini refused the request. Check the Gemini API key and the image model name in Settings.": "رفض Gemini الطلب. تحقق من مفتاح Gemini API واسم نموذج الصور في الإعدادات.",
+    'Key works. To check that it can make photos, use \\"Make a test photo\\" under Images.': "المفتاح يعمل. للتأكد من قدرته على إنشاء الصور، استخدم «إنشاء صورة تجريبية» في قسم الصور.",
+    "Add a Gemini API key first.": "أضف مفتاح Gemini API أولًا.",
+    "Gemini made this test photo. New articles will get photos like it.": "أنشأ Gemini هذه الصورة التجريبية. ستحصل المقالات الجديدة على صور مثلها.",
+    "Test photo": "صورة تجريبية",
+    "Make a test photo": "إنشاء صورة تجريبية",
+    "Makes one real photo with the saved Gemini key and model (about $0.03), so you can see what featured images look like. If it fails, the exact reason is shown. Save your settings first.": "يُنشئ صورة حقيقية واحدة بمفتاح Gemini والنموذج المحفوظين (نحو 0.03$)، لترى شكل الصور البارزة. وإذا فشل، يظهر السبب بالضبط. احفظ الإعدادات أولًا.",
+    "Making the photo… this can take a minute": "جارٍ إنشاء الصورة… قد يستغرق ذلك دقيقة",
+    "The planned photo could not be made, so another image was used.": "تعذّر إنشاء الصورة المخطط لها، فاستُخدمت صورة أخرى.",
+    "The featured image could not be made.": "تعذّر إنشاء الصورة البارزة.",
 }
 
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

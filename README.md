@@ -78,7 +78,9 @@ They are all editable in Settings. A rough estimate, not yet measured on real ar
 - **Stock photo of the topic, from Pexels.**
 - **Title written on the brand colour.** This is the style used before 1.3.0.
 
-If the chosen source fails, the other photo source is tried, then the title cover. When that happens, the quality checklist says so.
+If the chosen source fails, the other photo source is tried, then the title cover. When that happens, the article page shows Google's reason above the featured image, and the quality checklist flags it.
+
+**Gemini photos need a paid Gemini API plan.** Google doesn't offer its image models (Nano Banana 2.1, 2 and 2 Lite) on the free tier. With a free-tier key, every photo fails and the post gets the fallback image. To fix it, set up billing in Google AI Studio for the project the key belongs to. **Settings → Images → Make a test photo** makes one real photo and shows it, or shows the exact error. **Test connections** only checks that the key works, not that it can make images.
 
 On a finished article, **Featured image → Make a new featured image** replaces the image with a new Gemini photo. You can type a different scene first. For articles planned before 1.3.0, Claude describes a scene from the title. The old image stays in the Media Library.
 
@@ -181,6 +183,13 @@ All external APIs are mocked, so tests cost nothing and need no keys.
 Run `python3 bin/translations-ar.py`, then `wp i18n make-mo languages` and `wp i18n make-json languages --no-purge`.
 
 ## Changelog
+
+**1.3.1**
+- The article page now shows why a featured photo wasn't made, in plain words, with Google's own message. The most common cause is a free-tier Gemini key, which can't make images.
+- New **Make a test photo** button in Settings makes one real Gemini photo, or shows the exact error.
+- Gemini errors from the main endpoint are no longer hidden behind the fallback endpoint's error.
+- Photos that Google finishes in the background, or returns as a download link, are now handled.
+- Cancel now works during image steps too.
 
 **1.3.0**
 - Featured images are now Gemini photos of a scene about the topic, with no text, instead of the title on a template. The scene is planned in the outline and can be edited before approving.

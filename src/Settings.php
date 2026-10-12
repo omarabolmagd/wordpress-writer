@@ -263,6 +263,16 @@ final class Settings {
 					self::text_row( 'brand_color', __( 'Cover background colour', 'ana-afdal-writer' ), $s['brand_color'], __( 'Used for the title cover, and as a soft accent in AI illustrations.', 'ana-afdal-writer' ) );
 					self::number_row( 'cover_logo_id', __( 'Cover logo (attachment ID)', 'ana-afdal-writer' ), $s['cover_logo_id'], __( 'Optional. A PNG logo from the Media Library to place on title covers. Leave 0 to use the site\'s logo if it has one.', 'ana-afdal-writer' ), '1' );
 					self::text_row( 'gemini_model', __( 'Gemini image model', 'ana-afdal-writer' ), $s['gemini_model'], __( 'Default: gemini-nano-banana-2.1.', 'ana-afdal-writer' ) );
+					?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Test photo', 'ana-afdal-writer' ); ?></th>
+						<td>
+							<button type="button" class="button" id="aaw-test-image" <?php disabled( ! self::has_key( 'gemini_key' ) ); ?>><?php esc_html_e( 'Make a test photo', 'ana-afdal-writer' ); ?></button>
+							<p class="description"><?php esc_html_e( 'Makes one real photo with the saved Gemini key and model (about $0.03), so you can see what featured images look like. If it fails, the exact reason is shown. Save your settings first.', 'ana-afdal-writer' ); ?></p>
+							<div id="aaw-test-image-result" class="aaw-test-image" aria-live="polite"></div>
+						</td>
+					</tr>
+					<?php
 					self::text_row( 'screenshot_url_template', __( 'Screenshot request URL', 'ana-afdal-writer' ), $s['screenshot_url_template'], __( 'Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services.', 'ana-afdal-writer' ), 'url', 'large-text code' );
 					?>
 				</table>

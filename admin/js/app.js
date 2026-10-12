@@ -159,6 +159,23 @@
 		} );
 	}
 
+	const imageButton = document.getElementById( 'aaw-test-image' );
+	if ( imageButton ) {
+		const out = document.getElementById( 'aaw-test-image-result' );
+		imageButton.addEventListener( 'click', () => {
+			imageButton.disabled = true;
+			out.innerHTML = `<p>${ esc( __( 'Making the photo… this can take a minute', 'ana-afdal-writer' ) ) }</p>`;
+			api( '/test-image', { method: 'POST' } )
+				.then( ( res ) => {
+					out.innerHTML = res.ok
+						? `<p class="aaw-test ok">${ esc( res.message ) }</p><img src="${ esc( res.image ) }" alt="" class="aaw-cover-img">`
+						: `<div class="notice notice-error inline"><p dir="auto">${ esc( res.message ) }</p></div>`;
+				} )
+				.catch( ( err ) => ( out.innerHTML = `<div class="notice notice-error inline"><p>${ esc( errorText( err ) ) }</p></div>` ) )
+				.finally( () => ( imageButton.disabled = false ) );
+		} );
+	}
+
 	const root = document.getElementById( 'aaw-app' );
 	if ( ! root ) {
 		return;
@@ -960,6 +977,11 @@
 		return `
 			<section class="aaw-card aaw-cover">
 				<h2>${ esc( __( 'Featured image', 'ana-afdal-writer' ) ) }</h2>
+				${
+					c.errors && c.errors.length
+						? `<div class="notice notice-warning inline aaw-cover-why"><p><strong>${ esc( c.url ? __( 'The planned photo could not be made, so another image was used.', 'ana-afdal-writer' ) : __( 'The featured image could not be made.', 'ana-afdal-writer' ) ) }</strong></p>${ c.errors.map( ( e ) => `<p dir="ltr"><code>${ esc( e ) }</code></p>` ).join( '' ) }</div>`
+						: ''
+				}
 				<div class="aaw-cover-row">
 					${ c.url ? `<img src="${ esc( c.url ) }" alt="" class="aaw-cover-img">` : `<p class="description">${ esc( __( 'No featured image yet.', 'ana-afdal-writer' ) ) }</p>` }
 					<form class="aaw-cover-form" data-form="cover">

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Ana Afdal Writer 1.3.0\n"
+"Project-Id-Version: Ana Afdal Writer 1.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ana-afdal-writer\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-11T17:12:18+00:00\n"
+"POT-Creation-Date: 2026-10-12T04:47:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ana-afdal-writer\n"
@@ -47,7 +47,7 @@ msgstr ""
 
 #: src/Admin.php:34
 #: src/Admin.php:187
-#: admin/js/app.js:933
+#: admin/js/app.js:950
 msgid "Saved research"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 
 #: src/Admin.php:36
 #: src/Admin.php:41
-#: admin/js/app.js:356
+#: admin/js/app.js:373
 msgid "Settings"
 msgstr ""
 
@@ -113,7 +113,7 @@ msgstr ""
 #: src/Admin.php:134
 #: src/Admin.php:156
 #: src/Admin.php:224
-#: admin/js/app.js:505
+#: admin/js/app.js:522
 msgid "Cost"
 msgstr ""
 
@@ -259,36 +259,36 @@ msgstr ""
 msgid "This outline is not waiting for approval."
 msgstr ""
 
-#: src/Article.php:507
+#: src/Article.php:511
 msgid "This article has no saved draft yet."
 msgstr ""
 
-#: src/Article.php:586
+#: src/Article.php:590
 msgid "not one of the researched sources"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:596
+#: src/Article.php:600
 #, php-format
 msgid "site blocks automated checks (HTTP %d)"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:596
+#: src/Article.php:600
 #, php-format
 msgid "broken link (HTTP %d)"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: src/Article.php:596
+#: src/Article.php:600
 msgid "site did not respond"
 msgstr ""
 
-#: src/Article.php:610
+#: src/Article.php:614
 msgid "not a published post"
 msgstr ""
 
-#: src/Article.php:624
+#: src/Article.php:628
 msgid "invalid link"
 msgstr ""
 
@@ -310,6 +310,14 @@ msgstr ""
 
 #: src/DraftMetaBox.php:47
 msgid "Open this post in Ana Afdal Writer (sources, backlink suggestions, cost)"
+msgstr ""
+
+#: src/Images.php:302
+msgid "Gemini image generation is not available on this API key. Google offers its image models only on the paid tier: in Google AI Studio, set up billing for the project this key belongs to, then try again."
+msgstr ""
+
+#: src/Images.php:305
+msgid "Gemini refused the request. Check the Gemini API key and the image model name in Settings."
 msgstr ""
 
 #: src/Installer.php:70
@@ -371,7 +379,7 @@ msgid "About %1$d words (target %2$d–%3$d)."
 msgstr ""
 
 #: src/Quality.php:160
-#: admin/js/app.js:730
+#: admin/js/app.js:747
 msgid "Internal links"
 msgstr ""
 
@@ -428,8 +436,8 @@ msgstr ""
 
 #: src/Quality.php:221
 #: src/Settings.php:252
-#: admin/js/app.js:717
-#: admin/js/app.js:962
+#: admin/js/app.js:734
+#: admin/js/app.js:979
 msgid "Featured image"
 msgstr ""
 
@@ -487,96 +495,108 @@ msgstr ""
 msgid "New category created"
 msgstr ""
 
-#: src/Rest.php:84
+#: src/Rest.php:85
 msgid "Add your Claude API key in Settings first."
 msgstr ""
 
-#: src/Rest.php:87
+#: src/Rest.php:88
 msgid "This month's spending cap is reached. Raise it in Settings or wait until next month."
 msgstr ""
 
-#: src/Rest.php:120
-#: src/Rest.php:151
-#: src/Rest.php:179
+#: src/Rest.php:121
+#: src/Rest.php:152
+#: src/Rest.php:180
 msgid "Not found."
 msgstr ""
 
-#: src/Rest.php:141
+#: src/Rest.php:142
 msgid "Only a failed step can be retried."
 msgstr ""
 
-#: src/Rest.php:155
+#: src/Rest.php:156
 msgid "You do not have permission to edit this post."
 msgstr ""
 
-#: src/Rest.php:158
+#: src/Rest.php:159
 msgid "Wait until the article is finished."
 msgstr ""
 
-#: src/Rest.php:297
+#: src/Rest.php:307
 msgid "No key"
 msgstr ""
 
-#: src/Rest.php:312
+#: src/Rest.php:323
+msgid "Key works. To check that it can make photos, use \"Make a test photo\" under Images."
+msgstr ""
+
+#: src/Rest.php:326
 msgid "No key (AI images off)"
 msgstr ""
 
-#: src/Rest.php:327
+#: src/Rest.php:341
 msgid "No key (stock photos off)"
 msgstr ""
 
-#: src/Rest.php:331
+#: src/Rest.php:345
 msgid "Key saved (tested on first use)"
 msgstr ""
 
-#: src/Rest.php:332
+#: src/Rest.php:346
 msgid "No key (screenshots off)"
 msgstr ""
 
-#: src/Rest.php:335
+#: src/Rest.php:349
 msgid "Server can draw covers"
 msgstr ""
 
-#: src/Rest.php:336
+#: src/Rest.php:350
 msgid "PHP GD with FreeType is missing"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:347
+#: src/Rest.php:361
 #, php-format
 msgid "Time limit OK (%1$ds, can raise: %2$s)"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:347
+#: src/Rest.php:361
 msgid "yes"
 msgstr ""
 
 #. translators: 1: seconds, 2: yes or no
-#: src/Rest.php:347
+#: src/Rest.php:361
 msgid "no"
 msgstr ""
 
 #. translators: %d: seconds
-#: src/Rest.php:350
+#: src/Rest.php:364
 #, php-format
 msgid "PHP time limit is %ds and cannot be raised. Ask your host for 300s."
 msgstr ""
 
-#: src/Rest.php:362
+#: src/Rest.php:380
+msgid "Add a Gemini API key first."
+msgstr ""
+
+#: src/Rest.php:394
+msgid "Gemini made this test photo. New articles will get photos like it."
+msgstr ""
+
+#: src/Rest.php:402
 msgid "Connected"
 msgstr ""
 
-#: src/Rest.php:365
+#: src/Rest.php:405
 msgid "Key rejected"
 msgstr ""
 
-#: src/Rest.php:368
+#: src/Rest.php:408
 msgid "Model or endpoint not found — check the model name"
 msgstr ""
 
 #. translators: %s: HTTP status or error
-#: src/Rest.php:371
+#: src/Rest.php:411
 #, php-format
 msgid "Failed (%s)"
 msgstr ""
@@ -772,56 +792,68 @@ msgstr ""
 msgid "Default: gemini-nano-banana-2.1."
 msgstr ""
 
-#: src/Settings.php:266
-msgid "Screenshot request URL"
-msgstr ""
-
-#: src/Settings.php:266
-msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
+#: src/Settings.php:268
+msgid "Test photo"
 msgstr ""
 
 #: src/Settings.php:270
-msgid "Prices used for cost tracking (USD)"
+msgid "Make a test photo"
 msgstr ""
 
-#: src/Settings.php:273
-msgid "Claude input, per million tokens"
-msgstr ""
-
-#: src/Settings.php:274
-msgid "Claude output, per million tokens"
-msgstr ""
-
-#: src/Settings.php:275
-msgid "Claude cache write, per million tokens"
+#: src/Settings.php:271
+msgid "Makes one real photo with the saved Gemini key and model (about $0.03), so you can see what featured images look like. If it fails, the exact reason is shown. Save your settings first."
 msgstr ""
 
 #: src/Settings.php:276
+msgid "Screenshot request URL"
+msgstr ""
+
+#: src/Settings.php:276
+msgid "Advanced. {key} and {url} are replaced automatically. Change this only to switch screenshot services."
+msgstr ""
+
+#: src/Settings.php:280
+msgid "Prices used for cost tracking (USD)"
+msgstr ""
+
+#: src/Settings.php:283
+msgid "Claude input, per million tokens"
+msgstr ""
+
+#: src/Settings.php:284
+msgid "Claude output, per million tokens"
+msgstr ""
+
+#: src/Settings.php:285
+msgid "Claude cache write, per million tokens"
+msgstr ""
+
+#: src/Settings.php:286
 msgid "Claude cache read, per million tokens"
 msgstr ""
 
-#: src/Settings.php:277
+#: src/Settings.php:287
 msgid "Claude web search, per search"
 msgstr ""
 
-#: src/Settings.php:278
+#: src/Settings.php:288
 msgid "Gemini image, per image"
 msgstr ""
 
-#: src/Settings.php:279
+#: src/Settings.php:289
 msgid "Screenshot, per capture"
 msgstr ""
 
-#: src/Settings.php:279
+#: src/Settings.php:289
 msgid "0 while you are on a free plan."
 msgstr ""
 
-#: src/Settings.php:297
+#: src/Settings.php:307
 msgid "Set in wp-config.php"
 msgstr ""
 
-#: src/Settings.php:301
-#: admin/js/app.js:646
+#: src/Settings.php:311
+#: admin/js/app.js:663
 msgid "Remove"
 msgstr ""
 
@@ -965,603 +997,615 @@ msgstr ""
 msgid "Server time limit"
 msgstr ""
 
-#: admin/js/app.js:200
-#: admin/js/app.js:205
-#: admin/js/app.js:583
-#: admin/js/app.js:852
-msgid "Starting…"
-msgstr ""
-
-#: admin/js/app.js:200
-msgid "Waiting to start…"
-msgstr ""
-
-#: admin/js/app.js:207
-msgid "Finishing…"
-msgstr ""
-
-#: admin/js/app.js:209
-msgid "Thinking…"
-msgstr ""
-
-#: admin/js/app.js:211
-msgid "Searching the web…"
-msgstr ""
-
-#: admin/js/app.js:213
-msgid "Reading the search results…"
-msgstr ""
-
-#: admin/js/app.js:215
-msgid "Claude is busy right now. Trying again in a few seconds…"
+#: admin/js/app.js:167
+msgid "Making the photo… this can take a minute"
 msgstr ""
 
 #: admin/js/app.js:217
+#: admin/js/app.js:222
+#: admin/js/app.js:600
+#: admin/js/app.js:869
+msgid "Starting…"
+msgstr ""
+
+#: admin/js/app.js:217
+msgid "Waiting to start…"
+msgstr ""
+
+#: admin/js/app.js:224
+msgid "Finishing…"
+msgstr ""
+
+#: admin/js/app.js:226
+msgid "Thinking…"
+msgstr ""
+
+#: admin/js/app.js:228
+msgid "Searching the web…"
+msgstr ""
+
+#: admin/js/app.js:230
+msgid "Reading the search results…"
+msgstr ""
+
+#: admin/js/app.js:232
+msgid "Claude is busy right now. Trying again in a few seconds…"
+msgstr ""
+
+#: admin/js/app.js:234
 msgid "Waiting for Claude's answer…"
 msgstr ""
 
-#: admin/js/app.js:219
+#: admin/js/app.js:236
 #, js-format
 msgid "Image %1$d of %2$d…"
 msgstr ""
 
-#: admin/js/app.js:219
+#: admin/js/app.js:236
 msgid "cover"
 msgstr ""
 
-#: admin/js/app.js:221
+#: admin/js/app.js:238
 #, js-format
 msgid "Checking %d source links…"
 msgstr ""
 
-#: admin/js/app.js:223
+#: admin/js/app.js:240
 msgid "Saving the draft…"
 msgstr ""
 
-#: admin/js/app.js:228
+#: admin/js/app.js:245
 #, js-format
 msgid "Writing research notes… about %s words"
 msgstr ""
 
-#: admin/js/app.js:230
+#: admin/js/app.js:247
 msgid "Choosing the best topics…"
 msgstr ""
 
-#: admin/js/app.js:232
+#: admin/js/app.js:249
 msgid "Planning the sections…"
 msgstr ""
 
-#: admin/js/app.js:234
+#: admin/js/app.js:251
 #, js-format
 msgid "Writing… about %s words so far"
 msgstr ""
 
-#: admin/js/app.js:235
+#: admin/js/app.js:252
 #, js-format
 msgid "section %1$d of %2$d"
 msgstr ""
 
-#: admin/js/app.js:237
+#: admin/js/app.js:254
 msgid "Reviewing the draft…"
 msgstr ""
 
-#: admin/js/app.js:239
+#: admin/js/app.js:256
 msgid "Looking for places in older posts…"
 msgstr ""
 
-#: admin/js/app.js:241
+#: admin/js/app.js:258
 msgid "Writing…"
 msgstr ""
 
-#: admin/js/app.js:243
+#: admin/js/app.js:260
 msgid "Working…"
 msgstr ""
 
-#: admin/js/app.js:271
+#: admin/js/app.js:288
 msgid "search failed"
 msgstr ""
 
-#: admin/js/app.js:273
+#: admin/js/app.js:290
 #, js-format
 msgid "%d results"
 msgstr ""
 
-#: admin/js/app.js:280
+#: admin/js/app.js:297
 msgid "The answer was longer than the space Claude had, so it is trying again with more room."
 msgstr ""
 
-#: admin/js/app.js:280
+#: admin/js/app.js:297
 msgid "Claude was busy for a moment; the plugin retried automatically."
 msgstr ""
 
-#: admin/js/app.js:287
+#: admin/js/app.js:304
 #, js-format
 msgid "Using saved notes from related articles (%d), so fewer searches are needed."
 msgstr ""
 
-#: admin/js/app.js:288
+#: admin/js/app.js:305
 msgid "Using the notes of the topic search that suggested this article."
 msgstr ""
 
-#: admin/js/app.js:292
+#: admin/js/app.js:309
 #, js-format
 msgid "The server stopped this step before it finished, so it started again (attempt %d)."
 msgstr ""
 
-#: admin/js/app.js:306
+#: admin/js/app.js:323
 msgid "Keep this page open: it runs each step itself, which is the fastest way. If you leave, the work continues in the background only when your server allows it."
 msgstr ""
 
-#: admin/js/app.js:356
+#: admin/js/app.js:373
 #, js-format
 msgid "Add your Claude API key in %s to start writing."
 msgstr ""
 
-#: admin/js/app.js:357
+#: admin/js/app.js:374
 msgid "An administrator needs to add the Claude API key before you can write."
 msgstr ""
 
-#: admin/js/app.js:362
+#: admin/js/app.js:379
 msgid "stock photos"
 msgstr ""
 
-#: admin/js/app.js:365
+#: admin/js/app.js:382
 msgid "AI images"
 msgstr ""
 
-#: admin/js/app.js:368
+#: admin/js/app.js:385
 msgid "screenshots"
 msgstr ""
 
-#: admin/js/app.js:371
+#: admin/js/app.js:388
 #, js-format
 msgid "Off until their keys are added: %s."
 msgstr ""
 
-#: admin/js/app.js:377
+#: admin/js/app.js:394
 #, js-format
 msgid "of %s spent this month"
 msgstr ""
 
-#: admin/js/app.js:377
+#: admin/js/app.js:394
 msgid "spent this month (no cap)"
 msgstr ""
 
-#: admin/js/app.js:379
+#: admin/js/app.js:396
 msgid "The monthly cap is reached, so new posts are paused. Posts already in progress can finish."
 msgstr ""
 
-#: admin/js/app.js:386
+#: admin/js/app.js:403
 #, js-format
 msgid "New category: %s"
 msgstr ""
 
-#: admin/js/app.js:411
+#: admin/js/app.js:428
 #, js-format
 msgid "Reuse the topic search from %s (no new web searches)"
 msgstr ""
 
-#: admin/js/app.js:422
+#: admin/js/app.js:439
 msgid "No new ideas were left in the saved topic search. Untick \"Reuse\" and suggest again to search the web."
 msgstr ""
 
-#: admin/js/app.js:425
+#: admin/js/app.js:442
 #, js-format
 msgid "from the saved topic search of %s, with no new searches"
 msgstr ""
 
-#: admin/js/app.js:427
+#: admin/js/app.js:444
 #, js-format
 msgid "Suggested %s"
 msgstr ""
 
-#: admin/js/app.js:436
+#: admin/js/app.js:453
 msgid "Keyphrase:"
 msgstr ""
 
-#: admin/js/app.js:440
-#: admin/js/app.js:592
+#: admin/js/app.js:457
+#: admin/js/app.js:609
 msgid "Write this"
 msgstr ""
 
-#: admin/js/app.js:448
+#: admin/js/app.js:465
 msgid "1. Get topic ideas"
 msgstr ""
 
-#: admin/js/app.js:450
+#: admin/js/app.js:467
 msgid "Focus (optional)"
 msgstr ""
 
-#: admin/js/app.js:451
+#: admin/js/app.js:468
 msgid "Optional focus, e.g. scholarships in Europe or AI tools for students"
 msgstr ""
 
-#: admin/js/app.js:452
+#: admin/js/app.js:469
 msgid "Suggest topics"
 msgstr ""
 
-#: admin/js/app.js:465
+#: admin/js/app.js:482
 msgid "Let the writer choose"
 msgstr ""
 
-#: admin/js/app.js:467
+#: admin/js/app.js:484
 msgid "New category…"
 msgstr ""
 
-#: admin/js/app.js:469
+#: admin/js/app.js:486
 msgid "New category name"
 msgstr ""
 
-#: admin/js/app.js:474
+#: admin/js/app.js:491
 msgid "2. Or write about your own topic"
 msgstr ""
 
-#: admin/js/app.js:476
+#: admin/js/app.js:493
 msgid "Working title"
 msgstr ""
 
-#: admin/js/app.js:477
+#: admin/js/app.js:494
 msgid "Focus keyphrase (what readers search)"
 msgstr ""
 
-#: admin/js/app.js:479
-#: admin/js/app.js:711
+#: admin/js/app.js:496
+#: admin/js/app.js:728
 msgid "Post type"
 msgstr ""
 
-#: admin/js/app.js:482
-#: admin/js/app.js:712
+#: admin/js/app.js:499
+#: admin/js/app.js:729
 msgid "Category"
 msgstr ""
 
-#: admin/js/app.js:484
+#: admin/js/app.js:501
 msgid "Notes for the writer (optional)"
 msgstr ""
 
-#: admin/js/app.js:485
+#: admin/js/app.js:502
 msgid "Start research"
 msgstr ""
 
-#: admin/js/app.js:494
-#: admin/js/app.js:1015
+#: admin/js/app.js:511
+#: admin/js/app.js:1037
 msgid "(untitled)"
 msgstr ""
 
-#: admin/js/app.js:503
+#: admin/js/app.js:520
 msgid "Articles"
 msgstr ""
 
-#: admin/js/app.js:505
+#: admin/js/app.js:522
 msgid "Title"
 msgstr ""
 
-#: admin/js/app.js:505
+#: admin/js/app.js:522
 msgid "Status"
 msgstr ""
 
-#: admin/js/app.js:505
+#: admin/js/app.js:522
 msgid "Updated"
 msgstr ""
 
-#: admin/js/app.js:506
+#: admin/js/app.js:523
 msgid "No articles yet. Pick a topic above to start."
 msgstr ""
 
-#: admin/js/app.js:625
+#: admin/js/app.js:642
 msgid "Image"
 msgstr ""
 
-#: admin/js/app.js:628
+#: admin/js/app.js:645
 msgid "Search words (English)"
 msgstr ""
 
-#: admin/js/app.js:630
+#: admin/js/app.js:647
 msgid "What to draw (English)"
 msgstr ""
 
-#: admin/js/app.js:632
+#: admin/js/app.js:649
 msgid "Page to capture"
 msgstr ""
 
-#: admin/js/app.js:634
-#: admin/js/app.js:676
+#: admin/js/app.js:651
+#: admin/js/app.js:693
 msgid "Alt text (Arabic)"
 msgstr ""
 
-#: admin/js/app.js:643
+#: admin/js/app.js:660
 msgid "Section heading"
 msgstr ""
 
-#: admin/js/app.js:644
+#: admin/js/app.js:661
 msgid "Move up"
 msgstr ""
 
-#: admin/js/app.js:645
+#: admin/js/app.js:662
 msgid "Move down"
 msgstr ""
 
-#: admin/js/app.js:648
+#: admin/js/app.js:665
 msgid "Notes for the writer, one per line"
 msgstr ""
 
-#: admin/js/app.js:664
+#: admin/js/app.js:681
 msgid "The title written on the brand colour. You can change this in Settings."
 msgstr ""
 
-#: admin/js/app.js:670
+#: admin/js/app.js:687
 msgid "Scene to show (English)"
 msgstr ""
 
-#: admin/js/app.js:672
+#: admin/js/app.js:689
 msgid "A photo made with Gemini, with no text on it. Describe people, places and things, for example: a young woman reviewing her CV on a laptop in a bright cafe."
 msgstr ""
 
-#: admin/js/app.js:673
+#: admin/js/app.js:690
 msgid "Stock photo search words (English)"
 msgstr ""
 
-#: admin/js/app.js:690
+#: admin/js/app.js:707
 msgid "cited"
 msgstr ""
 
-#: admin/js/app.js:700
+#: admin/js/app.js:717
 msgid "Review the outline"
 msgstr ""
 
-#: admin/js/app.js:701
+#: admin/js/app.js:718
 msgid "Change anything you like. Nothing is written or paid for beyond this point until you approve."
 msgstr ""
 
-#: admin/js/app.js:704
+#: admin/js/app.js:721
 msgid "Title (H1)"
 msgstr ""
 
-#: admin/js/app.js:705
+#: admin/js/app.js:722
 msgid "SEO title"
 msgstr ""
 
-#: admin/js/app.js:706
+#: admin/js/app.js:723
 msgid "Meta description"
 msgstr ""
 
-#: admin/js/app.js:708
+#: admin/js/app.js:725
 msgid "Focus keyphrase"
 msgstr ""
 
-#: admin/js/app.js:709
+#: admin/js/app.js:726
 msgid "URL slug (English)"
 msgstr ""
 
-#: admin/js/app.js:713
+#: admin/js/app.js:730
 msgid "Author"
 msgstr ""
 
-#: admin/js/app.js:720
+#: admin/js/app.js:737
 msgid "Sections"
 msgstr ""
 
-#: admin/js/app.js:721
+#: admin/js/app.js:738
 msgid "The introduction, FAQ, summary and Telegram invitation are added automatically."
 msgstr ""
 
-#: admin/js/app.js:723
+#: admin/js/app.js:740
 msgid "Add section"
 msgstr ""
 
-#: admin/js/app.js:725
+#: admin/js/app.js:742
 msgid "FAQ questions"
 msgstr ""
 
-#: admin/js/app.js:731
+#: admin/js/app.js:748
 msgid "None suggested."
 msgstr ""
 
-#: admin/js/app.js:734
+#: admin/js/app.js:751
 msgid "Sources to cite"
 msgstr ""
 
-#: admin/js/app.js:735
+#: admin/js/app.js:752
 msgid "Ticked sources are offered to the writer; each link is checked live before the draft is saved."
 msgstr ""
 
-#: admin/js/app.js:736
+#: admin/js/app.js:753
 msgid "No sources found."
 msgstr ""
 
-#: admin/js/app.js:741
-#: admin/js/app.js:861
+#: admin/js/app.js:758
+#: admin/js/app.js:878
 msgid "Approve and write"
 msgstr ""
 
-#: admin/js/app.js:742
+#: admin/js/app.js:759
 msgid "Writing, images and checks usually take 2–4 minutes. Keep this page open for the fastest result."
 msgstr ""
 
-#: admin/js/app.js:843
+#: admin/js/app.js:860
 msgid "Add at least one section."
 msgstr ""
 
-#: admin/js/app.js:847
+#: admin/js/app.js:864
 msgid "Name the new category, or pick an existing one."
 msgstr ""
 
-#: admin/js/app.js:876
+#: admin/js/app.js:893
 msgid "Review checklist"
 msgstr ""
 
-#: admin/js/app.js:877
+#: admin/js/app.js:894
 #, js-format
 msgid "%d item(s) need a look before you publish."
 msgstr ""
 
-#: admin/js/app.js:877
+#: admin/js/app.js:894
 msgid "Everything passed. Give it a final read and publish."
 msgstr ""
 
-#: admin/js/app.js:894
+#: admin/js/app.js:911
 msgid "Approve"
 msgstr ""
 
-#: admin/js/app.js:895
+#: admin/js/app.js:912
 msgid "Dismiss"
 msgstr ""
 
-#: admin/js/app.js:898
+#: admin/js/app.js:915
 msgid "Approved"
 msgstr ""
 
-#: admin/js/app.js:898
+#: admin/js/app.js:915
 msgid "Approved — added when you publish"
 msgstr ""
 
-#: admin/js/app.js:899
+#: admin/js/app.js:916
 msgid "Link added"
 msgstr ""
 
-#: admin/js/app.js:900
+#: admin/js/app.js:917
 msgid "Dismissed"
 msgstr ""
 
-#: admin/js/app.js:901
+#: admin/js/app.js:918
 msgid "Could not add"
 msgstr ""
 
-#: admin/js/app.js:916
+#: admin/js/app.js:933
 msgid "Links from older posts"
 msgstr ""
 
-#: admin/js/app.js:917
+#: admin/js/app.js:934
 msgid "Approved links are added to the older posts once this post is published, so no reader lands on a draft."
 msgstr ""
 
-#: admin/js/app.js:918
+#: admin/js/app.js:935
 msgid "No good spots found in older posts this time."
 msgstr ""
 
-#: admin/js/app.js:928
+#: admin/js/app.js:945
 msgid "the topic search that suggested this article"
 msgstr ""
 
-#: admin/js/app.js:932
+#: admin/js/app.js:949
 #, js-format
 msgid "Research sources (%d)"
 msgstr ""
 
-#: admin/js/app.js:933
+#: admin/js/app.js:950
 #, js-format
 msgid "Started from saved research: %s"
 msgstr ""
 
-#: admin/js/app.js:935
+#: admin/js/app.js:952
 msgid "from saved research"
 msgstr ""
 
-#: admin/js/app.js:935
+#: admin/js/app.js:952
 msgid "linked in post"
 msgstr ""
 
-#: admin/js/app.js:942
+#: admin/js/app.js:959
 msgid "Activity"
 msgstr ""
 
-#: admin/js/app.js:951
+#: admin/js/app.js:968
 msgid "Photo made with Gemini"
 msgstr ""
 
-#: admin/js/app.js:952
+#: admin/js/app.js:969
 msgid "Stock photo from Pexels"
 msgstr ""
 
-#: admin/js/app.js:953
+#: admin/js/app.js:970
 msgid "Title cover"
 msgstr ""
 
-#: admin/js/app.js:964
-msgid "No featured image yet."
+#: admin/js/app.js:982
+msgid "The planned photo could not be made, so another image was used."
 msgstr ""
 
-#: admin/js/app.js:969
-msgid "Scene for a new photo (English)"
-msgstr ""
-
-#: admin/js/app.js:970
-msgid "Leave empty and Claude will describe a scene from the title."
-msgstr ""
-
-#: admin/js/app.js:971
-#: admin/js/app.js:1097
-msgid "Make a new featured image"
-msgstr ""
-
-#: admin/js/app.js:972
-msgid "The new photo replaces the current featured image. The old one stays in the Media Library."
-msgstr ""
-
-#: admin/js/app.js:973
-msgid "Add a Gemini API key in Settings to make a photo of the topic."
+#: admin/js/app.js:982
+msgid "The featured image could not be made."
 msgstr ""
 
 #: admin/js/app.js:986
+msgid "No featured image yet."
+msgstr ""
+
+#: admin/js/app.js:991
+msgid "Scene for a new photo (English)"
+msgstr ""
+
+#: admin/js/app.js:992
+msgid "Leave empty and Claude will describe a scene from the title."
+msgstr ""
+
+#: admin/js/app.js:993
+#: admin/js/app.js:1119
+msgid "Make a new featured image"
+msgstr ""
+
+#: admin/js/app.js:994
+msgid "The new photo replaces the current featured image. The old one stays in the Media Library."
+msgstr ""
+
+#: admin/js/app.js:995
+msgid "Add a Gemini API key in Settings to make a photo of the topic."
+msgstr ""
+
+#: admin/js/app.js:1008
 msgid "This step failed:"
 msgstr ""
 
-#: admin/js/app.js:987
+#: admin/js/app.js:1009
 msgid "Try this step again"
 msgstr ""
 
-#: admin/js/app.js:995
+#: admin/js/app.js:1017
 msgid "Published post"
 msgstr ""
 
-#: admin/js/app.js:995
+#: admin/js/app.js:1017
 msgid "Your draft"
 msgstr ""
 
-#: admin/js/app.js:996
+#: admin/js/app.js:1018
 #, js-format
 msgid "About %d words."
 msgstr ""
 
-#: admin/js/app.js:996
+#: admin/js/app.js:1018
 #, js-format
 msgid "%1$d internal and %2$d external links."
 msgstr ""
 
-#: admin/js/app.js:998
+#: admin/js/app.js:1020
 msgid "Open in the editor"
 msgstr ""
 
-#: admin/js/app.js:999
+#: admin/js/app.js:1021
 msgid "View"
 msgstr ""
 
-#: admin/js/app.js:999
+#: admin/js/app.js:1021
 msgid "Preview"
 msgstr ""
 
-#: admin/js/app.js:1013
-#: admin/js/app.js:1077
+#: admin/js/app.js:1035
+#: admin/js/app.js:1099
 msgid "All articles"
 msgstr ""
 
-#: admin/js/app.js:1016
-#: admin/js/app.js:1044
+#: admin/js/app.js:1038
+#: admin/js/app.js:1066
 #, js-format
 msgid "Cost so far: %s"
 msgstr ""
 
-#: admin/js/app.js:1017
+#: admin/js/app.js:1039
 msgid "Cancel"
 msgstr ""
 
-#: admin/js/app.js:1088
+#: admin/js/app.js:1110
 msgid "Making the image… this can take a minute"
 msgstr ""
 
-#: admin/js/app.js:1093
+#: admin/js/app.js:1115
 msgid "New featured image saved."
 msgstr ""
 
-#: admin/js/app.js:1150
+#: admin/js/app.js:1172
 msgid "Stop working on this article? Anything already saved stays."
 msgstr ""

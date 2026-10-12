@@ -410,6 +410,33 @@ try {
 $flags['gemini_fail'] = false;
 $check( str_contains( $error, 'overloaded' ) && $kept === (int) get_post_thumbnail_id( $post_id ), 'a failed remake keeps the current image and reports the error' );
 
+// A free-tier Gemini key: Google refuses image models, and the editor is told why in plain words.
+add_filter( 'aaw_gemini_poll_wait', '__return_zero' );
+$flags['gemini_free_tier'] = true;
+$error                     = '';
+try {
+	Article::new_cover( $job_id, 'A scene' );
+} catch ( \Throwable $e ) {
+	$error = $e->getMessage();
+}
+$check( str_contains( $error, 'paid tier' ) && str_contains( $error, 'billing' ) && str_contains( $error, 'RESOURCE_EXHAUSTED' ), 'a free-tier key gets a plain explanation plus Google\'s message' );
+$c = AnaAfdal\Writer\Images::cover( $plan, 'منحة', 'منح', 0, 'test-cover' );
+$check( 'pexels' === $c['source'] && str_contains( $c['errors']['ai'] ?? '', 'billing' ), 'without Gemini billing, articles fall back to a Pexels photo and say why' );
+$test = AnaAfdal\Writer\Rest::test_image()->get_data();
+$check( false === $test['ok'] && str_contains( $test['message'], 'billing' ), 'the test photo button shows the billing problem' );
+$flags['gemini_free_tier'] = false;
+$test = AnaAfdal\Writer\Rest::test_image()->get_data();
+$check( true === $test['ok'] && str_starts_with( $test['image'], 'data:image/jpeg;base64,' ), 'the test photo button shows a real photo when Gemini works' );
+$flags['gemini_async'] = true;
+$check( strlen( AnaAfdal\Writer\Images::gemini_bytes( 'x', 0, 'ai_test' ) ) > 1000, 'a photo Google finishes in the background is waited for' );
+$flags['gemini_async'] = false;
+$flags['gemini_uri']   = true;
+$check( strlen( AnaAfdal\Writer\Images::gemini_bytes( 'x', 0, 'ai_test' ) ) > 1000, 'a photo returned as a download link is downloaded' );
+$flags['gemini_uri'] = false;
+Jobs::update( $job_id, static function ( $s ) { $s['data']['images']['cover']['errors'] = array( 'ai' => 'Gemini error 429: quota' ); return $s; } );
+$pc = AnaAfdal\Writer\Rest::present( Jobs::get( $job_id ) )['cover'];
+$check( array( 'Gemini error 429: quota' ) === $pc['errors'], 'the article page shows why the planned photo was not used' );
+
 echo "Saved research\n";
 global $wpdb;
 $lib_table   = Library::table();

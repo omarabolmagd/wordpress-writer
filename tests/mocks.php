@@ -292,17 +292,36 @@ function aaw_test_install_mocks( string $claude = 'stream' ): void {
 			return array( 'status' => 200, 'headers' => array(), 'body' => $jpeg() );
 		}
 		if ( str_contains( $url, 'generativelanguage.googleapis.com' ) ) {
+			$flags   = $GLOBALS['aaw_test_flags'] ?? array();
+			$image   = array( 'type' => 'image', 'mime_type' => 'image/jpeg', 'data' => base64_encode( $jpeg( 1376, 768 ) ) );
+			$done    = static fn( array $content ) => array( 'status' => 200, 'headers' => array(), 'body' => wp_json_encode( array( 'id' => 'i1', 'object' => 'interaction', 'status' => 'completed', 'steps' => array( array( 'type' => 'model_output', 'content' => $content ) ) ) ) );
+			if ( 'GET' === $method && str_contains( $url, '/v1beta/interactions/' ) ) {
+				// Polling a background interaction: finished now.
+				return $done( array( $image ) );
+			}
+			if ( 'GET' === $method && str_contains( $url, '/files/' ) ) {
+				return array( 'status' => 200, 'headers' => array(), 'body' => $jpeg( 1376, 768 ) );
+			}
 			$GLOBALS['aaw_test_gemini'][] = json_decode( (string) ( $args['body'] ?? '' ), true );
-			if ( ! empty( $GLOBALS['aaw_test_flags']['gemini_fail'] ) ) {
-				return array( 'status' => 503, 'headers' => array(), 'body' => '{"error":{"message":"The model is overloaded."}}' );
+			if ( ! empty( $flags['gemini_fail'] ) ) {
+				return array( 'status' => 503, 'headers' => array(), 'body' => '{"error":{"code":503,"message":"The model is overloaded.","status":"UNAVAILABLE"}}' );
 			}
-		}
-		if ( str_contains( $url, '/v1beta/interactions' ) ) {
-			$body = json_decode( $args['body'], true );
-			if ( empty( $body['response_format']['type'] ) || 'image' !== $body['response_format']['type'] ) {
-				return array( 'status' => 400, 'headers' => array(), 'body' => '{}' );
+			if ( ! empty( $flags['gemini_free_tier'] ) ) {
+				return array( 'status' => 429, 'headers' => array(), 'body' => '{"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-nano-banana-2.1","status":"RESOURCE_EXHAUSTED"}}' );
 			}
-			return array( 'status' => 200, 'headers' => array(), 'body' => wp_json_encode( array( 'id' => 'i1', 'status' => 'completed', 'steps' => array( array( 'type' => 'model_output', 'content' => array( array( 'type' => 'image', 'mime_type' => 'image/jpeg', 'data' => base64_encode( $jpeg( 1376, 768 ) ) ) ) ) ) ) ) );
+			if ( str_contains( $url, '/v1beta/interactions' ) ) {
+				$body = json_decode( $args['body'], true );
+				if ( empty( $body['response_format']['type'] ) || 'image' !== $body['response_format']['type'] ) {
+					return array( 'status' => 400, 'headers' => array(), 'body' => '{}' );
+				}
+				if ( ! empty( $flags['gemini_async'] ) ) {
+					return array( 'status' => 200, 'headers' => array(), 'body' => wp_json_encode( array( 'id' => 'i-bg', 'object' => 'interaction', 'status' => 'in_progress', 'steps' => array() ) ) );
+				}
+				if ( ! empty( $flags['gemini_uri'] ) ) {
+					return $done( array( array( 'type' => 'image', 'mime_type' => 'image/jpeg', 'uri' => 'https://generativelanguage.googleapis.com/v1beta/files/img-1:download' ) ) );
+				}
+				return $done( array( $image ) );
+			}
 		}
 		return array( 'status' => 404, 'headers' => array(), 'body' => 'not mocked' );
 	};

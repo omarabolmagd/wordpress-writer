@@ -455,6 +455,8 @@ final class Article {
 				$id                     = Images::fetch( $plan, $job_id, $outline['slug'] );
 				$done['sections'][ $i ] = array( 'id' => $id, 'source' => $plan['source'] );
 				Jobs::log( $job_id, sprintf( 'Image %d (%s) saved.', $i + 1, $plan['source'] ) );
+			} catch ( Cancelled $e ) {
+				throw $e;
 			} catch ( \Throwable $e ) {
 				$done['sections'][ $i ] = array( 'id' => 0, 'source' => $plan['source'], 'error' => $e->getMessage() );
 				Jobs::log( $job_id, sprintf( 'Image %d (%s) failed: %s', $i + 1, $plan['source'], $e->getMessage() ) );
@@ -489,6 +491,8 @@ final class Article {
 				'prompt' => 'ai' === $cover['source'] ? (string) ( $plan['prompt'] ?? '' ) : '',
 				'errors' => $cover['errors'],
 			);
+		} catch ( Cancelled $e ) {
+			throw $e;
 		} catch ( \Throwable $e ) {
 			Jobs::log( $job_id, 'Featured image failed: ' . $e->getMessage() );
 			return array( 'id' => 0, 'error' => $e->getMessage() );
