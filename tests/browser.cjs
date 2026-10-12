@@ -47,8 +47,19 @@ fs.mkdirSync( out, { recursive: true } );
 		page.click( '[data-form="topics"] [type="submit"]' ),
 	] );
 	await page.waitForSelector( '[data-region="topics"] .aaw-live-events li', { timeout: 60000 } );
+	// While the search runs the reuse box is hidden; afterwards the form keeps the focus and the untick.
+	if ( await page.$( '[name="reuse_ideas"]' ) ) {
+		errors.push( 'check: the reuse box is shown during a running topic search' );
+	}
 	await shot( '2a-topics-live' );
 	await page.waitForSelector( '[data-region="topics"] .aaw-topic', { timeout: 120000 } );
+	if ( 'AI' !== ( await page.inputValue( '#aaw-focus' ) ) ) {
+		errors.push( 'check: the focus was cleared after the topic search' );
+	}
+	const boxAfter = await page.$( '[name="reuse_ideas"]' );
+	if ( reuseBox && ( ! boxAfter || ( await boxAfter.isChecked() ) ) ) {
+		errors.push( 'check: the reuse box came back ticked after unticking it' );
+	}
 	await shot( '2-topics' );
 
 	// Start an article from the first topic and wait for the outline.
@@ -124,7 +135,11 @@ fs.mkdirSync( out, { recursive: true } );
 	await page.goto( base + '/wp-admin/admin.php?page=aaw-writer' );
 	await page.waitForSelector( '[data-form="topics"]' );
 	await page.fill( '#aaw-focus', 'AI' );
-	await page.waitForSelector( '[name="reuse_ideas"]:checked' );
+	// The untick from the first search is remembered; tick it again to reuse.
+	if ( await page.isChecked( '[name="reuse_ideas"]' ) ) {
+		errors.push( 'check: the untick was not remembered across page loads' );
+	}
+	await page.check( '[name="reuse_ideas"]' );
 	await shot( '8b-topics-reuse' );
 	await Promise.all( [
 		page.waitForResponse( ( r ) => r.url().includes( '/aaw/v1/topics' ) && r.request().method() === 'POST' ),

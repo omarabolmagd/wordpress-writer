@@ -91,7 +91,7 @@ Every research step is saved under **Ana Afdal Writer → Saved research**: the 
 - **Related articles start from saved notes.** When a new article's title and keyphrase are close to an earlier article's, Claude gets that research (up to 2 earlier articles). It then searches only for what the notes miss and for facts that may have changed, such as deadlines, prices and dates. For a near-identical topic, the search limit is also halved.
 - **Closeness is measured on the words of the titles and keyphrases.** Arabic words are reduced to a common form, so "بشهادات" and "شهادة" match. Words that appear in many of the site's titles, such as "كورسات" or "مجانية", count for little; specific words such as "الذكاء الاصطناعي" or "ألمانيا" count for a lot.
 - **Freshness.** News articles only reuse notes up to 7 days old. Guides and lists reuse notes up to 30 days old, which you can change in Settings. Notes are deleted after 180 days.
-- **Topic ideas.** Asking for topics with the same focus within 3 days reuses that topic search with no new web searches, and suggests ideas that were not shown before. Untick **Reuse** to search again. An article started from a suggestion also gets the notes of the topic search that suggested it.
+- **Topic ideas.** Asking for topics with the same focus within 3 days reuses that topic search with no new web searches, and suggests ideas that were not shown before. Untick **Reuse** to search again. Your choice is remembered in your browser. An article started from a suggestion also gets the notes of the topic search that suggested it.
 - **Measured savings.** The Saved research page shows your average research cost per article, from scratch and with saved notes, from your own cost log.
 - **Settings.** You can turn reuse off under **Settings → Reuse saved research**.
 
@@ -183,6 +183,9 @@ All external APIs are mocked, so tests cost nothing and need no keys.
 Run `python3 bin/translations-ar.py`, then `wp i18n make-mo languages` and `wp i18n make-json languages --no-purge`.
 
 ## Changelog
+
+**1.3.2**
+- The topics form keeps your choice. Unticking **Reuse** now stays unticked while the search runs and afterwards, and it is remembered next time. The focus you typed is kept too. Before, the form redrew with the box ticked again, even though the search really was a fresh one.
 
 **1.3.1**
 - The article page now shows why a featured photo wasn't made, in plain words, with Google's own message. The most common cause is a free-tier Gemini key, which can't make images.

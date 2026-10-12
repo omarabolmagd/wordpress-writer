@@ -187,6 +187,21 @@
 	let pollTimer = null;
 	let topicsJob = null;
 	let currentJob = null;
+	// The topics form is redrawn while a search runs and when it ends: keep what the editor typed and chose.
+	let lastFocus = '';
+	const REUSE_KEY = 'aaw_reuse_ideas';
+	const reusePref = () => {
+		try {
+			return window.localStorage.getItem( REUSE_KEY ) !== '0';
+		} catch ( e ) {
+			return true;
+		}
+	};
+	const setReusePref = ( on ) => {
+		try {
+			window.localStorage.setItem( REUSE_KEY, on ? '1' : '0' );
+		} catch ( e ) {}
+	};
 
 	const stopPolling = () => {
 		if ( pollTimer ) {
@@ -422,10 +437,11 @@
 	/** Offers to reuse a recent topic search for the focus typed in the topics form. */
 	const reuseHtml = ( focus ) => {
 		const saved = ( overview.saved_ideas || [] ).find( ( i ) => i.focus === focusKey( focus ) );
-		if ( ! saved ) {
+		// Hidden while a topic search runs: the choice was already made, and the live box shows which one.
+		if ( ! saved || isActive( topicsJob ) ) {
 			return '';
 		}
-		return `<label><input type="checkbox" name="reuse_ideas" checked> ${ esc( sprintf( __( 'Reuse the topic search from %s (no new web searches)', 'ana-afdal-writer' ), when( saved.created ) ) ) }</label>`;
+		return `<label><input type="checkbox" name="reuse_ideas" ${ reusePref() ? 'checked' : '' }> ${ esc( sprintf( __( 'Reuse the topic search from %s (no new web searches)', 'ana-afdal-writer' ), when( saved.created ) ) ) }</label>`;
 	};
 
 	const topicsHtml = () => {
@@ -465,10 +481,10 @@
 				<h2>${ esc( __( '1. Get topic ideas', 'ana-afdal-writer' ) ) }</h2>
 				<form class="aaw-inline-form" data-form="topics">
 					<label class="screen-reader-text" for="aaw-focus">${ esc( __( 'Focus (optional)', 'ana-afdal-writer' ) ) }</label>
-					<input type="text" id="aaw-focus" name="focus" class="regular-text" dir="auto" placeholder="${ esc( __( 'Optional focus, e.g. scholarships in Europe or AI tools for students', 'ana-afdal-writer' ) ) }">
+					<input type="text" id="aaw-focus" name="focus" class="regular-text" dir="auto" value="${ esc( lastFocus ) }" placeholder="${ esc( __( 'Optional focus, e.g. scholarships in Europe or AI tools for students', 'ana-afdal-writer' ) ) }">
 					<button type="submit" class="button button-primary" ${ isActive( job ) || ! overview.ready.anthropic || overview.cap_reached ? 'disabled' : '' }>${ esc( __( 'Suggest topics', 'ana-afdal-writer' ) ) }</button>
 				</form>
-				<p class="aaw-reuse" data-region="reuse">${ reuseHtml( '' ) }</p>
+				<p class="aaw-reuse" data-region="reuse">${ reuseHtml( lastFocus ) }</p>
 				<div data-region="topics">${ body }</div>
 			</section>`;
 	};
@@ -532,7 +548,13 @@
 		const reuseRegion = root.querySelector( '[data-region="reuse"]' );
 		if ( focusInput && reuseRegion ) {
 			focusInput.addEventListener( 'input', () => {
+				lastFocus = focusInput.value;
 				reuseRegion.innerHTML = reuseHtml( focusInput.value );
+			} );
+			reuseRegion.addEventListener( 'change', ( e ) => {
+				if ( e.target.name === 'reuse_ideas' ) {
+					setReusePref( e.target.checked );
+				}
 			} );
 		}
 	};
@@ -1126,6 +1148,7 @@
 			const button = form.querySelector( '[type="submit"]' );
 			button.disabled = true;
 			const reuseBox = root.querySelector( '[name="reuse_ideas"]' );
+			lastFocus = form.focus.value;
 			api( '/topics', { method: 'POST', data: { focus: form.focus.value, reuse: reuseBox ? reuseBox.checked : false } } )
 				.then( ( job ) => {
 					topicsJob = job;

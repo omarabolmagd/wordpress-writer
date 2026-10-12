@@ -3,7 +3,7 @@
  * Plugin Name:       Ana Afdal Writer
  * Plugin URI:        https://anaafdal.com/
  * Description:       Researches, writes, illustrates and links new Arabic posts with Claude, then saves them as drafts for review.
- * Version:           1.3.1
+ * Version:           1.3.2
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author:            Omar Abouelmagd
@@ -15,7 +15,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AAW_VERSION', '1.3.1' );
+define( 'AAW_VERSION', '1.3.2' );
 define( 'AAW_FILE', __FILE__ );
 define( 'AAW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAW_URL', plugin_dir_url( __FILE__ ) );
